@@ -1,0 +1,468 @@
+﻿@{
+    ViewBag.Title = "Material_Issue";
+}
+<style>
+    .green {
+        color: black\9;
+        background-color: #b6ff00\9;
+    }
+
+    .yellow {
+        color: black\9;
+        background-color: yellow\9;
+    }
+
+    .red {
+        color: black\9;
+        background-color: #e83636\9;
+    }
+
+    .green:not(.jqx-grid-cell-hover):not(.jqx-grid-cell-selected), .jqx-widget .green:not(.jqx-grid-cell-hover):not(.jqx-grid-cell-selected) {
+        color: black;
+        background-color: #b6ff00;
+    }
+
+    .yellow:not(.jqx-grid-cell-hover):not(.jqx-grid-cell-selected), .jqx-widget .yellow:not(.jqx-grid-cell-hover):not(.jqx-grid-cell-selected) {
+        color: black;
+        background-color: yellow;
+    }
+
+    .red:not(.jqx-grid-cell-hover):not(.jqx-grid-cell-selected), .jqx-widget .red:not(.jqx-grid-cell-hover):not(.jqx-grid-cell-selected) {
+        color: black;
+        background-color: #e83636;
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var ID = 0;
+        var User = sessionStorage.getItem("user");       
+
+        //$("#from_Date").jqxDateTimeInput({ width: '110px', height: '25px', formatString: 'dd-MMM-yyyy' });
+        //$("#to_Date").jqxDateTimeInput({ width: '110px', height: '25px', formatString: 'dd-MMM-yyyy' });
+
+        getgrid();
+        function getgrid() {
+            var Rights = sessionStorage.getItem('rights');
+            var User = sessionStorage.getItem('Code');
+            var url = "";
+            if (Rights == 19) {
+                //$("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+                //$("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+
+                url = "pr_FetchMaterialIssue?ID=" + $('#matCode').val();// + "&to=" + $('#to_Date').val();
+
+                //$("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+                //$("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+            }
+            else {
+                //$("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+                //$("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+
+                url = "pr_FetchMaterialIssue?ID=" + $('#matCode').val();// + "&to=" + $('#to_Date').val();
+
+                //$("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+                //$("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+            }
+            var source = {
+                datatype: "json",
+                datafields: [{
+                    name: 'mr_ID',
+                    type: 'string'
+                },
+                    {
+                    name: 'mr_MRC_No',
+                    type: 'string'
+                    }, {
+                        name: 'mr_DOR',
+                        type: 'string'
+                    },                
+                    {
+                        name: 'mr_SupplierName',
+                        type: 'string'
+                    }, {
+                        name: 'mr_Lot_No',
+                        type: 'string'
+                    }, {
+                        name: 'mr_DOE',
+                        type: 'string'
+                    }, {
+                        name: 'ReceiptQty',
+                        type: 'string'
+                    }, {
+                        name: 'mr_BinNo',
+                        type: 'string'
+                    }, {
+                        name: 'BalQty',
+                        type: 'string'
+                    }, {
+                        name: 'mr_IssuedQty',
+                        type: 'string'
+                    },
+                    //{
+                    //    name: 'Use Me First / Use Me Next',
+                    //    type: 'string'
+                    //},             
+                ],
+                id: 'id',
+                url: url
+            };
+            //var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties, rowdata) {
+            //    debugger
+            //    if (value == 'Use Me First') {
+            //        return '<span style="margin: 4px; float: ' + columnproperties.cellsalign + '; color: #15c40c;">' + value + '</span>';
+            //    }
+            //}
+            var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties, rowdata) {
+                debugger
+                if (row == 0) {
+                    return '<span style="margin: 4px; float: ' + columnproperties.cellsalign + '; color: #15c40c;">' + 'Use Me First' + '</span>';
+                }
+                else {
+                    return 'Use Me Next';
+                }
+            }
+            //var cellclass = function (row, columnfield, value) {
+            //    if (value == 'Use Me First') {
+            //        return 'green';
+            //    }
+            //    else if (value == 'Use Me Next') {
+            //        return 'yellow';
+            //    }
+            //    //else return 'green';
+            //}
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            $("#Grid").jqxGrid({
+                theme: 'ui-sunny',
+                width: '100%',
+                autoheight: true,
+                source: dataAdapter,
+                columnsresize: true,
+                pageable: true,
+                editable: true,
+                enabletooltips: false,
+                pagermode: 'simple',
+                enabletooltips: true,
+                showaggregates: true,
+                showstatusbar: true,
+                showfilterrow: true,
+                filterable: true,
+                pagesize: 14,
+                columns: [{
+                    text: 'id',
+                    datafield: 'mr_ID',
+                    width: '100px',
+                    hidden: true
+                },
+                    {
+                        text: 'MRC No',
+                        datafield: 'mr_MRC_No',
+                        width: '15%'
+                    }, {
+                        text: 'DOR',
+                        datafield: 'mr_DOR',
+                        width: '15%'
+                    },
+                    {
+                        text: 'Supplier',
+                        datafield: 'mr_SupplierName',
+                        width: '20%'
+                    }, {
+                        text: 'Lot No',
+                        datafield: 'mr_Lot_No',
+                        width: '15%'
+                    },
+                    {
+                        text: 'Expiry Date',
+                        datafield: 'mr_DOE',
+                        width: '15%',
+                    },
+                    {
+                        text: 'Receipt Qty',
+                        datafield: 'ReceiptQty',
+                        width: '15%',
+                        aggregates: ['sum']
+                    }, {
+                        text: 'Bin No',
+                        datafield: 'mr_BinNo',
+                        width: '15%'
+                    }, {
+                        text: 'Issue Qty',
+                        datafield: 'mr_IssuedQty',
+                        width: '15%',
+                        aggregates: ['sum']
+                    }, {
+                        text: 'Balance Qty',
+                        datafield: 'BalQty',
+                        width: '15%',
+                        aggregates: ['sum']                  
+                    }, {
+                        text: 'Use Me First / Use Me Next',
+                        //datafield: 'Use Me First / Use Me Next',
+                        cellsrenderer: cellsrenderer,
+                        width: '15%',
+                    }, 
+                    //{
+                    //    text: 'Edit',
+                    //    datafield: 'Edit',
+                    //    filterable: false,
+                    //    width: 40,
+                    //    cellsrenderer: function () {
+                    //        return '<div style="width: 100%"><img src="../../../img/Edit1.png" style="margin-left: 25%" /></div>';
+                    //    }
+                    //},
+                    //{
+                    //    text: 'Del',
+                    //    datafield: 'delete',
+                    //    filterable: false,
+                    //    width: 40,
+                    //    cellsrenderer: function () {
+                    //        return '<div style="width: 100%"><img src="../../../img/del.png" style="margin-left: 25%" /></div>';
+                    //    }
+                    //},
+                ]
+            });
+        }
+        var MRCNo = "";
+        var Supplier = "";
+        var LotNo = "";
+        var Expiry = "";
+        var RecQty = "";
+        var IssQty = "";
+        var BalQty = "";
+        var IssueQty = "";
+        $("#Grid").on('cellendedit', function (event) {
+            debugger
+            var column = event.args.column;
+            var rowindex = event.args.rowindex;
+            var columnindex = event.args.columnindex;
+            var dataRecord = $("#Grid").jqxGrid('getrowdata', rowindex);
+            MRCNo = args.row.mr_MRC_No;
+            Supplier = args.row.mr_SupplierName;
+            LotNo = args.row.mr_Lot_No;
+            Expiry = args.row.mr_DOE;
+            RecQty = args.row.ReceiptQty;
+            IssQty = args.row.mr_IssuedQty;
+            BalQty = args.row.BalQty;
+            IssueQty = args.value;
+            if (args.datafield == 'mr_IssuedQty') {
+                if (args.value != "" && args.oldvalue != args.value) {
+                    $.ajax({
+                        type: 'POST',
+                        contentType: "application/json; charset=utf-8",
+                        url: 'Pr_Update_MaterialIssueQty',
+                        data: "{'mr_IssuedQty':'" + args.value + "','mr_ID':'" + args.row.mr_ID + "'}",//,'sc_StockQty':'" + args.value + "','sc_StoreID':'" + StoreID + "','sc_User':'" + User + "','sc_ItemBarcode':'" + args.row.IM_Barcode + "'}",
+                        async: false,
+                        success: function (response) {
+                        },
+                        error: function () {
+                            console.log('there is some error');
+                        }
+                    });
+                }
+                save();
+                //getgrid();
+            }
+        });
+
+        function save() {
+            var data = new FormData();
+            $.ajax({
+                url: "Pr_Insert_MaterialIssueDetails?mid_MRC_No=" + MRCNo + "&mr_SupplierName=" + Supplier +  "&mr_Lot_No=" + LotNo +
+                     "&mr_DOE=" + Expiry + "&ReceiptQty=" + RecQty + "&mr_IssuedQty=" + IssQty + "&BalQty=" + BalQty + "&User=" + User,
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: data,
+                async: false,
+                success: function (response) {
+                    if (response == 'True') {
+                        $.toaster({ priority: 'success', title: 'Notice', message: "Record Saved Successfully" });
+                        $("#Grid").jqxGrid('updatebounddata');
+                        $('#blah1').attr('src', "../../");
+                        Clear();
+                    } else {
+                        $.toaster({ priority: 'danger', title: 'Notice', message: response });
+                    }
+                },
+                error: function (er) {
+                    alert(er.responseText);
+                }
+            });
+        }
+
+        $('#ScanBarcode').keypress(function (e) {
+            if (e.keyCode == 13) {
+                $.ajax({
+                    type: 'POST',
+                    contentType: "application/json; charset=utf-8",
+                    url: 'pr_update_issueqty',
+                    data: "{'MRC_No':'" + $('#ScanBarcode').val() + "'}",//,'sc_StockQty':'" + args.value + "','sc_StoreID':'" + StoreID + "','sc_User':'" + User + "','sc_ItemBarcode':'" + args.row.IM_Barcode + "'}",
+                    async: false,
+                    success: function (response) {
+                        if (response == 'True') {
+                            $.toaster({ priority: 'success', title: 'Notice', message: "Record Updated Successfully" });
+                            $("#Grid").jqxGrid('updatebounddata');
+                            $('#ScanBarcode').val('');
+                        } else {
+                            $.toaster({ priority: 'danger', title: 'Notice', message: response });
+                            $('#ScanBarcode').val('');
+                        }
+                    },
+                    error: function () {
+                        console.log('there is some error');
+                    }
+                });
+            }
+        });
+
+        $("#btnshow").click(function () {
+            $('#myModal').modal('hide');
+            getgrid();
+        })
+
+        $("#Transactions").addClass("active");
+        $("#Material_Issue").addClass("active");
+
+        $("#sidebar-collapse").click(function () {
+            $("#Grid").jqxGrid('updatebounddata');
+        });
+        $("#btn_Clear").click(function () {
+            Clear();
+        })
+        $("#btn_Refresh").click(function () {
+            $("#Grid").jqxGrid('updatebounddata');
+        })
+        $("#btn_Excel").click(function () {
+            //$("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+            //$("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+            window.open("../../Master/Export_To_Excel?FileName=Material Issue&Heading=Material Issue&Data=pr_FetchMaterialIssue_Excel'" + $('#matCode').val() + "'");
+            //$("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+            //$("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+        })
+
+        $("#Transactions").addClass("active");
+        $("#Material_Issue").addClass("active");
+
+        $("#btn_Pdf").click(function () { })
+        $("#btn_Chart").click(function () { })
+        $("#btn_Help").click(function () { })
+    });
+</script>
+
+
+<div class="content-wrapper">
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12" style="padding: 5px; padding-top: 0px">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Material Issue</h3>
+                        <div class="box-tools pull-right">
+                            @*<button type="button" id="btn_AddNew" title="Add New" data-rel="tooltip" class="btn btn-box-tool" data-toggle="modal" data-target="#myModal" style="padding: 5px"><span class='fa fa fa-plus-square  bigger-130 green'></span></button>*@
+                            <button type="button" id="btn_Refresh" title="Refresh" data-rel="tooltip" class="btn btn-box-tool" style="padding: 5px"><span class='fa fa-refresh bigger-130 vilote'></span></button>
+                            <button type="button" id="btn_Excel" title="Export to Excel" data-rel="tooltip" class="btn btn-box-tool" style="padding: 5px"><span class='fa fa-file-excel-o bigger-130 '></span></button>
+                            @*<button type="button" id="btn_Pdf" title="Export to Pdf" data-rel="tooltip" class="btn btn-box-tool" style="padding:5px"><span class='fa fa-file-pdf-o bigger-130 red'> </span></button>*@
+                        </div>
+                        <!-- /.nav-search -->
+                    </div>
+                    <div class="box-body">
+                            <form class="form-horizontal" role="form" id="form1">
+                                <div class="box-body">
+                                    <div class="col-md-12" style="padding-left: 0px; padding-right: 0px">
+
+                                        <div class="col-sm-4" style="margin-top: 3px; max-width: 115px; padding-left: 0px; padding-right: 0px">
+                                            Material Code&nbsp;:&nbsp;
+                                        </div>
+
+                                        <div class="col-sm-3" style="max-width: 180px; padding-right: 0px; padding-left: 3px">
+                                            <input id="matCode" type="text" placeholder="Code" class="form-control" />
+                                        </div>
+
+                                        @*<div class="col-sm-4" style="margin-top: 3px; max-width: 50px; padding-left: 6px; padding-right: 0px">
+            From&nbsp;:&nbsp;
+        </div>
+
+        <div class="col-sm-7" style="max-width: 200px; padding-right: 0px; padding-left: 3px">
+            <div id="from_Date"></div>
+        </div>
+
+        <div class="col-sm-4" style="padding-left: 0px; max-width: 30px; padding-right: 0px; margin-top: 3px; color: MenuText">
+            To&nbsp;:&nbsp;
+        </div>
+
+        <div class="col-sm-7" style="padding-left: 3px; max-width: 200px;">
+            <div id="to_Date"></div>
+        </div>*@
+
+                                        <div class="col-sm-4 " style="max-width: 100px; padding-left: 0px; padding-right: 0px">
+                                            <button type="button" id="btnshow" style="width: 100px"><span class="fa fa-search  "></span>Search</button>
+                                        </div>
+
+                                        <div class="col-sm-4 " style="max-width: 200px; padding-left: 0px; padding-right: 0px">
+                                            <input id="ScanBarcode" type="text" placeholder="Scanning Barcode" class="form-control" />
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    <div class="col-md-12" style="padding-left: 0px; padding-right: 0px; padding-top: 10px">
+                        <div id="Grid"></div>
+                    </div>
+                </div>
+                @*<div class="modal fade  bd-example-modal-lg" id="myModal">
+                                        <div class="modal-dialog modal-lg">
+                                            <div>
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <h3 class="panel-title">
+                                                            Daily Collection Report <span class="pull-right ">
+                                                                <a href="#" data-dismiss="modal" aria-label="Close">
+                                                                    <i class="ace-icon fa fa-times"></i>
+                                                                </a>
+                                                            </span>
+                                                        </h3>
+                                                    </div>
+                                                    <div class="panel-body">
+                                                        <form class="form-horizontal" role="form" id="form1">
+                                                            <div class="col-md-8">
+                                                                <div class="col-md-12" style="padding-left: 0px; padding-right: 0px">
+
+                                                                    <div class="col-xs-6 col-sm-4 col-md-2 " style="margin-top: 3px; max-width: 50px; padding-left: 0px; padding-right: 0px">
+                                                                        From&nbsp;:&nbsp;
+                                                                    </div>
+
+                                                                    <div class="col-xs-6 col-sm-4 " style="max-width: 20px; padding-right: 0px; padding-left: 3px">
+                                                                        <div id="from_Date"></div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-md-12" style="padding-left: 0px; padding-right: 0px">
+                                                                    <div class="col-xs-6 col-sm-4   " style="padding-left: 0px; max-width: 50px; padding-left: 0px;padding-right: 0px; margin-top: 3px; color: MenuText">
+                                                                        To&nbsp;:&nbsp;
+                                                                    </div>
+
+                                                                    <div class=" col-xs-6 col-sm-4   " style="padding-left: 0px; max-width: 20px;">
+                                                                        <div id="to_Date"></div>
+                                                                    </div></div>
+
+                                                                    <div class=" col-xs-6 col-sm-4 col-md-3  " style="max-width: 70px; padding-left: 0px; padding-right: 0px">
+                                                                        <button type="button" id="btnshow" style="width: 100px"><span class="fa fa-search  "></span>Search</button>
+                                                                    </div>
+                                                                </div>
+                    </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>*@
+            </div>
+        </div>
+    </section>
+</div>
+
+
+
+
+
+

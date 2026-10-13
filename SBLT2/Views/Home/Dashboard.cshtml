@@ -1,0 +1,262 @@
+﻿
+@{
+    /**/
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var ID = 0;
+        var User = sessionStorage.getItem("Plant");
+
+        //$("#DateTime").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+
+        function sumAge() {
+            //$("#DateTime").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+            var url = "pr_fetch_AgeWiseInventory_Chart_Sum?ID=" + $('#DateTime').val();
+            //$("#DateTime").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+            var source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'Qty', type: 'string' },
+                ],
+                id: 'id',
+                url: url
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source, {
+                contentType: 'application/json; charset=utf-8',
+                loadComplete: function () {
+                    var length = dataAdapter.records.length;
+                    flag = false;
+                    var records = dataAdapter.records;
+                    var record = records[0];
+                    $('#TotalQty_Age').val(record.Qty);
+                },
+                error: function (xhr, status, error) {
+                    alert(JSON.stringify(xhr));
+                }
+            });
+            dataAdapter.dataBind();
+        }
+        function sumMat() {
+            //$("#DateTime").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+            var url = "pr_fetch_MaterialWiseInventory_Chart_Sum?ID=" + $('#DateTime').val();
+            //$("#DateTime").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+            var source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'TotalMat', type: 'string' },
+                ],
+                id: 'id',
+                url: url
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source, {
+                contentType: 'application/json; charset=utf-8',
+                loadComplete: function () {
+                    var length = dataAdapter.records.length;
+                    flag = false;
+                    var records = dataAdapter.records;
+                    var record = records[0];
+                    $('#TotalQty_Mat').val(record.TotalMat);
+                },
+                error: function (xhr, status, error) {
+                    alert(JSON.stringify(xhr));
+                }
+            });
+            dataAdapter.dataBind();
+        }
+
+        function chart1() {
+            // ----------------------------Page 1  start---------------------------------
+            //Absent list line chart......................................................
+            //$("#DateTime").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+            var url = "pr_fetch_passedqty_chart";//?ID=" + $('#DateTime').val();
+            //$("#DateTime").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+            var source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'mv_BatteryType', type: 'string' },
+                    { name: 'Qty', type: 'string' },
+                ],
+                id: 'id',
+                url: url
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            var settings = {
+                title: "Battery Type wise Passed Qty",
+                description: "",
+                showLegend: true,
+                enableAnimations: true,
+                padding: { left: 5, top: 5, right: 5, bottom: 5 },
+                titlePadding: { left: 90, top: 0, right: 0, bottom: 10 },
+                source: dataAdapter,
+                xAxis:
+                {
+                    dataField: 'mv_BatteryType',
+                    description: 'mv_BatteryType',
+                    showGridLines: false,
+                    valuesOnTicks: false
+                },
+                colorScheme: 'scheme02',
+                columnSeriesOverlap: false,
+                seriesGroups:
+                    [
+                        {
+                            type: 'column',
+                            valueAxis:
+                            {
+                                description: 'Qty(Nos)',
+                                visible: true,
+                                unitInterval: 500,
+                                showGridLines: false,
+                                title: { text: 'Plant Avg Cycletime<br>' }
+                            },
+                            series: [
+                                { dataField: 'Qty', displayText: 'Qty', showLabels: true, labelAngle: -90 },
+                            ]
+                        }
+                    ]
+            };
+            // setup the chart
+            $('#chartContainer2').jqxChart(settings);
+            var groups1 = $('#chartContainer2').jqxChart('seriesGroups');
+            $('#chartContainer2').jqxChart({ seriesGroups: groups1 });
+        }
+
+        function chartcolumn2() {
+            // ----------------------------Page 1  start---------------------------------
+            //Absent list line chart......................................................
+            var User = sessionStorage.getItem("Plant");
+            //$("#DateTime").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+            var url = "pr_fetch_failedqty_chart";//?ID=" + $('#DateTime').val();
+            //$("#DateTime").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+            var source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'mv_BatteryType', type: 'string' },
+                    { name: 'Qty', type: 'string' }
+                ],
+                id: 'id',
+                url: url
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            var settings = {
+                title: "Battery Type wise failed Qty",
+                description: "",
+                showLegend: true,
+                enableAnimations: true,
+                padding: { left: 5, top: 5, right: 5, bottom: 5 },
+                titlePadding: { left: 90, top: 0, right: 0, bottom: 10 },
+                source: dataAdapter,
+                xAxis:
+                {
+                    dataField: 'mv_BatteryType',
+                    description: 'mv_BatteryType',
+                    showGridLines: false,
+                    valuesOnTicks: false,
+                    //textRotationAngle: -75,
+                },
+                colorScheme: 'scheme07',
+                columnSeriesOverlap: false,
+                seriesGroups:
+                    [
+                        {
+                            type: 'column',
+                            valueAxis:
+                            {
+                                visible: true,
+                                description: 'Qty(Nos)',
+                                unitInterval: 500,
+                                showGridLines: false,
+                                title: { text: 'MSG Stock Modelwise<br> ' }
+                            },
+                            series: [
+                                { dataField: 'Qty', displayText: 'Qty', showLabels: true, labelAngle: -90 }
+                            ]
+                        }
+                    ]
+            };
+            // setup the chart
+            $('#chartContainer').jqxChart(settings);
+            var groups1 = $('#chartContainer').jqxChart('seriesGroups');
+            $('#chartContainer').jqxChart({ seriesGroups: groups1 });
+        }
+
+
+        $("#btnshow").click(function () {
+            chart1();
+            chartcolumn2();
+            //sumMat();
+            //sumAge();
+        })
+
+        //sumAge();
+        //sumMat();
+        chart1();
+        chartcolumn2();
+
+        $("#spinner").hide();
+        $("#Data").show();
+    });
+</script>
+
+<div class="content-wrapper">
+    <section class="content" style="padding-left:5px;padding-right:5px">
+        <div class="row">
+            <div class="col-lg-12">
+     
+                <div class="overlay" id="spinner" style="margin-left:15%;margin-top:40%">
+                    <i class="fa fa-refresh fa-spin"></i>
+                </div>
+                @*<div class="col-lg-12" style="text-align:center"><h4>Grid Inventory</h4></div>*@
+                <div class="col-lg-12">
+
+                    @*<div class="form-group">
+                        <label class="col-sm-2">Total Nos</label>
+                        <div class="col-sm-6">
+                            <input id="TotalQty_Age" type="text" style="width:95px;" disabled="disabled" />
+                        </div>
+                        <div class="col-sm-2">
+                            <div id="DateTime"></div>
+                        </div>
+                        <div class="col-sm-2">
+                            <button type="button" id="btnshow" style="width: 80px"><span class="fa fa-search"></span>Show</button>
+                        </div>
+                    </div>*@
+                    <div id='chartContainer2' style="width:100%; height:300px;"> </div>
+                </div>
+
+                <div class="col-lg-12">
+
+                    @*<div class="form-group">
+                        <label class="col-sm-2">Total Nos</label>
+                        <div class="col-sm-4">
+                            <input id="TotalQty_Mat" type="text" style="width:95px;" disabled="disabled" />
+                        </div>
+                    </div>*@
+                    <div id='chartContainer' style="width:100%; height:300px;"> </div>
+                </div>
+            
+            </div>
+          
+        </div>
+    </section>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+

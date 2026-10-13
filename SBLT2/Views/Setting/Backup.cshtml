@@ -1,0 +1,39 @@
+﻿@{
+    ViewBag.Title = "Backup";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        
+        $("#btn_Backup").click(function () {
+
+            $.ajax({
+                type: 'POST',
+                contentType: "application/json; charset=utf-8",
+                url: 'pr_create_Backup',
+                async: false,
+                success: function (response) {
+                 
+                    alert('Backup Created Successfully');
+                },
+                error: function () {
+                    console.log('there is some error');
+                }
+            });
+        });
+
+    });
+    </script>
+
+<div class="content-wrapper">
+    <section class="content">
+        <div class="row">
+<center>
+
+    <br /><br />
+    <input type="button" id="btn_Backup"  value="Create Backup"  class="btn btn-success" />
+</center>
+            </div>
+        </section>
+        </div>
+<

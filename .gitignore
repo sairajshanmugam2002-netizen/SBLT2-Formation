@@ -1,0 +1,83 @@
+## =========================================================================
+## Visual Studio & .NET .gitignore
+## =========================================================================
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa]rm/
+[Aa]rm64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio & IDE directories
+.vs/
+.vscode/
+
+# NuGet Packages
+*.nupkg
+**/packages/*
+!**/packages/repositories.config
+!**/packages/build/
+
+# Local backup and publish directories
+[Bb]ackup/
+[Bb]ackup*/
+[Pp]ublish/
+[Pp]ublish*/
+publish_New/
+Publish backup*/
+
+# Database backups & data files (prevent committing large SQL backups)
+*.bak
+*.mdf
+*.ldf
+*.ndf
+*.sdf
+
+# Compressed archives
+*.zip
+*.rar
+*.7z
+*.tar.gz
+
+# Generated PDFs and temporary uploads
+**/PreviewPDF/*
+!**/PreviewPDF/
+!**/PreviewPDF/.gitkeep
+
+# Microsoft Office temporary lock files
+~$*.xlsx
+~$*.docx
+~$*.pptx
+~$*
+
+# OS and Temporary files
+Thumbs.db
+ehthumbs.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.tmp
+*.temp
+*.log
+
+# Visual Studio upgrade logs
+_UpgradeReport_Files/
+UpgradeLog*.XML
+UpgradeLog*.htm
+UpgradeLog*.html

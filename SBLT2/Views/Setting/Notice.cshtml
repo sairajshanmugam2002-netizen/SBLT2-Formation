@@ -1,0 +1,273 @@
+﻿@{
+    ViewBag.Title = "Notice";
+}
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        var ID = 0;
+        var User = sessionStorage.getItem("user");;
+        var url = "Pr_Fetch_Notice_Details";
+        var source = {
+            datatype: "json",
+            datafields: [{
+                    name: 'N_iid',
+                    type: 'string'
+                },
+                {
+                    name: 'N_Notice_Details',
+                    type: 'string'
+                },
+                {
+                    name: 'N_Created_By',
+                    type: 'string'
+                },
+            ],
+            id: 'id',
+            url: url
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#Grid").jqxGrid({
+            theme: 'ui-sunny',
+            width: '100%',
+            height: '480px',
+            source: dataAdapter,
+            columnsresize: true,
+            pageable: true,
+            enabletooltips: false,
+            pagermode: 'simple',
+            enabletooltips: true,
+            showfilterrow: true,
+            filterable: true,
+            pagesize: 14,
+            columns: [{
+                    text: 'id',
+                    datafield: 'N_iid',
+                    width: '100px',
+                    hidden: true
+                },
+                {
+                    text: 'Notice Details',
+                    datafield: 'N_Notice_Details'
+                },
+                {
+                    text: 'Edit',
+                    datafield: 'Edit',
+                    filterable: false,
+                    width: 40,
+                    cellsrenderer: function() {
+                        return '<div style="width: 100%"><img src="../../../img/Edit1.png" style="margin-left: 25%" /></div>';
+                    }
+                }
+                
+            ]
+        });
+        $("#Grid").on("cellclick", function(event) {
+            var column = event.args.column;
+            var rowindex = event.args.rowindex;
+            var columnindex = event.args.columnindex;
+            if (columnindex == 2) {
+                editrow = rowindex;
+                var dataRecord = $("#Grid").jqxGrid('getrowdata', editrow);
+                ID = dataRecord.N_iid;
+                var url = "Pr_Fetch_Notice_ByID?ID=" + ID;
+                var source = {
+                    datatype: "json",
+                    datafields: [{
+                            name: 'N_iid',
+                            type: 'string'
+                        },
+                        {
+                            name: 'N_Notice_Details',
+                            type: 'string'
+                        },
+                    ],
+                    id: 'id',
+                    url: url
+                };
+                var dataAdapter_per = new $.jqx.dataAdapter(source, {
+                    contentType: 'application/json; charset=utf-8',
+                    loadComplete: function() {
+                        var length = dataAdapter_per.records.length;
+                        var records = dataAdapter_per.records;
+                        var record = records[0];
+                        $('#N_iid').val(record.N_iid);
+                        $('#N_Notice_Details').val(record.N_Notice_Details);
+                        $("#btn_save_label").text('Update');
+                        $('#myModal').modal('show');
+                    },
+                    error: function(xhr, status, error) {
+                        alert(JSON.stringify(xhr));
+                    }
+                })
+                dataAdapter_per.dataBind();
+            }
+           
+            
+        });
+
+
+        $('#form1').jqxValidator({
+            hintType: 'label',
+            animationDuration: 2,
+            rules: []
+        });
+        var flag = false;
+        var flag = false;
+        $('#form1').on('validationSuccess', function(event) {
+            flag = true;
+        });
+
+
+        $("#btn_Save").click(function() {
+            $('#form1').jqxValidator('validate');
+            if (flag == true) {
+                if ($("#btn_save_label").text() == 'Save') {
+                    save();
+                } else {
+                    Update();
+                }
+                flag = false;
+            }
+        });
+
+
+
+        function save() {
+            $.ajax({
+                type: 'POST',
+                contentType: "application/json; charset=utf-8",
+                url: 'Pr_Insert_Notice',
+                data: "{'N_Notice_Details':'" + $('#N_Notice_Details').val() +
+                    "', 'N_Created_By':'" + User +
+                    "'}",
+                async: false,
+                success: function(response) {
+                    alert("Record Saved Successfully...!");
+                    $("#Grid").jqxGrid('updatebounddata');
+                    Clear();
+                },
+                error: function() {
+                    console.log('there is some error');
+                }
+            });
+        }
+
+        function Update() {
+            $.ajax({
+                type: 'POST',
+                contentType: "application/json; charset=utf-8",
+                url: 'Pr_update_Notice',
+                data: "{'N_iid':'" + ID +
+                    "', 'N_Notice_Details':'" + $('#N_Notice_Details').val() +
+                    "', 'N_Created_By':'" + User +
+                    "'}",
+                async: false,
+                success: function(response) {
+                    alert("Record Updated Successfully...!");
+                    $("#btn_save_label").text('Save');
+                    $("#Grid").jqxGrid('updatebounddata');
+                    $('#myModal').modal('hide');
+                    Clear();
+                },
+                error: function() {
+                    console.log('there is some error');
+                }
+            });
+        }
+
+        function Clear() {
+            $('#N_Notice_Details').val('');
+            $("#btn_save_label").text('Save');
+            flag = false;
+        }
+        $("#btn_AddNew").click(function() {
+            $("#btn_save_label").text('Save');
+            Clear();
+        })
+        $("#sidebar-collapse").click(function() {
+            $("#Grid").jqxGrid('updatebounddata');
+        });
+        $("#btn_Clear").click(function() {
+            Clear();
+        })
+        $("#btn_Refresh").click(function() {
+            $("#Grid").jqxGrid('updatebounddata');
+        })
+        $("#btn_Excel").click(function() {})
+        $("#btn_Pdf").click(function() {})
+        $("#btn_Chart").click(function() {})
+        $("#btn_Help").click(function() {})
+    });
+</script>
+
+
+
+<div class="content-wrapper">
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12" style="padding:5px;  padding-top:0px">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Notice</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" id="btn_AddNew" title="Add New" data-rel="tooltip" class="btn btn-box-tool" data-toggle="modal" data-target="#myModal" style="padding:5px"><span class='fa fa fa-plus-square  bigger-130 green'></span></button>
+                            <button type="button" id="btn_Refresh" title="Refresh" data-rel="tooltip" class="btn btn-box-tool" style="padding:5px"><span class='fa fa-refresh bigger-130 vilote'></span></button>
+                            <button type="button" id="btn_Excel" title="Export to Excel" data-rel="tooltip" class="btn btn-box-tool" style="padding:5px"><span class='fa fa-file-excel-o bigger-130 green'></span></button>
+                            <button type="button" id="btn_Pdf" title="Export to Pdf" data-rel="tooltip" class="btn btn-box-tool" style="padding:5px"><span class='fa fa-file-pdf-o bigger-130 red'> </span></button>
+                        </div>
+                        <!-- /.nav-search -->
+                    </div>
+                    <div class="box-body">
+                        <div class="col-md-12" style="padding-left:0px; padding-right:0px">
+                            <div id="Grid"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="myModal">
+                    <div class="modal-dialog">
+                        <div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">Notice <span class="pull-right ">
+  <a href="#"   data-dismiss="modal" aria-label="Close">
+  <i class="ace-icon fa fa-times"></i>
+ </a>
+ </span> </h3>
+                                </div>
+                                <div class="panel-body">
+                                    <form class="form-horizontal" role="form" id="form1">
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Notice Details </label>
+                                            <div class="col-sm-7">
+
+                                                  <textarea id="N_Notice_Details" class="form-control" rows="5" placeholder="Enter ..."></textarea>
+
+
+                                               
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <div class="col-sm-5"></div>
+                                    <p>
+                                        <button id="btn_Save" class="btn btn-white btn-info btn-bold">
+ 						<i class="ace-icon fa fa-floppy-o bigger-120 blue"></i>
+ 			<span id="btn_save_label">Save</span>
+ </button>
+                                        <button id="btn_Clear" class="btn btn-white btn-warning btn-bold">
+ 		<i class="ace-icon fa fa-trash-o bigger-120 orange"></i>
+Clear
+ </button>
+                                        <button class="btn btn-white btn-default btn-round" data-dismiss="modal">
+ <i class="ace-icon fa fa-times red2"></i>
+ Close
+ </button>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

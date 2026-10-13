@@ -1,0 +1,170 @@
+﻿@{
+    ViewBag.Title = "Summary_CHN";
+}
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var ID = 0;
+        var User = sessionStorage.getItem("user");
+
+        $("#from_Date").jqxDateTimeInput({ width: '110px', height: '25px', formatString: 'dd-MMM-yyyy' });
+        $("#to_Date").jqxDateTimeInput({ width: '110px', height: '25px', formatString: 'dd-MMM-yyyy' });
+
+        //getgrid();
+        function getgrid(ID) {
+            var Rights = sessionStorage.getItem('rights');
+            var User = sessionStorage.getItem('Code');
+            var url = "";
+            if (ID == 1) {
+                $("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+                $("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+
+                url = "pr_Fetch_SummaryCHN?from=" + $('#from_Date').val() + "&to=" + $('#to_Date').val();
+
+                $("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+                $("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+            }
+            else {
+                $("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+                $("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+
+                url = "pr_Fetch_SummaryCHNINV?from=" + $('#from_Date').val() + "&to=" + $('#to_Date').val();
+
+                $("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+                $("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+            }
+            var source = {
+                datatype: "json",
+                datafields: [{name: 'inv_Id',type: 'string'},{name: 'inv_ProdName',type: 'string'},
+                    {name: 'inv_ProdCode',type: 'string'},{name: 'inv_Model',type: 'string'},
+                    {name: 'inv_Customer',type: 'string'},{name: 'inv_Location',type: 'string'},
+                    {name: 'inv_Qty',type: 'string'},{name: 'inv_LabelCount',type: 'string'},
+                    { name: 'inv_QRCode', type: 'string' }, { name: 'inv_CHEInwardUser', type: 'string' },
+                    { name: 'inv_CHEInwardDate', type: 'string' },
+                ],
+                id: 'id',
+                url: url
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            $("#Grid").jqxGrid({theme: 'ui-sunny',width: '100%',autoheight: true,source: dataAdapter,columnsresize: true,
+                pageable: true,enabletooltips: false,pagermode: 'simple',enabletooltips: true,showfilterrow: true,
+                filterable: true,pagesize: 14,
+                columns: [{text: 'ID',datafield: 'inv_Id',width: '10%',hidden: true},
+                    {text: 'QRCode',datafield: 'inv_QRCode',width: '10%'},
+                    {text: 'Product Name',datafield: 'inv_ProdName',width: '10%'},
+                    {text: 'Product Code',datafield: 'inv_ProdCode',width: '10%'},
+                    {text: 'Model',datafield: 'inv_Model',width: '10%'},
+                    {text: 'Customer',datafield: 'inv_Customer',width: '10%'},
+                    {text: 'Location',datafield: 'inv_Location',width: '10%'},
+                    {text: 'Qty',datafield: 'inv_Qty',width: '8%'},
+                    { text: 'Inward User', datafield: 'inv_CHEInwardUser', width: '10%' },
+                    { text: 'Inward Date', datafield: 'inv_CHEInwardDate', width: '10%' },
+                ]
+            });
+        }
+
+        $("#btnshow").click(function () {
+            getgrid(1);
+        })
+        $("#btnINV").click(function () {
+            getgrid(2);
+        })
+
+        $("#Reports").addClass("active");
+        $("#Summary_CHN").addClass("active");
+
+        $("#sidebar-collapse").click(function () {
+            $("#Grid").jqxGrid('updatebounddata');
+        });
+        $("#btn_Clear").click(function () {
+            Clear();
+        })
+        $("#btn_Refresh").click(function () {
+            $("#Grid").jqxGrid('updatebounddata');
+        })
+        $("#btn_Excel").click(function () {
+            var from = $('#from_Date').val();
+            var to = $('#to_Date').val();
+            $("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+            $("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+            window.open("../../Master/Export_To_Excel?FileName=Material Receipt Expire Report&Heading=Over all Material Receipt Expire Report for the particular period from " + from + " to " + to + "&Data=pr_FetchExpiryAlertReport_Excel '" + $('#from_Date').val() + "','" + $('#to_Date').val() + "'");
+            $("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+            $("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+        })
+
+        $("#Reports").addClass("active");
+        $("#Summary_CHN").addClass("active");
+
+        $("#btn_Pdf").click(function () { })
+        $("#btn_Chart").click(function () { })
+        $("#btn_Help").click(function () { })
+    });
+</script>
+
+
+<div class="content-wrapper">
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12" style="padding: 5px; padding-top: 0px">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Summary Report Chennai</h3>
+                        <div class="box-tools pull-right">
+                            @*<button type="button" id="btn_AddNew" title="Add New" data-rel="tooltip" class="btn btn-box-tool" data-toggle="modal" data-target="#myModal" style="padding: 5px"><span class='fa fa fa-plus-square  bigger-130 green'></span></button>*@
+                            <button type="button" id="btn_Refresh" title="Refresh" data-rel="tooltip" class="btn btn-box-tool" style="padding: 5px"><span class='fa fa-refresh bigger-130 vilote'></span></button>
+                            <button type="button" id="btn_Excel" title="Export to Excel" data-rel="tooltip" class="btn btn-box-tool" style="padding: 5px"><span class='fa fa-file-excel-o bigger-130 green'></span></button>
+                            @*<button type="button" id="btn_Pdf" title="Export to Pdf" data-rel="tooltip" class="btn btn-box-tool" style="padding:5px"><span class='fa fa-file-pdf-o bigger-130 red'> </span></button>*@
+                        </div>
+                        <!-- /.nav-search -->
+                    </div>
+                    <div class="box-body">
+                        <form class="form-horizontal" role="form" id="form1">
+                            <div class="box-body">
+                                <div class="col-md-12" style="padding-left: 0px; padding-right: 0px">
+
+                                    <div class="col-sm-4" style="margin-top: 3px; max-width: 50px; padding-left: 6px; padding-right: 0px">
+                                        From&nbsp;:&nbsp;
+                                    </div>
+
+                                    <div class="col-sm-7" style="max-width: 200px; padding-right: 0px; padding-left: 3px">
+                                        <div id="from_Date"></div>
+                                    </div>
+
+                                    <div class="col-sm-4" style="padding-left: 0px; max-width: 30px; padding-right: 0px; margin-top: 3px; color: MenuText">
+                                        To&nbsp;:&nbsp;
+                                    </div>
+
+                                    <div class="col-sm-7" style="padding-left: 3px; max-width: 200px;">
+                                        <div id="to_Date"></div>
+                                    </div>
+
+
+                                    <div class="col-sm-4 " style="max-width: 200px; padding-left: 0px; padding-right: 0px">
+                                        <button type="button" id="btnshow" style="width: 100px"><span class="fa fa-search  "></span>Search</button>
+                                    </div>
+
+                                    <div class="col-sm-4 " style="max-width: 200px; padding-left: 0px; padding-right: 0px">
+                                        <button type="button" id="btnINV" style="width: 100px"><span class="fa fa-search  "></span>Inventory</button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-12" style="padding-left: 0px; padding-right: 0px; padding-top: 10px">
+                        <div id="Grid"></div>
+                    </div>
+                </div>
+              
+            </div>
+        </div>
+    </section>
+</div>
+
+
+
+
+
+
+

@@ -1,0 +1,354 @@
+﻿@{
+    ViewBag.Title = "Filling_Report";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var ID = 0;
+        var User = sessionStorage.getItem("user");
+
+        $("#from_Date").jqxDateTimeInput({ width: '110px', height: '25px', formatString: 'dd-MMM-yyyy' });
+        $("#to_Date").jqxDateTimeInput({ width: '110px', height: '25px', formatString: 'dd-MMM-yyyy' });
+
+        var source = ['A', 'B', 'C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T'];
+        $("#bank").jqxComboBox({ selectedIndex: -1, source: source, width: '100%', height: '30' });
+        $("#bank").on('change', function (event) {
+            $("#model").val(""); $("#shift").val(""); 
+        });
+        var source = ['A', 'B', 'C'];
+        $("#shift").jqxComboBox({ selectedIndex: -1, source: source, width: '100%', height: '30' });
+        $("#shift").on('change', function (event) {
+            $("#model").val(""); $("#bank").val(""); $("#tub").val("");
+        });
+        var url = "../../Transaction/pr_fetch_BatteryTypeCombos"//?ID=" + User;
+        var Source =
+        {
+            datatype: "json",
+            datafields: [
+                { name: 'RGV_iRG_ID', type: 'string' },
+                { name: 'RGV_vDesciption', type: 'string' }
+            ],
+            id: 'id',
+            url: url
+        };
+        var adapter = new $.jqx.dataAdapter(Source);
+        $("#model").jqxComboBox({ selectedIndex: -1, source: adapter, displayMember: "RGV_vDesciption", valueMember: "RGV_vDesciption", width: '100%', height: '30' });
+
+        $("#model").on('change', function (event) {
+            $("#shift").val(""); $("#bank").val(""); $("#tub").val("");
+        });
+        var url = "../../Transaction/pr_fetch_TubCombos"//?ID=" + User;
+        var Source =
+        {
+            datatype: "json",
+            datafields: [
+                { name: 'RGV_iRG_ID', type: 'string' },
+                { name: 'RGV_vDesciption', type: 'string' }
+            ],
+            id: 'id',
+            url: url
+        };
+        var adapter = new $.jqx.dataAdapter(Source);
+        $("#tub").jqxComboBox({ selectedIndex: -1, source: adapter, displayMember: "RGV_vDesciption", valueMember: "RGV_vDesciption", width: '100%', height: '30' });
+
+        $("#tub").on('change', function (event) {
+            $("#shift").val(""); $("#bank").val(""); $("#model").val("");
+        });
+
+        getgrid();
+        function getgrid(ID) {
+            var Rights = sessionStorage.getItem('rights');
+            var User = sessionStorage.getItem('Code');
+            var url = "";
+            if ($('#shift').val() != "") {
+                $("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+                $("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+                    url = "Pr_Fetch_FillingReport?from=" + $('#from_Date').val() + "&to=" + $('#to_Date').val() + "&shift=" + $('#shift').val();
+                $("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+                $("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+            }
+            else if ($('#model').val() != ""){
+                $("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+                $("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+                    url = "Pr_Fetch_FillingReport?from=" + $('#from_Date').val() + "&to=" + $('#to_Date').val() + "&shift=" + $('#model').val();               
+                $("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+                $("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+            }
+            var source = {
+                datatype: "json",
+                datafields: [{ name: 'mv_BatteryType', type: 'string' }, { name: 'mv_FillingLine', type: 'string' },
+                    { name: 'mv_BankNo', type: 'string' }, { name: 'Qty', type: 'string' },
+                    { name: 'mv_Remarks', type: 'string' }, { name: 'mv_FillingStartTime', type: 'string' },
+                    { name: 'mv_FillingEndTime', type: 'string' }, { name: 'mv_CDPassedQty', type: 'string' },
+                    { name: 'mv_CDFailQty', type: 'string' }, { name: 'mv_AcidSPG', type: 'string' },
+                    { name: 'mv_AcidVolume', type: 'string' }, { name: 'mv_TubNo', type: 'string' },
+                    { name: 'mv_CKTNo', type: 'string' }, { name: 'mv_CellShortQty', type: 'string' },
+                    { name: 'mv_Temperature', type: 'string' }, { name: 'mv_PRDSupervisior', type: 'string' },
+                    { name: 'mv_FillingOperator', type: 'string' }, { name: 'mv_QAInspector', type: 'string' },
+                    { name: 'mv_ShiftEngineer', type: 'string' }, { name: 'mv_Shift', type: 'string' },
+                ],
+                id: 'id',
+                url: url
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            $("#Grid").jqxGrid({
+                theme: 'ui-sunny', width: '100%', autoheight: true, source: dataAdapter, columnsresize: true, //selectionmode: 'checkbox',
+                pageable: true,enabletooltips: false,pagermode: 'simple',enabletooltips: true,//showfilterrow: true,
+                //filterable: true,
+                pagesize: 14,
+                columns: [
+                    { text: 'Shift', datafield: 'mv_Shift', width: '12%', columngroup: 'MVRLA FORMATION - PRODUCTION REPORT' },
+                    { text: 'Line', datafield: 'mv_FillingLine', width: '12%', columngroup: 'MVRLA FORMATION - PRODUCTION REPORT' },
+                    { text: 'Model', datafield: 'mv_BatteryType', width: '12%', columngroup: 'MVRLA FORMATION - PRODUCTION REPORT' },
+                    { text: 'Bank', datafield: 'mv_BankNo', width: '12%', columngroup: 'MVRLA FORMATION - PRODUCTION REPORT' },
+                    { text: 'Tub', datafield: 'mv_TubNo', width: '10%', columngroup: 'MVRLA FORMATION - PRODUCTION REPORT' },
+                    { text: 'Shift Actual Qty', datafield: 'Qty', width: '15%', columngroup: 'MVRLA FORMATION - PRODUCTION REPORT' },
+                    { text: 'Remarks', datafield: 'mv_Remarks', width: '26%', columngroup: 'MVRLA FORMATION - PRODUCTION REPORT' },
+                ],
+                columngroups: [
+                    {text: '', align: 'center', name: 'ALMHFGTS6100R0' },
+                    { text: 'MVRLA FORMATION - PRODUCTION REPORT', parentgroup: 'ALMHFGTS6100R0', align: 'center', name: 'MVRLA FORMATION - PRODUCTION REPORT' },
+                ],
+            });
+        }
+
+        function getgrid2(ID) {
+            var Rights = sessionStorage.getItem('rights');
+            var User = sessionStorage.getItem('Code');
+            var url = "";
+                $("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+                $("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+            url = "Pr_Fetch_FillingReport2?from=" + $('#from_Date').val() + "&to=" + $('#to_Date').val() + "&tub=" + $('#tub').val() + "&bank=" + $('#bank').val();
+                $("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+                $("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+            var source = {
+                datatype: "json",
+                datafields: [{ name: 'mv_BatteryType', type: 'string' }, { name: 'mv_FillingLine', type: 'string' },
+                { name: 'mv_BankNo', type: 'string' }, { name: 'Qty', type: 'string' },
+                { name: 'mv_Remarks', type: 'string' }, { name: 'mv_FillingStartTime', type: 'string' },
+                { name: 'mv_FillingEndTime', type: 'string' }, { name: 'mv_CDPassedQty', type: 'string' },
+                { name: 'mv_CDFailQty', type: 'string' }, { name: 'mv_AcidSPG', type: 'string' },
+                { name: 'mv_AcidVolume', type: 'string' }, { name: 'mv_TubNo', type: 'string' },
+                { name: 'mv_CKTNo', type: 'string' }, { name: 'mv_CellShortQty', type: 'string' },
+                { name: 'mv_Temperature', type: 'string' }, { name: 'mv_PRDSupervisior', type: 'string' },
+                { name: 'mv_FillingOperator', type: 'string' }, { name: 'mv_QAInspector', type: 'string' },
+                { name: 'mv_ShiftEngineer', type: 'string' }, { name: 'mv_Shift', type: 'string' },
+                ],
+                id: 'id',
+                url: url
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            $("#Grid").jqxGrid({
+                theme: 'ui-sunny', width: '100%', autoheight: true, source: dataAdapter, columnsresize: true, //selectionmode: 'checkbox',
+                pageable: true, enabletooltips: false, pagermode: 'simple', enabletooltips: true,//showfilterrow: true,
+                //filterable: true,
+                pagesize: 14,
+                columns: [
+                    { text: 'Shift', datafield: 'mv_Shift', width: '12%', columngroup: 'MVRLA FORMATION - PRODUCTION REPORT' },
+                    { text: 'Line', datafield: 'mv_FillingLine', width: '12%', columngroup: 'MVRLA FORMATION - PRODUCTION REPORT' },
+                    { text: 'Model', datafield: 'mv_BatteryType', width: '12%', columngroup: 'MVRLA FORMATION - PRODUCTION REPORT' },
+                    { text: 'Bank', datafield: 'mv_BankNo', width: '12%', columngroup: 'MVRLA FORMATION - PRODUCTION REPORT' },
+                    { text: 'Tub', datafield: 'mv_TubNo', width: '10%', columngroup: 'MVRLA FORMATION - PRODUCTION REPORT' },
+                    { text: 'Shift Actual Qty', datafield: 'Qty', width: '15%', columngroup: 'MVRLA FORMATION - PRODUCTION REPORT' },
+                    { text: 'Remarks', datafield: 'mv_Remarks', width: '26%', columngroup: 'MVRLA FORMATION - PRODUCTION REPORT' },
+                ],
+                columngroups: [
+                    { text: '', align: 'center', name: 'ALMHFGTS6100R0' },
+                    { text: 'MVRLA FORMATION - PRODUCTION REPORT', parentgroup: 'ALMHFGTS6100R0', align: 'center', name: 'MVRLA FORMATION - PRODUCTION REPORT' },
+                ],
+            });
+        }
+
+
+        function printpdf(mv_QRCode,tub) {
+            debugger
+            $("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+            $("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });            
+            var url = ("../../Transaction/Pr_Fetch_MVRLA_PDF?FileName=Formation Log Sheet&Heading=Formation Log Sheet&Data=Pr_Fetch_MaterialReceipt_PDF " + "&mv_QRCode=" + mv_QRCode + "&from=" + $("#from_Date").val() + "&to=" + $("#to_Date").val() + "&tub=" + tub);
+            $("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+            $("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+            window.open(url, '_blank', '800', '700');
+        }
+
+        $("#btnshow").click(function () {
+            if ($("#shift").val() == "" && $("#model").val() == "" && $("#tub").val() == "") {
+                alert("Please select Shift or Line or Tub");
+                return;
+            }
+            else {
+                getgrid(1);
+            }           
+        })
+        $("#btnPrint").click(function () {
+            debugger
+            //var selectedrows = $('#Grid').jqxGrid('getselectedrowindexes');
+            if ($("#tub").val() == "") {
+                alert("Please select Tub No");
+                return;
+            }
+            else if ($("#tub").val() != "") {
+                //getgrid();
+                printpdf($("#bank").val(), $("#tub").val());
+            }               
+                //if (selectedrows.length <= 0) {
+                //    alert('Please select row want to Print');
+                //    return;
+                //}
+                //else {
+                //    //var a = confirm("Are you sure want to delete press OK");
+                //    //if (a == true) {
+                //    for (var i = 0; i < selectedrows.length; i++) {
+                //        mv_QRCode = $('#Grid').jqxGrid('getcellvalue', selectedrows[i], "mv_BankNo");
+                //        tub = $('#Grid').jqxGrid('getcellvalue', selectedrows[i], "mv_TubNo");
+                //        printpdf(mv_QRCode,tub);                        
+                //    }
+                //    //}
+                //    //else {
+                //    //    $('#Grid').jqxGrid('clearselection');
+                //    //    return;
+                //    //}
+                //}
+                //$.toaster({ priority: 'success', title: 'Notice', message: "Reprint Successfully" });
+                //$('#Grid').jqxGrid('clearselection');
+                //$("#Grid").jqxGrid('updatebounddata');                             
+        })
+
+        $("#Reports").addClass("active");
+        $("#Filling_Report").addClass("active");
+
+        $("#sidebar-collapse").click(function () {
+            $("#Grid").jqxGrid('updatebounddata');
+        });
+        $("#btn_Clear").click(function () {
+            Clear();
+        })
+        $("#btnSearch").click(function () {
+            getgrid2();
+        })
+        $("#btn_Refresh").click(function () {
+            $("#Grid").jqxGrid('updatebounddata');
+        })
+        $("#btn_Excel").click(function () {
+            var from = $('#from_Date').val();
+            var to = $('#to_Date').val();
+            $("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+            $("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+            if ($('#shift').val() != "") {
+                window.open("../../Master/Export_To_Excel?FileName=Filling Report&Heading=Filling Report&Data=Pr_Fetch_FillingReport '" + $('#from_Date').val() + "','" + $('#to_Date').val() + "','" + $('#shift').val() + "'");
+            }
+            else if ($('#model').val() != "") {
+                window.open("../../Master/Export_To_Excel?FileName=Filling Report&Heading=Filling Report&Data=Pr_Fetch_FillingReport '" + $('#from_Date').val() + "','" + $('#to_Date').val() + "','" + $('#model').val() + "'");
+            }
+            else {
+                window.open("../../Master/Export_To_Excel?FileName=Filling Report&Heading=Filling Report&Data=Pr_Fetch_FillingReport '" + $('#from_Date').val() + "','" + $('#to_Date').val() + "','" + $('#tub').val() + "'");
+            }
+                $("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+            $("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+        })
+
+        $("#Reports").addClass("active");
+        $("#Filling_Report").addClass("active");
+
+        $("#btn_Pdf").click(function () { })
+        $("#btn_Chart").click(function () { })
+        $("#btn_Help").click(function () { })
+    });
+</script>
+
+
+<div class="content-wrapper">
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12" style="padding: 5px; padding-top: 0px">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Filling Report</h3>
+                        <div class="box-tools pull-right">
+                            @*<button type="button" id="btn_AddNew" title="Add New" data-rel="tooltip" class="btn btn-box-tool" data-toggle="modal" data-target="#myModal" style="padding: 5px"><span class='fa fa fa-plus-square bigger-130 green'></span></button>*@
+                            <button type="button" id="btn_Refresh" title="Refresh" data-rel="tooltip" class="btn btn-box-tool" style="padding: 5px"><span class='fa fa-refresh bigger-130 vilote'></span></button>
+                            <button type="button" id="btn_Excel" title="Export to Excel" data-rel="tooltip" class="btn btn-box-tool" style="padding: 5px"><span class='fa fa-file-excel-o bigger-130 green'></span></button>
+                            @*<button type="button" id="btn_Pdf" title="Export to Pdf" data-rel="tooltip" class="btn btn-box-tool" style="padding:5px"><span class='fa fa-file-pdf-o bigger-130 red'></span></button>*@
+                        </div>
+                        <!-- /.nav-search -->
+                    </div>
+                    <div class="box-body">
+                        <form class="form-horizontal" role="form" id="form1">
+                            <div class="box-body">
+                                <div class="col-md-12" style="padding-left: 0px; padding-right: 0px">
+                                    <div class="row">
+                                        <div class="col-sm-4" style="margin-top: 3px; max-width: 50px; padding-left: 6px; padding-right: 0px">
+                                            From&nbsp;:&nbsp;
+                                        </div>
+
+                                        <div class="col-sm-7" style="max-width: 200px; padding-right: 0px; padding-left: 3px">
+                                            <div id="from_Date"></div>
+                                        </div>
+
+                                        <div class="col-sm-4" style="padding-left: 0px; max-width: 30px; padding-right: 0px; margin-top: 3px; color: MenuText">
+                                            To&nbsp;:&nbsp;
+                                        </div>
+
+                                        <div class="col-sm-7" style="padding-left: 3px; max-width: 200px;">
+                                            <div id="to_Date"></div>
+                                        </div>
+                                        <div class="col-sm-4" style="padding-left: 0px; max-width: 30px; padding-right: 0px; margin-top: 3px; color: MenuText">
+                                            Shift&nbsp;:&nbsp;
+                                        </div>
+                                        <div class="col-sm-4 " style="max-width: 200px; padding-left: 20px; padding-right: 0px">
+                                            <div id="shift"></div>
+                                        </div>
+                                        <div class="col-sm-4" style="padding-left: 10px; max-width: 30px; padding-right: 0px; margin-top: 3px; color: MenuText">
+                                            Model&nbsp;:&nbsp;
+                                        </div>
+                                        <div class="col-sm-4 " style="max-width: 200px; padding-left: 40px; padding-right: 0px">
+                                            <div id="model"></div>
+                                        </div>
+
+                                        <div class="col-sm-5 " style="max-width: 200px; padding-left: 20px; padding-right: 0px">
+                                            <button type="button" id="btnshow" style="width: 100px"><span class="fa fa-search"></span>Search</button>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-4" style="padding-left: 10px; max-width: 30px; padding-right: 0px; margin-top: 3px; color: MenuText">
+                                            TubNo&nbsp;:&nbsp;
+                                        </div>
+                                        <div class="col-sm-4 " style="max-width: 200px; padding-left: 40px; padding-right: 0px">
+                                            <div id="tub"></div>
+                                        </div>
+
+                                        <div class="col-sm-4" style="padding-left: 10px; max-width: 30px; padding-right: 0px; margin-top: 3px; color: MenuText">
+                                            Bank&nbsp;:&nbsp;
+                                        </div>
+                                        <div class="col-sm-4 " style="max-width: 200px; padding-left: 30px; padding-right: 0px">
+                                            <div id="bank"></div>
+                                        </div>
+
+                                        <div class="col-sm-4 " style="max-width: 200px; padding-left: 20px; padding-right: 0px">
+                                            <button type="button" id="btnSearch" style="width: 100px"><span class="fa fa-search"></span>Search</button>
+                                        </div>
+                                        <div class="col-sm-4 " style="max-width: 200px; padding-left: 20px; padding-right: 0px">
+                                            <button type="button" id="btnPrint" style="width: 100px"><span class="fa fa-search"></span>Print</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-12" style="padding-left: 0px; padding-right: 0px; padding-top: 10px">
+                        <div id="Grid"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</div>
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,307 @@
+﻿@{
+    ViewBag.Title = "Role_Assignment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var ORG_ID = "1";
+        var User = sessionStorage.getItem("user");
+        var Right = sessionStorage.getItem("rights");
+
+        $("#Settings").addClass("active");
+        $("#Rights_Assing").addClass("active");
+
+        var url = "../../Master/pr_get_Reference_Values?Type=User_Type";
+        var Source =
+        {
+            datatype: "json",
+            datafields: [
+                { name: 'RGV_iID', type: 'int' },
+                { name: 'RGV_vDesciption', type: 'string' }
+            ],
+            id: 'id',
+            url: url
+        };
+        var adapter = new $.jqx.dataAdapter(Source);
+        $("#Cm_pincode").jqxDropDownList({ selectedIndex: -1, autoDropDownHeight: true, source: adapter, displayMember: "RGV_vDesciption", valueMember: "RGV_iID", width: '100%', height: '30' });
+
+
+        $("#btnSave").click(function () {
+            var User = "";
+            var griddata = $('#Grid').jqxGrid('getdatainformation');
+            var n = griddata.rowscount;
+            for (var i = 0; i < n; i++) {
+                dataRecord = $("#Grid").jqxGrid('getrowdata', i);
+                var visibile = 0;
+                var Add = 0;
+                var Edit = 0;
+                var Delete = 0;
+                var View = 0;
+                if (dataRecord.RA_iVisibility == true) {
+                    visibile = 1;
+                }
+                if (dataRecord.RA_iAdd == true) {
+                    Add = 1;
+                }
+                if (dataRecord.RA_iEdit == true) {
+                    Edit = 1;
+                }
+                if (dataRecord.RA_iDelete == true) {
+                    Delete = 1;
+                }
+                if (dataRecord.RA_iView == true) {
+                    View = 1;
+                }
+                $.ajax({
+                    type: 'POST', contentType: "application/json; charset=utf-8",
+                    url: 'Pr_Insert_T_Setting_Role_Assignment',
+                    data: "{'RA_iRole':'" + $('#Cm_pincode').val() +
+                        "', 'RA_iMenuID':'" + dataRecord.MM_iId +
+                        "', 'RA_iVisibility':'" + visibile +
+                        "', 'RA_iView':'" + View +
+                        "', 'RA_iAdd':'" + Add +
+                        "', 'RA_iEdit':'" + Edit +
+                        "', 'RA_iDelete':'" + Delete +
+                        "', 'RA_iOrganization':'" + ORG_ID +
+                        "', 'RA_vCreatedby':'" + User +
+                        "'}",
+                    async: false,
+                    success: function (response) {
+                    },
+                    error: function () { console.log('there is some error'); }
+                });
+            }
+            var a = confirm("Saved Successfully");
+            if (a == true) {
+                Loaddetails(1);
+            }
+        });
+
+        function Loaddetails(IDS) {
+            MID = IDS;
+            var url = "../../Home/pr_getMenu_listnew?Role=" + Right + "&module=" + IDS;
+            var source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'MM_iId', type: 'string' },
+                    { name: 'Type', type: 'string' },
+                    { name: 'MM_vMenu_Name', type: 'string' },
+                    { name: 'MM_iMenu_Order', type: 'string' },
+                    { name: 'MM_iMenuLevel', type: 'string' },
+                    { name: 'MM_iParentID', type: 'string' },
+                    { name: 'MM_vURL', type: 'string' },
+                    { name: 'MM_vIcon', type: 'string' },
+                    { name: 'MM_vUpdatedBy', type: 'string' },
+                ],
+                id: 'id',
+                url: url,
+                async: false
+            };
+            var dataAdapter_per = new $.jqx.dataAdapter(source,
+                {
+                    contentType: 'application/json; charset=utf-8',
+                    loadComplete: function () {
+                        var length = dataAdapter_per.records.length;
+                        var records = dataAdapter_per.records;
+                        var html = "";
+                        var s = "";
+                        html += '  <ul class="sidebar-menu">';
+                        for (var i = 0; i < length; i++) {
+                            var record = records[i];
+                            $("#wait").text("Waiti.." + i);
+                            html += ' <li class="treeview " id="' + record.MM_vUpdatedBy + '">';
+                            html += '<a href="#">';
+                            html += '<i class="' + record.MM_vIcon + '"></i>';
+                            html += '<span> ' + record.MM_vMenu_Name + ' </span>';
+                            html += '<i class="fa fa-angle-left pull-right"></i>';
+                            html += '</a>';
+                            html += '<ul class="treeview-menu  ">';
+                            Get_submenu(record.MM_iId);
+                            html += Data;
+                            html += '</ul> </li>';
+                        }
+                        html += '</Ul>';
+                        sessionStorage.setItem('Menu', html);
+                    },
+                    error: function (xhr, status, error) {
+                    }
+                });
+            dataAdapter_per.dataBind();
+        }
+        function Get_submenu(Parent) {
+            Data = "";
+            var url = "../../Home/pr_getMenu_listbyParentnew?Role=" + Right + "&module=" + MID + "&ParentID=" + Parent;
+            var source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'MM_iId', type: 'string' },
+                    { name: 'Type', type: 'string' },
+                    { name: 'MM_vMenu_Name', type: 'string' },
+                    { name: 'MM_iMenu_Order', type: 'string' },
+                    { name: 'MM_iMenuLevel', type: 'string' },
+                    { name: 'MM_iParentID', type: 'string' },
+                    { name: 'MM_vURL', type: 'string' },
+                    { name: 'MM_vIcon', type: 'string' },
+                    { name: 'MM_vUpdatedBy', type: 'string' }
+                ],
+                id: 'id',
+                url: url,
+                async: false
+            };
+            var dataAdapter_per = new $.jqx.dataAdapter(source,
+                {
+                    contentType: 'application/json; charset=utf-8',
+                    loadComplete: function () {
+                        var length = dataAdapter_per.records.length;
+                        var records = dataAdapter_per.records;
+                        Data = "";
+                        for (var i = 0; i < length; i++) {
+                            var record = records[i];
+                            Data += '<li class="" id="' + record.MM_vUpdatedBy + '"><a href="' + record.MM_vURL + '"><i class="' + record.MM_vIcon + '"></i> ' + record.MM_vMenu_Name + ' </a></li>';
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        //alert(JSON.stringify(xhr));
+                    }
+                });
+            dataAdapter_per.dataBind();
+        }
+        var MD_iid_ID = 0;
+        var MD_vModuleName_Name = '';
+        var url = "Pr_Load_MD_vModuleName";
+        var Source =
+        {
+            datatype: "json",
+            datafields: [
+                { name: 'MD_iid', type: 'int' },
+                { name: 'MD_vModuleName', type: 'string' }
+            ],
+            id: 'id',
+            url: url
+        };
+        var adapter = new $.jqx.dataAdapter(Source);
+        $("#MM_vModule").jqxDropDownList({ selectedIndex: 0, source: adapter, displayMember: "MD_vModuleName", valueMember: "MD_iid", width: '100%', height: '30', autoDropDownHeight: true });
+
+        load();
+
+        $("#btnShow").click(function () {
+            load();
+        });
+
+        function load() {
+            var url = "pr_get_T_Setting_Menu_Master?Role=" + $("#Cm_pincode").val() + "&module=" + $("#MM_vModule").val();
+            var source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'RA_iID', type: 'string' },
+                    { name: 'RA_iRole', type: 'string' },
+                    { name: 'Parent', type: 'string' },
+                    { name: 'MM_vMenu_Name', type: 'string' },
+                    { name: 'MM_iId', type: 'string' },
+                    { name: 'RA_iVisibility', type: 'bool' },
+                    { name: 'RA_iView', type: 'bool' },
+                    { name: 'RA_iAdd', type: 'bool' },
+                    { name: 'RA_iEdit', type: 'bool' },
+                    { name: 'RA_iDelete', type: 'bool' },
+                    { name: 'RA_iOrganization', type: 'string' },
+                    { name: 'RA_vCreatedby', type: 'string' },
+                    { name: 'RA_dCreatedDate', type: 'string' },
+                    { name: 'RA_vUpdatedBy', type: 'string' },
+                ],
+                id: 'id',
+                url: url
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            $("#Grid").jqxGrid(
+                {
+                    theme: 'ui-sunny',
+                    width: '100%',
+                    height: '440px',
+                    source: dataAdapter,
+                    columnsresize: true,
+                    pageable: true,
+                    enabletooltips: false,
+                    pagermode: 'simple',
+                    enabletooltips: true,
+                    showfilterrow: true,
+                    filterable: true,
+                    pagesize: 14,
+                    altrows: true,
+                    editable: true,
+                    enabletooltips: true,
+                    selectionmode: 'singlecell',
+                    columns: [
+                        { text: 'ID', datafield: 'RA_iID', width: '100px', hidden: true },
+                        { text: 'Parent', datafield: 'Parent', width: '17%' },
+                        { text: 'Menu', datafield: 'MM_vMenu_Name' },
+                        { text: 'Visibility', datafield: 'RA_iVisibility', width: '12%', threestatecheckbox: false, columntype: 'checkbox' },
+                        { text: 'View', datafield: 'RA_iView', width: '12%', threestatecheckbox: false, columntype: 'checkbox' },
+                        { text: 'Add', datafield: 'RA_iAdd', width: '12%', threestatecheckbox: false, columntype: 'checkbox' },
+                        { text: 'Edit', datafield: 'RA_iEdit', width: '12%', threestatecheckbox: false, columntype: 'checkbox' },
+                        { text: 'Delete', datafield: 'RA_iDelete', width: '12%', threestatecheckbox: false, columntype: 'checkbox' }
+                    ]
+                });
+        }
+    });
+
+</script>
+
+<div class="content-wrapper">
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12" style="padding:5px;  padding-top:0px">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Rights Assingment</h3>
+                        <!-- /.nav-search -->
+                    </div>
+
+                    <div class="box-body">
+                        <div class="col-md-12" style="padding-left:0px; padding-right:0px">
+                            <div class="col-md-12" style="padding-left:0px; padding-right:0px">
+                                <Label class="col-md-2" style="max-width:115px; line-height:30px; padding-left:0px">Select&nbsp;Rights&nbsp;:</Label>
+                                <div class="col-md-3">
+                                    <div id="Cm_pincode"></div>
+                                </div>
+
+                                <Label class="col-md-1" style="max-width:55px; line-height:30px; padding-left:0px">Module&nbsp;:</Label>
+                                <div class="col-md-3">
+                                    <div id="MM_vModule"></div>
+                                </div>
+
+                                <p>
+                                    <button id="btnShow" class="btn btn-white btn-info btn-bold">
+                                        <i class="ace-icon fa fa-search bigger-120 blue"></i>
+                                        <span id="btn_save_label"> Show </span>
+                                    </button>
+                                    <button id="btnSave" class="btn btn-white btn-info btn-bold">
+                                        <i class="ace-icon fa fa-floppy-o bigger-120 pink"></i>
+                                        <span id="Span1"> Save </span>
+                                    </button>
+
+                                </p>
+
+                            </div>
+
+                            <div id="Grid"></div>
+
+                            <div class="col-sm-12" style="padding-left:0px; padding-right:0px">
+                                <h5 class="header smaller lighter green" style="padding:0px; margin:0px">
+                                    <i class="ace-icon fa fa-bullhorn"></i>
+                                    <b>Notes</b>
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+

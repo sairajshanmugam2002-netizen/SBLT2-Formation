@@ -1,0 +1,35 @@
+﻿﻿<!DOCTYPE html>
+
+<html>
+<head>
+     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>@ViewBag.Title</title>
+ 
+	    @System.Web.Optimization.Styles.Render("~/bundle/css")
+</head>
+
+     @System.Web.Optimization.Scripts.Render("~/bundle/js")
+     @RenderSection("scripts", required: false)
+
+
+
+<body  class="no-skin" style="background-color:#fff; font-family:Verdana;font-size:12px" >
+
+
+    <script type="text/javascript">
+
+   </script>
+
+  
+
+			<div class="main-content" >
+                
+                @RenderBody()
+
+            </div>
+     @System.Web.Optimization.Scripts.Render("~/bundle/js1")
+  
+</body>
+</html>

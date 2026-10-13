@@ -1,0 +1,880 @@
+﻿@{
+    ViewBag.Title = "Assembly_Product_Master";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var ID = 0;
+        var User = sessionStorage.getItem("user");
+
+        //var url = "../../Transaction/pr_FetchProductName"//?ID=" + User;
+        //var Source =
+        //{
+        //    datatype: "json",
+        //    datafields: [
+        //        { name: 'mm_ID', type: 'string' },
+        //        { name: 'mm_MaterialDesc', type: 'string' }
+        //    ],
+        //    id: 'id',
+        //    url: url
+        //};
+        //var adapter = new $.jqx.dataAdapter(Source);
+        //$("#PM_Description").jqxComboBox({ selectedIndex: -1, source: adapter, displayMember: "mm_MaterialDesc", valueMember: "mm_ID", width: '100%', height: '30' });
+
+        //$('#PM_Description').on('select', function (event) {
+        //    debugger
+        //    var args = event.args;
+        //    if (args) {
+        //        var item = args.item;
+        //        var originalItem = item.originalItem.mm_ID;
+        //    }
+        //    Bind(originalItem);
+        //    //Bind1(originalItem);
+        //    //Bind3(originalItem);
+        //});
+
+        //Bind(0);
+
+        function Bind(ID) {
+            var url = "../../Transaction/pr_FetchProductDetails?ID=" + ID;
+            var Source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'mm_ID', type: 'string' }, { name: 'mm_MaterialCode', type: 'string' },
+                    { name: 'mm_CustomerName', type: 'string' }, { name: 'mm_Location', type: 'string' },
+                    { name: 'mm_Model', type: 'string' },
+                ],
+                id: 'id',
+                url: url
+            };
+            var dataAdapter_per = new $.jqx.dataAdapter(Source, {
+                contentType: 'application/json; charset=utf-8',
+                loadComplete: function () {
+                    var length = dataAdapter_per.records.length;
+                    var records = dataAdapter_per.records;
+                    var record = records[0];
+                    $('#PM_Variant_Code').val(record.mm_MaterialCode); $('#PM_Skid_Qty').val(record.mm_CustomerName);
+                    $('#PM_MOQ_Qty').val(record.mm_Location); $('#compare_code').val(record.mm_Model);
+                },
+                error: function (xhr, status, error) {
+                    alert(JSON.stringify(xhr));
+                }
+            })
+            dataAdapter_per.dataBind();
+        }
+
+        //Bind3(0);
+
+        //function Bind3(ID) {
+        //var url = "../../Transaction/pr_FetchSource";//?ID=" + ID;
+        //    var Source =
+        //    {
+        //        datatype: "json",
+        //        datafields: [
+        //            //{ name: 'sm_ID', type: 'string' },
+        //            { name: 'sm_Source', type: 'string' }
+        //        ],
+        //        id: 'id',
+        //        url: url
+        //    };
+        //    var adapter = new $.jqx.dataAdapter(Source);
+        //$("#mr_Source").jqxComboBox({ selectedIndex: -1, source: adapter, displayMember: "sm_Source", valueMember: "sm_Source", width: '100%', height: '30' });
+        //}
+
+        //Bind1(0);
+
+        function Bind1(ID) {
+            debugger
+            var url = "../../Transaction/pr_FetchSupplierName?ID=" + ID;
+            var Source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'sm_ID', type: 'string' },
+                    { name: 'sm_Supplier', type: 'string' }
+                ],
+                id: 'id',
+                url: url
+            };
+            var adapter = new $.jqx.dataAdapter(Source);
+            $("#mr_SupplierName").jqxComboBox({ selectedIndex: -1, source: adapter, displayMember: "sm_Supplier", valueMember: "sm_ID", width: '100%', height: '30' });
+        }
+
+        //$('#mr_SupplierName').on('select', function (event) {
+        //    debugger
+        //    var args = event.args;
+        //    if (args) {
+        //        var item = args.item;
+        //        var originalItem = item.originalItem.sm_ID;
+        //    }
+        //    Bind2(originalItem);
+        //});
+
+        //Bind2(0);
+
+        function Bind2(ID) {
+            debugger
+            var url = "../../Transaction/pr_FetchSupplierApproval?ID=" + ID;
+            var Source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'sm_ID', type: 'string' },
+                    { name: 'sm_ApprovedSupplier', type: 'string' },
+                ],
+                id: 'id',
+                url: url
+            };
+            var dataAdapter_per = new $.jqx.dataAdapter(Source, {
+                contentType: 'application/json; charset=utf-8',
+                loadComplete: function () {
+                    var length = dataAdapter_per.records.length;
+                    var records = dataAdapter_per.records;
+                    var record = records[0];
+                    if (record.sm_ApprovedSupplier == "yes" || record.sm_ApprovedSupplier == "Yes") {
+                        //return '<span style="margin: 4px; color: #ff0000;">' + $('#mr_ApprovedSource').val(record.sm_ApprovedSupplier); + '</span>';
+                        $('#mr_ApprovedSource').css('color', '#15c40c');
+                        $('#mr_ApprovedSource').val(record.sm_ApprovedSupplier);
+                    }
+                    if (record.sm_ApprovedSupplier == "No") {
+                        //return '<span style="margin: 4px; color: #15c40c;">' + $('#mr_ApprovedSource').val(record.sm_ApprovedSupplier); + '</span>';
+                        $('#mr_ApprovedSource').css('color', '#ff0000');
+                        $('#mr_ApprovedSource').val(record.sm_ApprovedSupplier);
+                    }
+                    if (record.sm_ApprovedSupplier == "Trial") {
+                        //return '<span style="margin: 4px; color: #15c40c;">' + $('#mr_ApprovedSource').val(record.sm_ApprovedSupplier); + '</span>';
+                        $('#mr_ApprovedSource').css('color', '#fcb80a');
+                        $('#mr_ApprovedSource').val(record.sm_ApprovedSupplier);
+                    }
+                    //$('#mr_ApprovedSource').val(record.sm_ApprovedSupplier);
+                },
+                error: function (xhr, status, error) {
+                    alert(JSON.stringify(xhr));
+                }
+            })
+            dataAdapter_per.dataBind();
+        }
+
+        getGrid();
+        function getGrid() {
+            var url = "Pr_Fetch_Product_MasterAssy";
+            var source = {
+                datatype: "json",
+                datafields: [{
+                    name: 'PM_iID',
+                    type: 'string'
+                },
+                {
+                    name: 'PM_Description',
+                    type: 'string'
+                },
+                {
+                    name: 'PM_Variant_Code',
+                    type: 'string'
+                },
+                {
+                    name: 'compare_code',
+                    type: 'string'
+                },
+                {
+                    name: 'PM_Skid_Qty',
+                    type: 'string'
+                },
+                {
+                    name: 'PM_MOQ_Qty',
+                    type: 'string'
+                },
+                {
+                    name: 'inv_Qty',
+                    type: 'string'
+                },
+                {
+                    name: 'inv_LabelCount',
+                    type: 'string'
+                },
+                {
+                    name: 'PM_Item_Code',
+                    type: 'string'
+                },
+                ],
+                id: 'id',
+                url: url
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            $("#Grid").jqxGrid({
+                theme: 'ui-sunny',
+                width: '100%',
+                height: '480px',
+                source: dataAdapter,
+                columnsresize: true,
+                pageable: true,
+                enabletooltips: false,
+                pagermode: 'simple',
+                selectionmode: 'checkbox',
+                enabletooltips: true,
+                showfilterrow: true,
+                filterable: true,
+                pagesize: 14,
+                columns: [
+                    {
+                    text: 'Edit',
+                    datafield: 'Edit',
+                    filterable: false,
+                    width: 40,
+                    cellsrenderer: function () {
+                        return '<div style="width: 100%"><img src="../../../img/Edit1.png" style="margin-left: 25%"/></div>';
+                    }
+                    },
+                    //{
+                    //    text: 'Print',
+                    //    datafield: 'Print',
+                    //    filterable: false,
+                    //    width: 40,
+                    //    cellsrenderer: function () {
+                    //        return '<div style="width: 100%"><img src="../../../img/download.png" style="margin-left: 25%"/></div>';
+                    //    }
+                    //},
+                //{
+                //    text: 'Del',
+                //    datafield: 'delete',
+                //    filterable: false,
+                //    width: 40,
+                //    cellsrenderer: function () {
+                //        return '<div style="width: 100%"><img src="../../../img/del.png" style="margin-left: 25%" /></div>';
+                //    }
+                //},
+                {
+                    text: 'ID',
+                    datafield: 'PM_iID',
+                    width: '10%',
+                    hidden: true
+                    },
+                    {
+                        text: 'Product Code',
+                        datafield: 'PM_Item_Code',
+                        width: '10%'
+                    },
+                {
+                    text: 'Product Name',
+                    datafield: 'PM_Description',
+                    width: '10%'
+                },
+                {
+                    text: 'Variant Code',
+                    datafield: 'PM_Variant_Code',
+                    width: '10%'
+                },
+                {
+                    text: 'Compare Code',
+                    datafield: 'compare_code',
+                    width: '12%'
+                },
+                {
+                    text: 'Skid Qty',
+                    datafield: 'PM_Skid_Qty',
+                    width: '10%'
+                },
+                {
+                    text: 'Qty',
+                    datafield: 'PM_MOQ_Qty',
+                    width: '15%'
+                },
+                {
+                    text: 'Qty',
+                    datafield: 'inv_Qty',
+                    width: '8%'
+                },
+                //{
+                //    text: 'Label Count',
+                //    datafield: 'inv_LabelCount',
+                //    width: '10%'
+                //},
+                ]
+            });
+        }
+        $("#Grid").on("cellclick", function (event) {
+            var column = event.args.column;
+            var rowindex = event.args.rowindex;
+            var columnindex = event.args.columnindex;
+            if (columnindex == 0) {
+                editrow = rowindex;
+                var dataRecord = $("#Grid").jqxGrid('getrowdata', editrow);
+                ID = dataRecord.PM_iID;
+                var url = "Pr_Fetch_Product_MasterAssy_ByID?ID=" + ID;
+                var source = {
+                    datatype: "json",
+                    datafields: [{
+                        name: 'PM_iID',
+                        type: 'string'
+                    },
+                        {
+                            name: 'PM_Description',
+                            type: 'string'
+                        },
+                        {
+                            name: 'PM_Variant_Code',
+                            type: 'string'
+                        },
+                        {
+                            name: 'compare_code',
+                            type: 'string'
+                        },
+                        {
+                            name: 'PM_Skid_Qty',
+                            type: 'string'
+                        },
+                        {
+                            name: 'PM_MOQ_Qty',
+                            type: 'string'
+                        },
+                        {
+                            name: 'inv_Qty',
+                            type: 'string'
+                        },
+                        {
+                            name: 'inv_LabelCount',
+                            type: 'string'
+                        },
+                        {
+                            name: 'PM_Item_Code',
+                            type: 'string'
+                        },
+                        {
+                            name: 'mr_BE_No',
+                            type: 'string'
+                        },
+                        {
+                            name: 'mr_Place',
+                            type: 'string'
+                        },
+                        {
+                            name: 'mr_Source',
+                            type: 'string'
+                        },
+                        {
+                            name: 'mr_SupplierName',
+                            type: 'string'
+                        },
+                        {
+                            name: 'mr_Lot_No',
+                            type: 'string'
+                        }, {
+                            name: 'mr_DOM',
+                            type: 'string'
+                        }, {
+                            name: 'mr_Remarks',
+                            type: 'string'
+                        }, {
+                            name: 'mr_CreadtedBy',
+                            type: 'string'
+                        }, {
+                            name: 'mr_ApprovedSource',
+                            type: 'string'
+                        }, {
+                            name: 'mr_AvgWeight',
+                            type: 'string'
+                        },
+                    ],
+                    id: 'id',
+                    url: url
+                };
+                var dataAdapter_per = new $.jqx.dataAdapter(source, {
+                    contentType: 'application/json; charset=utf-8',
+                    loadComplete: function () {
+                        var length = dataAdapter_per.records.length;
+                        var records = dataAdapter_per.records;
+                        var record = records[0];
+                        //if (record.mr_ApprovedSource == "yes" || record.sm_ApprovedSupplier == "Yes") {
+                        //    $('#mr_ApprovedSource').css('color', '#15c40c');
+                        //    $('#mr_ApprovedSource').val(record.mr_ApprovedSource);
+                        //}
+                        //if (record.mr_ApprovedSource == "No") {
+                        //    $('#mr_ApprovedSource').css('color', '#ff0000');
+                        //    $('#mr_ApprovedSource').val(record.mr_ApprovedSource);
+                        //}
+                        //if (record.mr_ApprovedSource == "Trial") {
+                        //    $('#mr_ApprovedSource').css('color', '#fcb80a');
+                        //    $('#mr_ApprovedSource').val(record.mr_ApprovedSource);
+                        //}
+                        $('#PM_Description').val(record.PM_Description);
+                        $('#PM_Variant_Code').val(record.PM_Variant_Code);
+                        $('#compare_code').val(record.compare_code);
+                        $('#blah1').attr('src', "../../" + record.TM_vDocumentLocation);
+                        $('#PM_Skid_Qty').val(record.PM_Skid_Qty);
+                        $('#PM_MOQ_Qty').val(record.PM_MOQ_Qty);
+                        $('#inv_Qty').val(record.inv_Qty);
+                        $('#inv_LabelCount').val(record.inv_LabelCount);
+                        $('#PM_Item_Code').val(record.PM_Item_Code);
+                        $('#mr_BE_No').val(record.mr_BE_No);
+                        $('#mr_Place').val(record.mr_Place);
+                        $('#mr_Source').val(record.mr_Source);
+                        $('#mr_SupplierName').val(record.mr_SupplierName);
+                        //$("#mr_SupplierName").jqxComboBox({ source: record.mr_SupplierName});
+                        $('#mr_Lot_No').val(record.mr_Lot_No);
+                        $('#mr_DOM').val(record.mr_DOM);
+                        $('#mr_Remarks').val(record.mr_Remarks);
+                        $('#mr_CreadtedBy').val(record.mr_CreadtedBy);
+                        $('#mr_AvgWeight').val(record.mr_AvgWeight);
+                        $("#btn_save_label").text('Update');
+                        $('#myModal').modal('show');
+                    },
+                    error: function (xhr, status, error) {
+                        alert(JSON.stringify(xhr));
+                    }
+                })
+                dataAdapter_per.dataBind();
+            }
+            if (columnindex == 2) {
+                editrow = rowindex;
+                var dataRecord = $("#Grid").jqxGrid('getrowdata', editrow);
+                var inv_Id = dataRecord.inv_Id;
+                printpdf(inv_Id);
+            }
+        });
+
+        $('#Delete').click(function () {
+            debugger
+            var selectedrows = $('#Grid').jqxGrid('getselectedrowindexes');
+            if (selectedrows.length <= 0) {
+                alert('Please select row yoy want to Delete');
+                return;
+            }
+            else {
+                var a = confirm("Are you sure want to delete press OK");
+                if (a == true) {
+                    for (var i = 0; i < selectedrows.length; i++) {
+                        inv_Id = $('#Grid').jqxGrid('getcellvalue', selectedrows[i], "inv_Id");
+                        $.ajax({
+                            type: 'POST',
+                            contentType: "application/json; charset=utf-8",
+                            url: 'Pr_Delete_Material_Receipt',
+                            data: "{'ID':'" + inv_Id + "'}",
+                            async: false,
+                            success: function (response) {
+                                //$("#Grid").jqxGrid('updatebounddata');
+                                //alert('Record Deleted Successfully');
+                            },
+                            error: function () {
+                                console.log('there is some error');
+                            }
+                        });
+                    }
+                }
+                else {
+                    $('#Grid').jqxGrid('clearselection');
+                    return;
+                }
+            }
+            alert("Record Saved Successfully...!");
+            $('#Grid').jqxGrid('clearselection');
+            $("#Grid").jqxGrid('updatebounddata');
+        });
+
+        function printpdf(inv_Id) {
+            debugger
+            //$('#myModal').modal('hide');
+            //$("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMM' });
+            var url = ("../../Transaction/Pr_Fetch_MaterialReceipt_PDF?FileName=MR Card&Heading=MR Card&Data=Pr_Fetch_MaterialReceipt_PDF " + "&inv_Id=" + inv_Id );
+            window.open(url, '_blank', '800', '700');
+            //getvisitorpass();
+            //window.open("../../Reports/pr_FetchPaySlipPDF_NewXx?FileName=Payslip&Heading=Payslip&Data=pr_FetchPaySlipPDF_NewXx " + "'" + $('#from_Date').val() + "'" + ","+ "'" +category + "'" + ","+"'" + branch + "'" + ","+ "'" + User+ "'");
+            //$("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'MMMM - yyyy' });
+        }
+
+
+        $('#form1').jqxValidator({
+            hintType: 'label',
+            animationDuration: 2,
+            rules: [
+                {
+                    input: '#PM_Item_Code',
+                message: 'QR Code Required..!',
+                action: 'keyup, blur',
+                rule: 'required',
+                focus: true
+            },
+                {
+                    input: '#VStart',
+                    message: 'Invoice No Required..!',
+                    action: 'keyup, blur',
+                    rule: 'required',
+                    focus: true
+                },
+                {
+                    input: '#VEnd',
+                    message: 'Vehicle No Required..!',
+                    action: 'keyup',
+                    rule: 'required',
+                    focus: true
+                },
+            ]
+        });
+        var flag = false;
+        var flag = false;
+        $('#form1').on('validationSuccess', function (event) {
+            flag = true;
+        });
+
+        $('#PM_Item_Code').keypress(function (e) {
+            var flag = true;
+            if (e.keyCode == 13) {
+                var a = "false";
+                $.ajax({
+                    type: "POST",
+                    url: "pr_Fetch_CHNInward_Available?ID=" + $('#PM_Item_Code').val(),
+                    dataType: "text",
+                    async: false,
+                    success: function (response) {
+                        a = response;
+                        //alert(a);
+                    }
+                });
+                if (a == "false") {
+                    alert("QR Code Not yet Inward in Chennai or Already Scanned");
+                    $('#PM_Item_Code').val("");
+                    $('#PM_Item_Code').focus();
+                    return;
+                }
+                else {
+                    var url = "../../Transaction/pr_fetch_CHEInwardDetails?ID=" + $('#PM_Item_Code').val();
+                    var Source =
+                    {
+                        datatype: "json",
+                        datafields: [
+                            { name: 'PM_Variant_Code', type: 'string' }, { name: 'PM_Skid_Qty', type: 'string' },
+                            { name: 'compare_code', type: 'string' }, { name: 'PM_MOQ_Qty', type: 'string' },
+                            { name: 'inv_Qty', type: 'string' }, { name: 'PM_Description', type: 'string' },
+                            { name: 'SerialStart', type: 'string' }, { name: 'SerialEnd', type: 'string' }
+                        ],
+                        id: 'id',
+                        url: url,
+                        async: false
+                    };
+                    var dataAdapter_per = new $.jqx.dataAdapter(Source, {
+                        contentType: 'application/json; charset=utf-8',
+                        loadComplete: function () {
+                            var length = dataAdapter_per.records.length;
+                            var records = dataAdapter_per.records;
+                            var record = records[0];
+                            flag = false;
+                            $('#PM_Variant_Code').val(record.PM_Variant_Code); $('#PM_Skid_Qty').val(record.PM_Skid_Qty);
+                            $('#PM_MOQ_Qty').val(record.PM_MOQ_Qty); $('#compare_code').val(record.compare_code);
+                            $('#PM_Description').val(record.PM_Description); $('#inv_Qty').val(record.inv_Qty);
+                            $('#SerialStart').val(record.SerialStart); $('#SerialEnd').val(record.SerialEnd);
+                            save();
+                        },
+                        error: function (xhr, status, error) {
+                            alert(JSON.stringify(xhr));
+                        }
+                    })
+                    dataAdapter_per.dataBind();
+                    if (flag == true) {
+                        $.toaster({ priority: 'danger', title: 'Notice', message: "Invalid QR Code.." });
+                        //clear();
+                        $('#PM_Item_Code').val("");
+                        $('#PM_Item_Code').focus();
+                    }
+                }
+            }
+        });
+
+
+        $("#btn_Save").click(function () {
+            debugger
+            $('#form1').jqxValidator('validate');
+            if (flag == true) {
+                if ($("#btn_save_label").text() == 'Save') {
+                    save();
+                } else {
+                    Update();
+                }
+                flag = false;
+            }
+        });
+
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#blah1').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $("#imgInp").change(function () {
+            readURL(this);
+        });
+
+        function save() {
+            var data = new FormData();
+            //var selectedIndexSection12 = $('#PM_Item_Code').jqxComboBox('selectedIndex');
+            //if (selectedIndexSection12 < 0) {
+            //    flag = false;
+            //    $("#PM_Item_Code").jqxComboBox('focus');
+            //    $.toaster({ priority: 'danger', title: 'Notice', message: "Please Select Product Name" });
+            //    return;
+            //}
+            //var selectedIndexSection13 = $('#mr_SupplierName').jqxComboBox('selectedIndex');
+            //if (selectedIndexSection13 < 0) {
+            //    flag = false;
+            //    $("#mr_SupplierName").jqxComboBox('focus');
+            //    $.toaster({ priority: 'danger', title: 'Notice', message: "Please Select Supplier Name" });
+            //    return;
+            //}
+            $.ajax({
+                url: "pr_Insert_Product_MasterAssy?PM_Item_Code=" + $('#PM_Item_Code').val() + "&PM_Mold=" + $('#PM_Mold').val() + "&PM_Sector=" + $('#PM_Sector').val() +
+                    "&PM_Description=" + $('#PM_Description').val() + "&PM_Variant_Code=" + $('#PM_Variant_Code').val() +
+                    "&PM_Skid_Qty=" + $('#PM_Skid_Qty').val() + "&PM_MOQ_Qty=" + $('#PM_MOQ_Qty').val() + "&SerialStart=" + $('#SerialStart').val() +
+                    "&SerialEnd=" + $('#SerialEnd').val() + "&VStart=" + $('#VStart').val() + "&VEnd=" + $('#VEnd').val() + "&compare_code=" + $('#compare_code').val() +
+                    "&chargeing_Dub_Hrs=" + $('#chargeing_Dub_Hrs').val() + "&PM_Created_by=" + User,
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: data,
+                async: false,
+                success: function (response) {
+                    if (response == 'True') {
+                        $.toaster({ priority: 'success', title: 'Notice', message: "Record Saved Successfully" });
+                        $('#blah1').attr('src', "../../");
+                        Clear();
+                    } else {
+                        $.toaster({ priority: 'danger', title: 'Notice', message: response });
+                    }
+                },
+                error: function (er) {
+                    alert(er.responseText);
+                }
+            });
+            getGrid();
+        }
+
+        function Update() {
+            var data = new FormData();
+            $.ajax({
+                url: "pr_Update_Product_MasterAssy?PM_iID=" + ID + "&PM_Item_Code=" + $('#PM_Item_Code').val() + "&PM_Mold=" + $('#PM_Mold').val() + "&PM_Sector=" + $('#PM_Sector').val() +
+                    "&PM_Description=" + $('#PM_Description').val() + "&PM_Variant_Code=" + $('#PM_Variant_Code').val() +
+                    "&PM_Skid_Qty=" + $('#PM_Skid_Qty').val() + "&PM_MOQ_Qty=" + $('#PM_MOQ_Qty').val() + "&SerialStart=" + $('#SerialStart').val() +
+                    "&SerialEnd=" + $('#SerialEnd').val() + "&VStart=" + $('#VStart').val() + "&VEnd=" + $('#VEnd').val() + "&compare_code=" + $('#compare_code').val() +
+                    "&chargeing_Dub_Hrs=" + $('#chargeing_Dub_Hrs').val(),
+               type: "POST",
+                processData: false,
+                contentType: false,
+                data: data,
+                async: false,
+                success: function (response) {
+                    if (response == 'True') {
+                        $.toaster({ priority: 'success', title: 'Notice', message: "Record Updated Successfully" });
+                        $("#Grid").jqxGrid('updatebounddata');
+                        Clear();
+                    } else {
+                        $.toaster({ priority: 'danger', title: 'Notice', message: response });
+                    }
+                },
+                error: function (er) {
+                    alert(er.responseText);
+                }
+            });
+        }
+
+        $("#inv_LabelCount").change(function () {
+            debugger
+            if ($('#inv_LabelCount').val() != "") {
+                $('#mr_AvgWeight').val(parseInt($('#inv_Qty').val()) / parseInt($('#inv_LabelCount').val()))
+            }
+        });
+
+        $("#inv_Qty").change(function () {
+            debugger
+            if ($('#inv_Qty').val() != "") {
+                $('#mr_AvgWeight').val(parseInt($('#inv_Qty').val()) / parseInt($('#inv_LabelCount').val()))
+            }
+        });
+
+        $('#Dep_Period').focusout(function (e) {
+            debugger
+            var d = $('#Dep_Period').val();
+            var iNum = parseInt(d);
+            var a = $('#Dep_date').jqxDateTimeInput('getDate');
+            a.setHours(0, 0, 0, 0);
+            var current = new Date(a);
+            current.setMonth(a.getMonth() + iNum);
+            $('#Dep_Maturitydate ').jqxDateTimeInput('setDate', new Date(current));
+        });
+
+        $("#btnApp").click(function () {
+            var url = ("../../Transaction/pr_print_application?FileName=Bond&Heading=Bond&Data=pr_print_bond " + "&PM_Description=" + $('#PM_Description').val());
+            window.open(url, '_blank', '800', '700');
+        })
+
+        function Clear() {
+            $('#PM_Item_Code').val('');$("#btn_save_label").text('Save');
+            $('#blah1').attr('src', "../../");
+            flag = false;
+        }
+
+        $("#Transactions").addClass("active");
+        $("#CHE_Outward").addClass("active");
+
+        $("#btn_AddNew").click(function () {
+            $("#btn_save_label").text('Save');
+            Clear();
+        })
+        $("#sidebar-collapse").click(function () {
+            $("#Grid").jqxGrid('updatebounddata');
+        });
+        $("#btn_Clear").click(function () {
+            Clear();
+        })
+        $("#btn_Refresh").click(function () {
+            $("#Grid").jqxGrid('updatebounddata');
+        })
+        $("#btn_Excel").click(function () {
+            window.open("../../Master/Export_To_Excel?FileName=Material_Receipt&Heading=Material Receipt&Data=Pr_Fetch_MaterialReceipt_Excel");
+        })
+        $("#btn_Pdf").click(function () { })
+        $("#btn_Chart").click(function () { })
+        $("#btn_Help").click(function () { })
+    });
+</script>
+
+<div class="content-wrapper">
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12" style="padding:5px;  padding-top:0px">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Product Master</h3>
+                        <div class="box-tools pull-right">
+                            @*<button type="button" id="btn_AddNew" title="Add New" data-rel="tooltip" class="btn btn-box-tool" data-toggle="modal" data-target="#myModal" style="padding:5px"><span class='fa fa fa-plus-square bigger-130 green'></span></button>*@
+                            <button type="button" id="btn_Refresh" title="Refresh" data-rel="tooltip" class="btn btn-box-tool" style="padding:5px"><span class='fa fa-refresh bigger-130 vilote'></span></button>
+                            <button type="button" id="btn_Excel" title="Export to Excel" data-rel="tooltip" class="btn btn-box-tool" style="padding:5px"><span class='fa fa-file-excel-o bigger-130 green'></span></button>
+                            @*<button type="button" id="btn_Pdf" title="Export to Pdf" data-rel="tooltip" class="btn btn-box-tool" style="padding:5px"><span class='fa fa-file-pdf-o bigger-130 red'></span></button>*@
+                        </div>
+                    </div>
+
+                    <div class="panel-body">
+                        <form class="form-horizontal" role="form" id="form1">
+                            <div class="col-md-12">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star">*</span>Product Code</label>
+                                            <input id="PM_Item_Code" type="text" placeholder="Product Code" class="form-control" />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star">*</span>Mold</label>
+                                            <input id="PM_Mold" type="text" placeholder="Mold" class="form-control" />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star">*</span>Sector</label>
+                                            <input id="PM_Sector" type="text" placeholder="Sector" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Description</label>
+                                            <input id="PM_Description" type="text" placeholder="Description" class="form-control" />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Variant Code</label>
+                                            <input id="PM_Variant_Code" type="text" placeholder="Variant Code" class="form-control" />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Compare Code</label>
+                                            <input id="compare_code" type="text" placeholder="Compare Code" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label control-label no-padding-right" for="form-field-1"> <span class="star"></span>Skid Qty</label>
+                                            <input id="PM_Skid_Qty" type="text" placeholder="Skid Qty" class="form-control" />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Qty</label>
+                                            <input id="PM_MOQ_Qty" type="text" placeholder="Qty" class="form-control" />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Bosh Code</label>
+                                            <input id="inv_Qty" type="text" placeholder="Bosh Code" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star">*</span>Start Variant Code</label>
+                                            <input id="VStart" type="text" placeholder="Start Variant Code" class="form-control" />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star">*</span>End Variant Code</label>
+                                            <input id="VEnd" type="text" placeholder="End Variant Code" class="form-control" />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Start Serial No</label>
+                                            <input id="SerialStart" type="text" placeholder="Start Serial No" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>End Serial No</label>
+                                            <input id="SerialEnd" type="text" placeholder="End Serial No" class="form-control" />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Charge Hrs</label>
+                                            <input id="chargeing_Dub_Hrs" type="text" placeholder="Charge Hrs" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </form>
+                        @*<div class="col-sm-5"></div>*@
+                        <p>
+                            <div class="col-md-12">
+                                <div class="col-md-6">
+                                    <button id="btn_Save" class="btn btn-white btn-info btn-bold">
+                                            <i class="ace-icon fa fa-floppy-o bigger-120 blue"></i>
+                                            <span id="btn_save_label">Save</span>
+                                        </button>
+                                    <button id="btn_Clear" class="btn btn-white btn-warning btn-bold">
+                                        <i class="ace-icon fa fa-trash-o bigger-120 orange"></i>
+                                        Clear
+                                    </button>
+                                    <button class="btn btn-white btn-default btn-round" data-dismiss="modal">
+                                        <i class="ace-icon fa fa-times red2"></i>
+                                        Close
+                                    </button>
+                                </div>
+                            </div>
+                        </p>
+                    </div>
+
+                    <div class="box-body">
+                        <div class="col-sm-4" style="max-width: 70px; padding-left: 0px; padding-right: 0px">
+                            <button type="button" id="Delete" style="width: 100px;background-color: red">Delete</button>
+                        </div>
+                        <div class="col-md-12" style="padding-left:0px; padding-right:0px">
+                            <div id="Grid"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+
+
+
+
+
+

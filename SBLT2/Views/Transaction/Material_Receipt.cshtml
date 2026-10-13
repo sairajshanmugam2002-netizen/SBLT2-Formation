@@ -1,0 +1,946 @@
+﻿@{
+    ViewBag.Title = "Material_Receipt";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var ID = 0;
+        var User = sessionStorage.getItem("user");
+
+        $("#mr_DOR").jqxDateTimeInput({ width: '200px', height: '25px', formatString: 'dd-MMM-yyyy' });
+        $("#mr_DOM").jqxDateTimeInput({ width: '200px', height: '25px', formatString: 'dd-MMM-yyyy' });
+
+        var url = "../../Transaction/pr_FetchMaterialCode"//?ID=" + User;
+        var Source =
+        {
+            datatype: "json",
+            datafields: [
+                { name: 'mm_ID', type: 'string' },
+                { name: 'mm_MaterialCode', type: 'string' }
+            ],
+            id: 'id',
+            url: url
+        };
+        var adapter = new $.jqx.dataAdapter(Source);
+        $("#mr_MaterialCode").jqxComboBox({ selectedIndex: -1, source: adapter, displayMember: "mm_MaterialCode", valueMember: "mm_ID", width: '100%', height: '30' });
+
+        $('#mr_MaterialCode').on('select', function (event) {
+            debugger
+            var args = event.args;
+            if (args) {
+                var item = args.item;
+                var originalItem = item.originalItem.mm_ID;
+            }
+            Bind(originalItem);
+            Bind1(originalItem);
+            //Bind3(originalItem);
+        });
+
+        Bind(0);
+
+        function Bind(ID) {
+            var url = "../../Transaction/pr_FetchMaterialDescription?ID=" + ID;
+            var Source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'mm_ID', type: 'string' },
+                    { name: 'mm_MaterialDesc', type: 'string' },
+                ],
+                id: 'id',
+                url: url
+            };
+            var dataAdapter_per = new $.jqx.dataAdapter(Source, {
+                contentType: 'application/json; charset=utf-8',
+                loadComplete: function () {
+                    var length = dataAdapter_per.records.length;
+                    var records = dataAdapter_per.records;
+                    var record = records[0];
+                    $('#mr_MaterialDescription').val(record.mm_MaterialDesc);
+                },
+                error: function (xhr, status, error) {
+                    alert(JSON.stringify(xhr));
+                }
+            })
+            dataAdapter_per.dataBind();
+        }
+
+        //Bind3(0);
+
+        //function Bind3(ID) {            
+        var url = "../../Transaction/pr_FetchSource";//?ID=" + ID;
+            var Source =
+            {
+                datatype: "json",
+                datafields: [
+                    //{ name: 'sm_ID', type: 'string' },
+                    { name: 'sm_Source', type: 'string' }
+                ],
+                id: 'id',
+                url: url
+            };
+            var adapter = new $.jqx.dataAdapter(Source);
+        $("#mr_Source").jqxComboBox({ selectedIndex: -1, source: adapter, displayMember: "sm_Source", valueMember: "sm_Source", width: '100%', height: '30' });
+        //}
+
+        Bind1(0);
+
+        function Bind1(ID) {
+            debugger
+            var url = "../../Transaction/pr_FetchSupplierName?ID=" + ID;
+            var Source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'sm_ID', type: 'string' },
+                    { name: 'sm_Supplier', type: 'string' }
+                ],
+                id: 'id',
+                url: url
+            };
+            var adapter = new $.jqx.dataAdapter(Source);
+            $("#mr_SupplierName").jqxComboBox({ selectedIndex: -1, source: adapter, displayMember: "sm_Supplier", valueMember: "sm_ID", width: '100%', height: '30' });
+        }
+
+        $('#mr_SupplierName').on('select', function (event) {
+            debugger
+            var args = event.args;
+            if (args) {
+                var item = args.item;
+                var originalItem = item.originalItem.sm_ID;
+            }
+            Bind2(originalItem);
+        });
+
+        Bind2(0);
+
+        function Bind2(ID) {
+            debugger
+            var url = "../../Transaction/pr_FetchSupplierApproval?ID=" + ID;
+            var Source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'sm_ID', type: 'string' },
+                    { name: 'sm_ApprovedSupplier', type: 'string' },
+                ],
+
+                id: 'id',
+                url: url
+            };
+            var dataAdapter_per = new $.jqx.dataAdapter(Source, {
+                contentType: 'application/json; charset=utf-8',
+                loadComplete: function () {
+                    var length = dataAdapter_per.records.length;
+                    var records = dataAdapter_per.records;
+                    var record = records[0];
+                    if (record.sm_ApprovedSupplier == "yes" || record.sm_ApprovedSupplier == "Yes") {
+                        //return '<span style="margin: 4px; color: #ff0000;">' + $('#mr_ApprovedSource').val(record.sm_ApprovedSupplier); + '</span>';
+                        $('#mr_ApprovedSource').css('color', '#15c40c');
+                        $('#mr_ApprovedSource').val(record.sm_ApprovedSupplier);
+                    }
+                    if (record.sm_ApprovedSupplier == "No") {
+                        //return '<span style="margin: 4px; color: #15c40c;">' + $('#mr_ApprovedSource').val(record.sm_ApprovedSupplier); + '</span>';
+                        $('#mr_ApprovedSource').css('color', '#ff0000');
+                        $('#mr_ApprovedSource').val(record.sm_ApprovedSupplier);
+                    }
+                    if (record.sm_ApprovedSupplier == "Trial") {
+                        //return '<span style="margin: 4px; color: #15c40c;">' + $('#mr_ApprovedSource').val(record.sm_ApprovedSupplier); + '</span>';
+                        $('#mr_ApprovedSource').css('color', '#fcb80a');
+                        $('#mr_ApprovedSource').val(record.sm_ApprovedSupplier);
+                    }
+                    //$('#mr_ApprovedSource').val(record.sm_ApprovedSupplier);
+                },
+                error: function (xhr, status, error) {
+                    alert(JSON.stringify(xhr));
+                }
+            })
+            dataAdapter_per.dataBind();
+        }
+
+        getGrid();
+        function getGrid() {
+            var url = "Pr_Fetch_MaterialReceipt";
+            var source = {
+                datatype: "json",
+                datafields: [{
+                    name: 'mr_ID',
+                    type: 'string'
+                },
+                {
+                    name: 'mr_MRC_No',
+                    type: 'string'
+                },
+                {
+                    name: 'mr_InvoiceNo',
+                    type: 'string'
+                },
+                {
+                    name: 'mr_DOR',
+                    type: 'string'
+                },
+                {
+                    name: 'mr_MaterialCode',
+                    type: 'string'
+                },
+                {
+                    name: 'mr_MaterialDescription',
+                    type: 'string'
+                },
+                {
+                    name: 'mr_Weight',
+                    type: 'string'
+                },
+                {
+                    name: 'mr_NoOfBages',
+                    type: 'string'
+                },
+                {
+                    name: 'mr_BondNo',
+                    type: 'string'
+                },
+                {
+                    name: 'mr_BE_No',
+                    type: 'string'
+                },
+                {
+                    name: 'mr_Place',
+                    type: 'string'
+                },
+                {
+                    name: 'mr_Source',
+                    type: 'string'
+                },
+                {
+                    name: 'mr_SupplierName',
+                    type: 'string'
+                },
+                {
+                    name: 'mr_Lot_No',
+                    type: 'string'
+                }, {
+                    name: 'mr_DOM',
+                    type: 'string'
+                }, {
+                    name: 'mr_Remarks',
+                    type: 'string'
+                },
+                ],
+                id: 'id',
+                url: url
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            $("#Grid").jqxGrid({
+                theme: 'ui-sunny',
+                width: '100%',
+                height: '480px',
+                source: dataAdapter,
+                columnsresize: true,
+                pageable: true,
+                enabletooltips: false,
+                pagermode: 'simple',
+                selectionmode: 'checkbox',
+                enabletooltips: true,
+                showfilterrow: true,
+                filterable: true,
+                pagesize: 14,
+                columns: [{
+                    text: 'Edit',
+                    datafield: 'Edit',
+                    filterable: false,
+                    width: 40,
+                    cellsrenderer: function () {
+                        return '<div style="width: 100%"><img src="../../../img/Edit1.png" style="margin-left: 25%"/></div>';
+                    }
+                }, {
+                        text: 'Print',
+                        datafield: 'Print',
+                        filterable: false,
+                        width: 40,
+                        cellsrenderer: function () {
+                            return '<div style="width: 100%"><img src="../../../img/download.png" style="margin-left: 25%"/></div>';
+                        }
+                    },
+                //{
+                //    text: 'Del',
+                //    datafield: 'delete',
+                //    filterable: false,
+                //    width: 40,
+                //    cellsrenderer: function () {
+                //        return '<div style="width: 100%"><img src="../../../img/del.png" style="margin-left: 25%" /></div>';
+                //    }
+                //},
+                {
+                    text: 'ID',
+                    datafield: 'mr_ID',
+                    width: '10%',
+                    hidden: true
+                },
+                {
+                    text: 'MRC No',
+                    datafield: 'mr_MRC_No',
+                    width: '10%'
+                },
+                {
+                    text: 'Invoice No',
+                    datafield: 'mr_InvoiceNo',
+                    width: '10%'
+                },
+                {
+                    text: 'DOR',
+                    datafield: 'mr_DOR',
+                    width: '12%'
+                },
+                {
+                    text: 'Material Code',
+                    datafield: 'mr_MaterialCode',
+                    width: '10%'
+                },
+                {
+                    text: 'Material Description',
+                    datafield: 'mr_MaterialDescription',
+                    width: '15%'
+                },
+                {
+                    text: 'Weight',
+                    datafield: 'mr_Weight',
+                    width: '8%'
+                },
+                {
+                    text: 'NoOfBags',
+                    datafield: 'mr_NoOfBages',
+                    width: '10%'
+                },
+                {
+                    text: 'Bond No',
+                    datafield: 'mr_BondNo',
+                    width: '10%'
+                },
+                {
+                    text: 'BE No',
+                    datafield: 'mr_BE_No',
+                    width: '10%'
+                },
+                {
+                    text: 'Place',
+                    datafield: 'mr_Place',
+                    width: '10%'
+                },
+                {
+                    text: 'Source',
+                    datafield: 'mr_Source',
+                    width: '15%'
+                },
+                {
+                    text: 'Supplier Name',
+                    datafield: 'mr_SupplierName',
+                    width: '18%'
+                },
+                {
+                    text: 'Lot No',
+                    datafield: 'mr_Lot_No',
+                    width: '10%'
+                }, {
+                    text: 'DOM',
+                    datafield: 'mr_DOM',
+                    width: '12%'
+                }, {
+                    text: 'Remarks',
+                    datafield: 'mr_Remarks',
+                    width: '12%'
+                },
+                ]
+            });
+        }
+        $("#Grid").on("cellclick", function (event) {
+            var column = event.args.column;
+            var rowindex = event.args.rowindex;
+            var columnindex = event.args.columnindex;
+            if (columnindex == 1) {
+                editrow = rowindex;
+                var dataRecord = $("#Grid").jqxGrid('getrowdata', editrow);
+                ID = dataRecord.mr_ID;
+                var url = "Pr_Fetch_MaterialReceipt_ByID?ID=" + ID;
+                var source = {
+                    datatype: "json",
+                    datafields: [{
+                        name: 'mr_ID',
+                        type: 'string'
+                    },
+                        {
+                            name: 'mr_MRC_No',
+                            type: 'string'
+                        },
+                        {
+                            name: 'mr_InvoiceNo',
+                            type: 'string'
+                        },
+                        {
+                            name: 'mr_DOR',
+                            type: 'string'
+                        },
+                        {
+                            name: 'mr_MaterialCode',
+                            type: 'string'
+                        },
+                        {
+                            name: 'mr_MaterialDescription',
+                            type: 'string'
+                        },
+                        {
+                            name: 'mr_Weight',
+                            type: 'string'
+                        },
+                        {
+                            name: 'mr_NoOfBages',
+                            type: 'string'
+                        },
+                        {
+                            name: 'mr_BondNo',
+                            type: 'string'
+                        },
+                        {
+                            name: 'mr_BE_No',
+                            type: 'string'
+                        },
+                        {
+                            name: 'mr_Place',
+                            type: 'string'
+                        },
+                        {
+                            name: 'mr_Source',
+                            type: 'string'
+                        },
+                        {
+                            name: 'mr_SupplierName',
+                            type: 'string'
+                        },
+                        {
+                            name: 'mr_Lot_No',
+                            type: 'string'
+                        }, {
+                            name: 'mr_DOM',
+                            type: 'string'
+                        }, {
+                            name: 'mr_Remarks',
+                            type: 'string'
+                        }, {
+                            name: 'mr_CreadtedBy',
+                            type: 'string'
+                        }, {
+                            name: 'mr_ApprovedSource',
+                            type: 'string'
+                        }, {
+                            name: 'mr_AvgWeight',
+                            type: 'string'
+                        },
+                    ],
+                    id: 'id',
+                    url: url
+                };               
+                var dataAdapter_per = new $.jqx.dataAdapter(source, {
+                    contentType: 'application/json; charset=utf-8',
+                    loadComplete: function () {
+                        var length = dataAdapter_per.records.length;
+                        var records = dataAdapter_per.records;
+                        var record = records[0];
+                        if (record.mr_ApprovedSource == "yes" || record.sm_ApprovedSupplier == "Yes") {                        
+                            $('#mr_ApprovedSource').css('color', '#15c40c');
+                            $('#mr_ApprovedSource').val(record.mr_ApprovedSource);
+                        }
+                        if (record.mr_ApprovedSource == "No") {                        
+                            $('#mr_ApprovedSource').css('color', '#ff0000');
+                            $('#mr_ApprovedSource').val(record.mr_ApprovedSource);
+                        }
+                        if (record.mr_ApprovedSource == "Trial") {                         
+                            $('#mr_ApprovedSource').css('color', '#fcb80a');
+                            $('#mr_ApprovedSource').val(record.mr_ApprovedSource);
+                        }
+                        $('#mr_MRC_No').val(record.mr_MRC_No);
+                        $('#mr_InvoiceNo').val(record.mr_InvoiceNo);
+                        $('#mr_DOR').val(record.mr_DOR);
+                        $('#blah1').attr('src', "../../" + record.TM_vDocumentLocation);
+                        $('#mr_MaterialCode').val(record.mr_MaterialCode);
+                        $('#mr_MaterialDescription').val(record.mr_MaterialDescription);
+                        $('#mr_Weight').val(record.mr_Weight);
+                        $('#mr_NoOfBages').val(record.mr_NoOfBages);
+                        $('#mr_BondNo').val(record.mr_BondNo);
+                        $('#mr_BE_No').val(record.mr_BE_No);
+                        $('#mr_Place').val(record.mr_Place);
+                        $('#mr_Source').val(record.mr_Source);
+                        $('#mr_SupplierName').val(record.mr_SupplierName);
+                        //$("#mr_SupplierName").jqxComboBox({ source: record.mr_SupplierName});
+                        $('#mr_Lot_No').val(record.mr_Lot_No);
+                        $('#mr_DOM').val(record.mr_DOM);
+                        $('#mr_Remarks').val(record.mr_Remarks);
+                        $('#mr_CreadtedBy').val(record.mr_CreadtedBy);
+                        $('#mr_AvgWeight').val(record.mr_AvgWeight);
+                        $("#btn_save_label").text('Update');
+                        $('#myModal').modal('show');
+                    },
+                    error: function (xhr, status, error) {
+                        alert(JSON.stringify(xhr));
+                    }
+                })
+                dataAdapter_per.dataBind();
+            }
+            if (columnindex == 2) {
+                editrow = rowindex;
+                var dataRecord = $("#Grid").jqxGrid('getrowdata', editrow);
+                var mr_ID = dataRecord.mr_ID;
+                printpdf(mr_ID);
+            }
+        });
+
+        $('#Delete').click(function () {
+            debugger
+            var selectedrows = $('#Grid').jqxGrid('getselectedrowindexes');
+            if (selectedrows.length <= 0) {
+                alert('Please select row yoy want to Delete');
+                return;
+            }
+            else {
+                var a = confirm("Are you sure want to delete press OK");
+                if (a == true) {
+                    for (var i = 0; i < selectedrows.length; i++) {
+                        mr_ID = $('#Grid').jqxGrid('getcellvalue', selectedrows[i], "mr_ID");
+                        $.ajax({
+                            type: 'POST',
+                            contentType: "application/json; charset=utf-8",
+                            url: 'Pr_Delete_Material_Receipt',
+                            data: "{'ID':'" + mr_ID + "'}",
+                            async: false,
+                            success: function (response) {
+                                //$("#Grid").jqxGrid('updatebounddata');
+                                //alert('Record Deleted Successfully');
+                            },
+                            error: function () {
+                                console.log('there is some error');
+                            }
+                        });
+                    }
+                }
+                else {
+                    $('#Grid').jqxGrid('clearselection');
+                    return;
+                }
+            }
+            alert("Record Saved Successfully...!");
+            $('#Grid').jqxGrid('clearselection');
+            $("#Grid").jqxGrid('updatebounddata');
+        });
+
+        function printpdf(mr_ID) {
+            debugger
+            //$('#myModal').modal('hide');
+            //$("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMM' });
+            var url = ("../../Transaction/Pr_Fetch_MaterialReceipt_PDF?FileName=MR Card&Heading=MR Card&Data=Pr_Fetch_MaterialReceipt_PDF " + "&mr_ID=" + mr_ID );
+            window.open(url, '_blank', '800', '700');
+            //getvisitorpass();
+            //window.open("../../Reports/pr_FetchPaySlipPDF_NewXx?FileName=Payslip&Heading=Payslip&Data=pr_FetchPaySlipPDF_NewXx " + "'" + $('#from_Date').val() + "'" + ","+ "'" +category + "'" + ","+"'" + branch + "'" + ","+ "'" + User+ "'");
+            //$("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'MMMM  -  yyyy' });
+        }
+
+
+        $('#form1').jqxValidator({
+            hintType: 'label',
+            animationDuration: 2,
+            rules: [
+                {
+                input: '#mr_MRC_No',
+                message: 'MRC No Required..!',
+                action: 'keyup, blur',
+                rule: 'required',
+                focus: true
+            },
+                {
+                input: '#mr_InvoiceNo',
+                message: 'Invoice No Required..!',
+                action: 'keyup, blur',
+                rule: 'required',
+                focus: true
+            }, {
+                input: '#mr_Weight',
+                message: 'Weight Required..!',
+                action: 'keyup, blur',
+                rule: 'required',
+                focus: true
+                }, {
+                    input: '#mr_NoOfBages',
+                    message: 'No Of Bags Required..!',
+                    action: 'keyup, blur',
+                    rule: 'required',
+                    focus: true
+                },
+                //{
+                //    input: '#mr_Source',
+                //    message: 'Source Required..!',
+                //    action: 'keyup, blur',
+                //    rule: 'required',
+                //    focus: true
+                //},
+                //{
+                //    input: '#mr_MaterialCode',
+                //    message: 'Material Code Required..!',
+                //    action: 'keyup',
+                //    rule: 'required',
+                //    focus: true
+                //},
+            ]
+        });
+        var flag = false;
+        var flag = false;
+        $('#form1').on('validationSuccess', function (event) {
+            flag = true;
+        });
+
+
+        $("#btn_Save").click(function () {
+            debugger
+            $('#form1').jqxValidator('validate');
+            //if (flag == true) {
+                if ($("#btn_save_label").text() == 'Save') {
+                    save();
+                } else {
+                    Update();
+                }
+                flag = false;
+            //}
+        });
+
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#blah1').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $("#imgInp").change(function () {
+            readURL(this);
+        });
+
+        function save() {
+            var data = new FormData();
+            var selectedIndexSection12 = $('#mr_MaterialCode').jqxComboBox('selectedIndex');
+            if (selectedIndexSection12 < 0) {
+                flag = false;
+                $("#mr_MaterialCode").jqxComboBox('focus');
+                $.toaster({ priority: 'danger', title: 'Notice', message: "Please Select Material Code" });
+                return;
+            }
+            var selectedIndexSection13 = $('#mr_SupplierName').jqxComboBox('selectedIndex');
+            if (selectedIndexSection13 < 0) {
+                flag = false;
+                $("#mr_SupplierName").jqxComboBox('focus');
+                $.toaster({ priority: 'danger', title: 'Notice', message: "Please Select Supplier Name" });
+                return;
+            }
+            $.ajax({
+                url: "pr_insert_MaterialReceipt?mr_MRC_No=" + $('#mr_MRC_No').val() + "&mr_InvoiceNo=" + $('#mr_InvoiceNo').val() +"&mr_DOR=" + $('#mr_DOR').val() +
+                    "&mr_MaterialCode=" + $('#mr_MaterialCode').val() + "&mr_MaterialDescription=" + $('#mr_MaterialDescription').val() +
+                    "&mr_Weight=" + $('#mr_Weight').val() + "&mr_NoOfBages=" + $('#mr_NoOfBages').val() + "&mr_BondNo=" + $('#mr_BondNo').val() +
+                    "&mr_BE_No=" + $('#mr_BE_No').val() + "&mr_Place=" + $('#mr_Place').val() + "&mr_AvgWeight=" + $('#mr_AvgWeight').val() +
+                    "&mr_Lot_No=" + $('#mr_Lot_No').val() +"&mr_Source=" + $('#mr_Source').val() + "&mr_SupplierName=" + $('#mr_SupplierName').val() +
+                    "&mr_DOM=" + $('#mr_DOM').val() +"&mr_ApprovedSource=" + $('#mr_ApprovedSource').val() + "&mr_CreadtedBy=" + $('#mr_CreadtedBy').val() +
+                    "&mr_Remarks=" + $('#mr_Remarks').val() + "&mr_User=" + User,
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: data,
+                async: false,
+                success: function (response) {
+                    if (response == 'True') {
+                        $.toaster({ priority: 'success', title: 'Notice', message: "Record Saved Successfully" });
+                        $('#blah1').attr('src', "../../");
+                        Clear();
+                    } else {
+                        $.toaster({ priority: 'danger', title: 'Notice', message: response });
+                    }
+                },
+                error: function (er) {
+                    alert(er.responseText);
+                }
+            });
+            getGrid();
+        }
+
+        function Update() {
+            var data = new FormData();
+            $.ajax({
+                url: "pr_update_MaterialReceipt?mr_ID=" + ID + "&mr_MRC_No=" + $('#mr_MRC_No').val() + "&mr_InvoiceNo=" + $('#mr_InvoiceNo').val() + "&mr_DOR=" + $('#mr_DOR').val() +
+                    "&mr_MaterialCode=" + $('#mr_MaterialCode').val() + "&mr_MaterialDescription=" + $('#mr_MaterialDescription').val() +
+                    "&mr_Weight=" + $('#mr_Weight').val() + "&mr_NoOfBages=" + $('#mr_NoOfBages').val() + "&mr_BondNo=" + $('#mr_BondNo').val() +
+                    "&mr_BE_No=" + $('#mr_BE_No').val() + "&mr_Place=" + $('#mr_Place').val() + "&mr_AvgWeight=" + $('#mr_AvgWeight').val() +
+                    "&mr_Lot_No=" + $('#mr_Lot_No').val() + "&mr_Source=" + $('#mr_Source').val() + "&mr_SupplierName=" + $('#mr_SupplierName').val() +
+                    "&mr_DOM=" + $('#mr_DOM').val() + "&mr_ApprovedSource=" + $('#mr_ApprovedSource').val() + "&mr_CreadtedBy=" + $('#mr_CreadtedBy').val() +
+                    "&mr_Remarks=" + $('#mr_Remarks').val(),
+               type: "POST",
+                processData: false,
+                contentType: false,
+                data: data,
+                async: false,
+                success: function (response) {
+                    if (response == 'True') {
+                        $.toaster({ priority: 'success', title: 'Notice', message: "Record Updated Successfully" });
+                        $("#Grid").jqxGrid('updatebounddata');
+                        Clear();
+                    } else {
+                        $.toaster({ priority: 'danger', title: 'Notice', message: response });
+                    }
+                },
+                error: function (er) {
+                    alert(er.responseText);
+                }
+            });
+        }
+
+        $("#mr_NoOfBages").change(function () {
+            debugger
+            if ($('#mr_NoOfBages').val() != "") {
+                $('#mr_AvgWeight').val(parseInt($('#mr_Weight').val()) / parseInt($('#mr_NoOfBages').val()))
+            }
+        });
+
+        $("#mr_Weight").change(function () {
+            debugger
+            if ($('#mr_Weight').val() != "") {
+                $('#mr_AvgWeight').val(parseInt($('#mr_Weight').val()) / parseInt($('#mr_NoOfBages').val()))
+            }
+        });
+
+        $('#Dep_Period').focusout(function (e) {
+            debugger
+            var d = $('#Dep_Period').val();
+            var iNum = parseInt(d);
+            var a = $('#Dep_date').jqxDateTimeInput('getDate');
+            a.setHours(0, 0, 0, 0);
+            var current = new Date(a);
+            current.setMonth(a.getMonth() + iNum);
+            $('#Dep_Maturitydate ').jqxDateTimeInput('setDate', new Date(current));
+        });
+
+        $("#btnApp").click(function () {
+            var url = ("../../Transaction/pr_print_application?FileName=Bond&Heading=Bond&Data=pr_print_bond " + "&mr_MRC_No=" + $('#mr_MRC_No').val());
+            window.open(url, '_blank', '800', '700');
+        })
+
+        function Clear() {
+            $('#mr_MRC_No').val('');
+            $('#mr_InvoiceNo').val('');
+            //$('#mr_DOR').val('');
+            $('#mr_MaterialCode').val('');
+            $('#mr_MaterialDescription').val('');
+            $('#mr_Weight').val('');
+            $('#mr_NoOfBages').val('');
+            $('#mr_BondNo').val('');
+            $('#mr_BE_No').val('');
+            $('#mr_Place').val('');
+            $('#mr_AvgWeight').val('');
+            $('#mr_Lot_No').val('');
+            $('#mr_Source').val('');
+            $('#mr_SupplierName').val('');
+            $('#mr_DOM').val('');
+            $('#mr_ApprovedSource').val('');
+            $('#mr_CreadtedBy').val('');
+            $('#mr_Remarks').val('');
+            $("#btn_save_label").text('Save');
+            $('#blah1').attr('src', "../../");
+            flag = false;
+        }
+
+        $("#Transactions").addClass("active");
+        $("#Material_Receipt").addClass("active");
+
+        $("#btn_AddNew").click(function () {
+            $("#btn_save_label").text('Save');
+            Clear();
+        })
+        $("#sidebar-collapse").click(function () {
+            $("#Grid").jqxGrid('updatebounddata');
+        });
+        $("#btn_Clear").click(function () {
+            Clear();
+        })
+        $("#btn_Refresh").click(function () {
+            $("#Grid").jqxGrid('updatebounddata');
+        })
+        $("#btn_Excel").click(function () {
+            window.open("../../Master/Export_To_Excel?FileName=Material_Receipt&Heading=Material Receipt&Data=Pr_Fetch_MaterialReceipt_Excel");
+        })
+        $("#btn_Pdf").click(function () { })
+        $("#btn_Chart").click(function () { })
+        $("#btn_Help").click(function () { })
+    });
+</script>
+
+<div class="content-wrapper">
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12" style="padding:5px;  padding-top:0px">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                            <h3 class="box-title">Material Receipt</h3>
+                            <div class="box-tools pull-right">
+                                <button type="button" id="btn_AddNew" title="Add New" data-rel="tooltip" class="btn btn-box-tool" data-toggle="modal" data-target="#myModal" style="padding:5px"><span class='fa fa fa-plus-square  bigger-130 green'></span></button>
+                                <button type="button" id="btn_Refresh" title="Refresh" data-rel="tooltip" class="btn btn-box-tool" style="padding:5px"><span class='fa fa-refresh bigger-130 vilote'></span></button>
+                                <button type="button" id="btn_Excel" title="Export to Excel" data-rel="tooltip" class="btn btn-box-tool" style="padding:5px"><span class='fa fa-file-excel-o bigger-130 green'></span></button>
+                                @*<button type="button" id="btn_Pdf" title="Export to Pdf" data-rel="tooltip" class="btn btn-box-tool" style="padding:5px"><span class='fa fa-file-pdf-o bigger-130 red'> </span></button>*@
+                            </div>
+                        </div>
+                    <div class="box-body">
+                        <div class="col-sm-4" style="max-width: 70px; padding-left: 0px; padding-right: 0px">
+                            <button type="button" id="Delete" style="width: 100px;background-color: red">Delete</button>
+                        </div>
+                        <div class="col-md-12" style="padding-left:0px; padding-right:0px">
+                            <div id="Grid"></div>
+                        </div>
+                    </div>
+                    </div>
+                            <div class="modal fade  bd-example-modal-lg" id="myModal">
+                            <div class="modal-dialog modal-lg">
+                            <div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">
+                                            Material Receipt<span class="pull-right ">
+                                                <a href="#" data-dismiss="modal" aria-label="Close">
+                                                        <i class="ace-icon fa fa-times"></i></a></span></h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <form class="form-horizontal" role="form" id="form1">
+                                            <div class="col-md-12">
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <label control-label no-padding-right" for="form-field-1"><span class="star">*</span>MRC No</label>
+                                                            <input id="mr_MRC_No" type="text" placeholder="MRC No" class="form-control" />
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label control-label no-padding-right" for="form-field-1"><span class="star">*</span>Invoice No</label>
+                                                            <input id="mr_InvoiceNo" type="text" placeholder="Invoice No" class="form-control" />
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label control-label no-padding-right" for="form-field-1"><span class="star">*</span>DOR</label>
+                                                            @*<input id="mr_DOR" type="text" placeholder="DOR" class="form-control" />*@
+                                                            <div id="mr_DOR"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <label control-label no-padding-right" for="form-field-1"> <span class="star">*</span>Material Code</label>
+                                                            <div id="mr_MaterialCode"></div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Material Description</label>
+                                                            <input id="mr_MaterialDescription" type="text" disabled placeholder="Material Description" class="form-control" />
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label control-label no-padding-right" for="form-field-1"><span class="star">*</span>Weight</label>
+                                                            <input id="mr_Weight" type="text" placeholder="Weight" class="form-control" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                                <label control-label no-padding-right" for="form-field-1"><span class="star">*</span>No Of Bags</label>
+                                                                <input id="mr_NoOfBages" type="text" placeholder="No Of Bags" class="form-control" />
+                                                            </div>
+                                                        <div class="col-md-4">
+                                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Bond No</label>
+                                                            <input id="mr_BondNo" type="text" placeholder="Bond No" class="form-control" />
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>BE No</label>
+                                                            <input id="mr_BE_No" type="text" placeholder="BE No" class="form-control" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Place</label>
+                                                            <input id="mr_Place" type="text" placeholder="Place" class="form-control" />
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Avg Weight</label>
+                                                            <input id="mr_AvgWeight" type="text" disabled placeholder="Avg Weight" class="form-control" />
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Lot No</label>
+                                                            <input id="mr_Lot_No" type="text" placeholder="Lot No" class="form-control" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <label control-label no-padding-right" for="form-field-1"><span class="star">*</span>Source</label>
+                                                            @*<input id="mr_Source" type="text" placeholder="Source" class="form-control" />*@
+                                                            <div id="mr_Source"></div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label control-label no-padding-right" for="form-field-1"><span class="star">*</span>Supplier Name</label>
+                                                            <div id="mr_SupplierName"></div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>DOM</label>
+                                                            @*<input id="mr_DOM" type="text" placeholder="DOM" class="form-control" />*@
+                                                            <div id="mr_DOM"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Approved Source</label>
+                                                            <input id="mr_ApprovedSource" type="text" placeholder="Yes/No/Trial" class="form-control" disabled/>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Created By</label>
+                                                            <input id="mr_CreadtedBy" type="text" placeholder="Created By" class="form-control" />
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Remarks</label>
+                                                            <input id="mr_Remarks" type="text" placeholder="Remarks" class="form-control" />
+                                                        </div>
+                                                    </div>
+                                                </div>                                             
+                                            </div>
+                                        </form>
+                                        @*<div class="col-sm-5"></div>*@
+                                        <p>
+                                            <div class="col-md-12">
+                                                <div class="col-md-6">
+                                                    <button id="btn_Save" class="btn btn-white btn-info btn-bold">
+                                                        <i class="ace-icon fa fa-floppy-o bigger-120 blue"></i>
+                                                        <span id="btn_save_label">Save</span>
+                                                    </button>
+                                                    <button id="btn_Clear" class="btn btn-white btn-warning btn-bold">
+                                                        <i class="ace-icon fa fa-trash-o bigger-120 orange"></i>
+                                                        Clear
+                                                    </button>
+                                                    <button class="btn btn-white btn-default btn-round" data-dismiss="modal">
+                                                        <i class="ace-icon fa fa-times red2"></i>
+                                                        Close
+                                                    </button>
+                                                </div>                                            
+                                            </div>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>             
+            </div>
+        </div>
+    </section>
+</div>
+
+
+

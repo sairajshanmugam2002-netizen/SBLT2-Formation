@@ -1,0 +1,23 @@
+﻿@media (max-width: 4767px) {
+}
+
+    .skin-blue .sidebar a {
+       
+        font-family: Verdana;
+}
+
+
+
+label {
+ 
+  font-family:Verdana;
+ 
+
+  color:rgba(0, 0, 0,.65);
+}
+
+.star {
+    font-family: Verdana;
+  
+    color:#ff6a00!important;
+}

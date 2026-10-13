@@ -1,0 +1,403 @@
+﻿@{
+    ViewBag.Title = "FIFO_Display";
+}
+
+<style>
+    .column {
+        background-color: #82b7f5;
+        color: black;
+        font-weight: bold;
+    }
+
+    .row1 {
+        background-color: #75cf55;
+        color: black;
+        font-weight: bold;
+    }
+
+    .row2 {
+        background-color: #d9a521;
+        color: black;
+        font-weight: bold;
+    }
+
+    .green {
+        color: black\9;
+        background-color: #b6ff00\9;
+    }
+
+    .yellow {
+        color: black\9;
+        background-color: yellow\9;
+    }
+
+    .red {
+        color: black\9;
+        background-color: #e83636\9;
+    }
+
+    .green:not(.jqx-grid-cell-hover):not(.jqx-grid-cell-selected), .jqx-widget .green:not(.jqx-grid-cell-hover):not(.jqx-grid-cell-selected) {
+        color: black;
+        background-color: #b6ff00;
+    }
+
+    .yellow:not(.jqx-grid-cell-hover):not(.jqx-grid-cell-selected), .jqx-widget .yellow:not(.jqx-grid-cell-hover):not(.jqx-grid-cell-selected) {
+        color: black;
+        background-color: yellow;
+    }
+
+    .red:not(.jqx-grid-cell-hover):not(.jqx-grid-cell-selected), .jqx-widget .red:not(.jqx-grid-cell-hover):not(.jqx-grid-cell-selected) {
+        color: black;
+        background-color: #e83636;
+    }
+
+    .jqx-grid .jqx-grid-header .jqx-header {
+        border-bottom: none;
+        background-color: gray;
+    }
+</style>
+<link rel="stylesheet" href="../../jqwidgets/styles/jqx.base.css" type="text/css" />
+<link rel="stylesheet" href="../../jqwidgets/styles/jqx.energyblue.css" type="text/css" />
+<script type="text/javascript">
+    $(document).ready(function () {
+        var ID = 0;
+        var User = sessionStorage.getItem("user");
+
+        //$("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+        //$("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+
+        //var url = "../../Reports/pr_FetchMatCodeFIFOReport"//?ID=" + User;
+        //var Source =
+        //{
+        //    datatype: "json",
+        //    datafields: [
+        //        //{ name: 'mr_ID', type: 'string' },
+        //        { name: 'mr_MaterialCode', type: 'string' }
+        //    ],
+        //    id: 'id',
+        //    url: url
+        //};
+        //var adapter = new $.jqx.dataAdapter(Source);
+        //$("#MatCode").jqxComboBox({ selectedIndex: -1, source: adapter, displayMember: "mr_MaterialCode", valueMember: "mr_MaterialCode", width: '100%', height: '30' });
+
+        getgrid();
+        function getgrid() {
+            var Rights = sessionStorage.getItem('rights');
+            var User = sessionStorage.getItem('Code');
+            var url = "";
+            if (Rights == 19) {
+                //$("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+                //$("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+
+                url = "pr_FetchFIFODisplay";//?from=" + $('#from_Date').val() + "&matCode=" + $('#MatCode').val();
+
+                //$("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+                //$("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+            }
+            else {
+                //$("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+                //$("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+
+                url = "pr_FetchFIFODisplay";//?from=" + $('#from_Date').val() + "&matCode=" + $('#MatCode').val();
+
+                //$("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+                //$("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+            }
+            var source = {
+                datatype: "json",
+                datafields: [{
+                    name: 'mm_MaterialGroup',
+                    type: 'string'
+                },
+                {
+                    name: 'mm_MaterialCode',
+                    type: 'string'
+                },
+                {
+                    name: 'Use Me First Tag No',
+                    type: 'string'
+                },
+                {
+                    name: 'First Bin No',
+                    type: 'string'
+                },
+                {
+                    name: 'First Supplier',
+                    type: 'string'
+                }, {
+                    name: 'Use Me Next Tag No',
+                    type: 'string'
+                }, {
+                    name: 'Next Bin No',
+                    type: 'string'
+                }, {
+                    name: 'Next Supplier',
+                    type: 'string'
+                    }, {
+                        name: 'space1',
+                        type: 'string'
+                    }, {
+                        name: 'space2',
+                        type: 'string'
+                    },
+                ],
+                id: 'id',
+                url: url
+            };
+            //var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties, rowdata) {
+            //    debugger
+            //    if (row == 0) {
+            //        return '<span style="margin: 4px; float: ' + columnproperties.cellsalign + '; color: #15c40c;">' + value + '</span>';
+            //    }
+            //}
+            var cellclass = function (row, columnfield, value) {
+                debugger
+                if (columnfield == 'mm_MaterialGroup') {
+                    return 'violet';
+                }
+                else if (columnfield == 'mm_MaterialCode' || columnfield == 'Use Me First Tag No' || columnfield == 'First Bin No' || columnfield == 'First Supplier') {
+                    return 'dark green';
+                }
+                else if (columnfield == 'Use Me Next Tag No' || columnfield == 'Next Bin No' || columnfield == 'Next Supplier') {
+                    return 'dark yellow';
+                }
+            }
+            var pagerrenderer = "";
+            setInterval(function () {
+                //$('#Grid').jqxGrid('gotonextpage');
+                //pagerrenderer = function () {
+                //debugger
+                var paginginfo = $("#Grid").jqxGrid('getpaginginformation');
+                if (paginginfo.pagenum == paginginfo.pagescount - 1) {
+                    //$('#Grid').jqxGrid('gotopage', 0);
+                    location.reload(true);
+                }
+                $('#Grid').jqxGrid('gotonextpage');
+                //var paginginfo = $("#Grid").jqxGrid('getpaginginformation');
+                //setInterval(paginginfo, 1000);
+                //setInterval(function () {
+                //for (i = 0; i < paginginfo.pagescount; i++) {
+                //var anchor = $("<a style='padding: 5px;' href='#" + i + "'>" + i + "</a>");
+                //arr.push(i);
+                //setInterval(function () {
+                //    $("#Grid").jqxGrid('gotopage', arr[i]);
+                //}, 10000);
+                //anchor.appendTo(element);
+                //anchor.click(function (event) {
+                //    debugger
+                //    var pagenum = parseInt($(event.target).text());
+                //    $("#Grid").jqxGrid('gotopage', pagenum);
+                //});
+                //}
+                //}, i * 10000);
+                //return element;
+                //}
+                //setInterval(function () {
+                //    for (i = 0; i < arr.length; i++) {
+                //        $("#Grid").jqxGrid('gotopage', arr[i]);
+                //    }
+                //}, 10000);
+            }, 100000);
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            $("#Grid").jqxGrid({
+                theme: 'ui-sunny',
+                width: '100%',
+                autoheight: true,
+                source: dataAdapter,
+                columnsresize: true,
+                pageable: true,
+                enabletooltips: false,
+                pagermode: 'simple',
+                pagerrenderer: pagerrenderer,
+                enabletooltips: true,
+                //showfilterrow: true,
+                //filterable: true,
+                pagesize: 14,
+                theme: 'energyblue',
+                columns: [{
+                    text: 'Material Group',
+                    datafield: 'mm_MaterialGroup',
+                    cellclassname: 'column',
+                    width: '12%'
+                }, {
+                        text: '',
+                        datafield: 'space1',
+                        width: '0.5%'
+                    },
+                {
+                    text: 'Material Code',
+                    datafield: 'mm_MaterialCode',
+                    cellclassname: 'row1',
+                    width: '10%'
+                },
+                {
+                    text: 'Use Me First Tag No',
+                    datafield: 'Use Me First Tag No',
+                    cellclassname: 'row1',
+                    width: '15%',
+                },
+                {
+                    text: 'Bin No',
+                    datafield: 'First Bin No',
+                    cellclassname: 'row1',
+                    width: '10%'
+                }, {
+                    text: 'Supplier',
+                    datafield: 'First Supplier',
+                    cellclassname: 'row1',
+                    width: '12%',
+                    }, {
+                        text: '',
+                        datafield: 'space2',
+                        width: '0.5%'
+                    }, {
+                    text: 'Use Me Next Tag No',
+                    datafield: 'Use Me Next Tag No',
+                    cellclassname: 'row2',
+                    width: '15%',
+                }, {
+                    text: 'Bin No',
+                    datafield: 'Next Bin No',
+                    cellclassname: 'row2',
+                    width: '10%',
+                }, {
+                    text: 'Supplier',
+                    datafield: 'Next Supplier',
+                    cellclassname: 'row2',
+                    width: '12%',
+                },
+                    //{
+                    //    text: 'Edit',
+                    //    datafield: 'Edit',
+                    //    filterable: false,
+                    //    width: 40,
+                    //    cellsrenderer: function () {
+                    //        return '<div style="width: 100%"><img src="../../../img/Edit1.png" style="margin-left: 25%" /></div>';
+                    //    }
+                    //},
+                    //{
+                    //    text: 'Del',
+                    //    datafield: 'delete',
+                    //    filterable: false,
+                    //    width: 40,
+                    //    cellsrenderer: function () {
+                    //        return '<div style="width: 100%"><img src="../../../img/del.png" style="margin-left: 25%" /></div>';
+                    //    }
+                    //},
+                ]
+            });
+        }
+
+
+        $("#btnshow").click(function () {
+            getgrid();
+        })
+
+        $("#Reports").addClass("active");
+        $("#FIFO_Inventory_Report").addClass("active");
+
+        $("#sidebar-collapse").click(function () {
+            $("#Grid").jqxGrid('updatebounddata');
+        });
+        $("#btn_Clear").click(function () {
+            Clear();
+        })
+        $("#btn_Refresh").click(function () {
+            $("#Grid").jqxGrid('updatebounddata');
+        })
+        $("#btn_Excel").click(function () {
+            //var from = $('#from_Date').val();
+            //$("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+            //$("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+            window.open("../../Master/Export_To_Excel?FileName=FIFO and Inventory Report&Heading=Over all FIFO and Inventory Report as on" + from + "&Data=pr_FetchFIFOInventoryReport_Excel'" + $('#from_Date').val() + "','" + $('#MatCode').val() + "'");
+            //$("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+            //$("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+        })
+
+        $("#Reports").addClass("active");
+        $("#FIFO_Inventory_Report").addClass("active");
+
+        $("#btn_Pdf").click(function () { })
+        $("#btn_Chart").click(function () { })
+        $("#btn_Help").click(function () { })
+    });
+</script>
+
+<div class="content-wrapper">
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12" style="padding: 5px; padding-top: 0px">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">FIFO Display</h3>
+                        <div class="box-tools pull-right">
+                            @*<button type="button" id="btn_AddNew" title="Add New" data-rel="tooltip" class="btn btn-box-tool" data-toggle="modal" data-target="#myModal" style="padding: 5px"><span class='fa fa fa-plus-square  bigger-130 green'></span></button>*@
+                            <button type="button" id="btn_Refresh" title="Refresh" data-rel="tooltip" class="btn btn-box-tool" style="padding: 5px"><span class='fa fa-refresh bigger-130 vilote'></span></button>
+                            <button type="button" id="btn_Excel" title="Export to Excel" data-rel="tooltip" class="btn btn-box-tool" style="padding: 5px"><span class='fa fa-file-excel-o bigger-130'></span></button>
+                            @*<button type="button" id="btn_Pdf" title="Export to Pdf" data-rel="tooltip" class="btn btn-box-tool" style="padding:5px"><span class='fa fa-file-pdf-o bigger-130 red'></span></button>*@
+                        </div>
+                        <!-- /.nav-search -->
+                    </div>
+                    <div class="box-body">
+                        <form class="form-horizontal" role="form" id="form1">
+                            <div class="box-body">
+                                <div class="col-md-12" style="padding-left: 0px; padding-right: 0px">
+                                    @*<div class="col-sm-4" style="margin-top: 3px; max-width: 80px; padding-left: 0px; padding-right: 0px">
+                                            Material Code&nbsp;:&nbsp;
+                                        </div>*@
+
+                                    @*<div class="col-sm-3" style="max-width: 200px; padding-right: 0px; padding-left: 3px">
+                                            <div id="MatCode"></div>
+                                        </div>
+
+                                        <div class="col-sm-4" style="margin-top: 3px; max-width: 50px; padding-left: 6px; padding-right: 0px">
+                                            Date&nbsp;:&nbsp;
+                                        </div>
+
+                                        <div class="col-sm-7 " style="max-width: 190px; padding-right: 0px; padding-left: 3px">
+                                            <div id="from_Date"></div>
+                                        </div>*@
+
+                                    @*<div class="col-sm-4" style="padding-left: 0px; max-width: 30px; padding-right: 0px; margin-top: 3px; color: MenuText">
+                                            To&nbsp;:&nbsp;
+                                        </div>
+
+                                        <div class="col-sm-7" style="padding-left: 3px; max-width: 190px;">
+                                            <div id="to_Date"></div>
+                                        </div>*@
+
+                                    @*<div class="col-sm-4" style="max-width: 100px; padding-left: 0px; padding-right: 3px">
+                                            <button type="button" id="btnshow" style="width: 100px"><span class="fa fa-search  "></span>Search</button>
+                                        </div>*@
+
+                                    @*<div class="col-sm-4" style="margin-top: 3px; max-width: 110px; padding-left: 0px; padding-right: 0px">
+                                                Total Amount&nbsp;:&nbsp;
+                                            </div>
+
+                                            <div class="col-sm-4" style="max-width: 100px; padding-right: 0px; padding-left: 3px">
+                                                <input type="text" id="total"/>
+                                        </div>*@
+                                    <div id="Grid"></div>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+
+                    @*<div class="col-md-12" style="padding-left: 0px; padding-right: 0px; padding-top: 10px">
+                        <div id="Grid"></div>
+                    </div>*@
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+</div>
+
+
+
+
+
+
+

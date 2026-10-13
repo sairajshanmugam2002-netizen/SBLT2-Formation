@@ -1,0 +1,567 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+
+    <link href="~/Content/materialize.min.css" rel="stylesheet" />
+    <link href="~/Content/style_.css" rel="stylesheet" />
+
+    <link href="~/Content/JQWidgets/jqx.base.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-2.1.1.min.js"></script>
+    <script src="~/Scripts/JQWidgets/jqx-all.js"></script>
+    <script type="text/javascript" src="~/Scripts/JQWidgets/jqxcore.js"></script>
+    @*<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">*@
+
+    <script src="~/Scripts/materialize.min.js"></script>
+    <script src="~/Scripts/jquery.toaster.js"></script>
+</head>
+
+<!-- Styles -->
+<style>
+    .dropdown-button {
+    }
+
+    html, body {
+        color: #636b6f;
+        font-family: 'Roboto', sans-serif;
+        margin: 0;
+        background: #f2f2f2;
+    }
+
+    body {
+        min-height: 100%;
+    }
+
+    .flex-center {
+        /*align-items: center;
+            display: flex;
+            justify-content: center;*/
+    }
+
+    .position-ref {
+        position: relative;
+    }
+
+    .top-right {
+        position: absolute;
+        right: 10px;
+        top: 18px;
+    }
+
+    #app {
+        min-height: 100vh;
+    }
+
+    .main-content {
+        min-height: calc(100vh - 112px);
+    }
+
+    /*
+                .content {
+                    text-align: center;
+                }
+        */
+
+
+    .title {
+        font-size: 84px;
+    }
+
+    .links > a {
+        color: #636b6f;
+        padding: 0 25px;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: .1rem;
+        text-decoration: none;
+        text-transform: uppercase;
+    }
+
+    .m-b-md {
+        margin-bottom: 30px;
+    }
+
+    .dropdown-content {
+        top: 50px !important;
+    }
+
+    .GST {
+        background: #E7ECEF;
+        border: 10px solid white;
+    }
+
+    .modal.GST h4 {
+        font-size: 2.125rem;
+        text-align: center;
+    }
+
+    .modal.GST .input-field label:not(.label-icon).active {
+        transform: translateY(-175deg) !important;
+        -webkit-transform: translateY(-175%) !important;
+    }
+
+    .modal.GST .input-field textarea.materialize-textarea {
+        padding-left: 8px;
+        background: white;
+        border-radius: 4px;
+        /*border: 1px solid #bdbdbd;*/
+        height: 6rem;
+        border: 0;
+        box-shadow: inset 1px 3px rgba(0, 0, 0, .14);
+    }
+
+    .modal.GST .input-field input[type='email'] {
+        padding-left: 8px;
+        background: white;
+        border-radius: 4px;
+        /*border: 1px solid #bdbdbd;*/
+        border: 0;
+        box-shadow: inset 1px 3px rgba(0, 0, 0, .14);
+    }
+
+    .modal.GST .input-field label {
+        padding-left: 8px;
+    }
+
+    .modal.GST .input-field .material-icons {
+        color: #aaa !important;
+    }
+
+        .modal.GST .input-field .material-icons.active {
+            color: #097aa8 !important;
+        }
+
+
+
+    /*.GST{
+          background:#097aa8;
+        }
+        .modal.GST h4{
+          font-size: 2.125rem;
+          text-align: center;
+          color: #E7ECEF;
+        }
+        .modal.GST .input-field label:not(.label-icon).active{
+          transform: translateY(-175deg)!important;
+          -webkit-transform: translateY(-175%)!important;
+        }
+        .modal.GST .input-field textarea.materialize-textarea{
+          padding-left: 8px;
+          background: white;
+          border-radius: 4px;
+          border: 1px solid #bdbdbd;
+          border:0;
+          box-shadow: inset 1px 3px rgba(0, 0, 0, .14);
+        }
+        .modal.GST .input-field input[type='email']{
+          padding-left: 8;
+          background: white;
+          border-radius: 4px;
+          border: 1px solid #bdbdbd;
+          border:0;
+          box-shadow: inset 1px 3px rgba(0, 0, 0, .14);
+        }
+        .modal.GST .input-field label{
+          padding-left: 8px;
+        }
+        .modal.GST .input-field .material-icons{
+          color: #E7ECEF!important;
+        }*/
+
+</style>
+
+<style>
+    #createButton {
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+        #createButton:hover {
+            filter: brightness(120%);
+            -webkit-filter: brightness(120%);
+        }
+
+    .right span {
+        font-size: 0.875rem;
+        color: #989898;
+        display: block;
+        text-align: right;
+    }
+</style>
+
+<script type="text/javascript">
+    $(window).load(function () {
+        $(".loader").fadeOut("slow");
+
+
+
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var flag = false;
+
+        $('#Password').keypress(function (e) {
+            if (e.keyCode == 13) {  //detect the enter key
+                login();
+            }
+        });
+
+        $('#btnlogin').on('click', function () {
+            login();
+        });
+
+        var Right = '';
+        function login() {
+            $("#spinner").show();
+            flag = true;
+            if ($('#UserName').val() == "" || $('#Password').val() == "") {
+                alert("Enter Valid User Name");
+                $("#spinner").hide();
+                //$.toaster({ priority: 'danger', title: 'Notice', message: 'User Name and Password Should Not Empty' });
+                flag = false;
+            }
+            if (flag == true) {
+                var f = "false";
+                $.ajax({
+                    type: "POST",
+                    url: "../../Home/pr_getlogin1?user=" + $('#UserName').val() + "&pwd=" + $('#Password').val(),
+                    dataType: "text",
+                    async: false,
+                    success: function (response) {
+                        f = response;
+                    }
+                });
+                if (f == "false") {
+                    alert("Enter Valid User Name & Password");
+                    $('#UserName').val("");
+                    $('#Password').val("");
+                    $("#spinner").hide();
+                }
+                else {
+                    var res = f.split("~");
+                    sessionStorage.setItem('Name', res[0]);
+                    sessionStorage.setItem('rights', res[1]);
+                    sessionStorage.setItem('user', res[0]);
+                    sessionStorage.setItem('Area', res[2]);
+                    sessionStorage.setItem('User_ID', res[4]);
+
+                    //sessionStorage.setItem('Points', res[5]);
+
+                    Right = res[1];
+
+                    Loaddetails(1);
+                    var menues = sessionStorage.getItem('Menu');
+                    //alert(menues);
+                    if (menues == null) {
+                        //Loaddetails(1);
+                    } else {
+                        //this function is executed after function1
+                        window.location = "../Home/Home";
+                    }
+                }
+            }
+        }
+        var MID = 0;
+        var Data = "";
+
+        function Loaddetails(IDS) {
+            MID = IDS;
+            var url = "../../Home/pr_getMenu_listnew1?Role= " + Right + "&module=" + IDS;
+            var source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'MM_iId', type: 'string' },
+                    { name: 'Type', type: 'string' },
+                    { name: 'MM_vMenu_Name', type: 'string' },
+                    { name: 'MM_iMenu_Order', type: 'string' },
+                    { name: 'MM_iMenuLevel', type: 'string' },
+                    { name: 'MM_iParentID', type: 'string' },
+                    { name: 'MM_vURL', type: 'string' },
+                    { name: 'MM_vIcon', type: 'string' },
+                    { name: 'MM_vUpdatedBy', type: 'string' },
+                ],
+                id: 'id',
+                url: url,
+                async: false
+            };
+            var dataAdapter_per = new $.jqx.dataAdapter(source,
+                {
+                    contentType: 'application/json; charset=utf-8',
+                    loadComplete: function () {
+                        var length = dataAdapter_per.records.length;
+                        var records = dataAdapter_per.records;
+                        var html = "";
+                        var s = "";
+                        html += '<ul class="sidebar-menu">';
+                        for (var i = 0; i < length; i++) {
+                            var record = records[i];
+                            $("#wait").text("Waiti.." + i);
+                            html += ' <li class="treeview " id="' + record.MM_vUpdatedBy + '">';
+                            html += '<a href="#">';
+                            html += '<i class="' + record.MM_vIcon + '"></i>';
+                            html += '<span> ' + record.MM_vMenu_Name + ' </span>';
+                            html += '<i class="fa fa-angle-left pull-right"></i>';
+                            html += '</a>';
+                            html += '<ul class="treeview-menu  ">';
+                            Get_submenu(record.MM_iId);
+                            html += Data;
+                            html += '</ul> </li>';
+                        }
+                        html += '</Ul>';
+                        sessionStorage.setItem('Menu', html);
+                        //$("#table").html(html);
+                    },
+                    error: function (xhr, status, error) {
+                        //alert(JSON.stringify(xhr));
+                    }
+                });
+            dataAdapter_per.dataBind();
+        }
+
+
+        function Get_submenu_2(Parent) {
+            Data2 = "";
+            var url = "../../Home/pr_getMenu_listbyParentnew?Role=" + Right + "&module=" + MID + "&ParentID=" + Parent;
+            var source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'MM_iId', type: 'string' },
+                    { name: 'Type', type: 'string' },
+                    { name: 'MM_vMenu_Name', type: 'string' },
+                    { name: 'MM_iMenu_Order', type: 'string' },
+                    { name: 'MM_iMenuLevel', type: 'string' },
+                    { name: 'MM_iParentID', type: 'string' },
+                    { name: 'MM_vURL', type: 'string' },
+                    { name: 'MM_vIcon', type: 'string' },
+                ],
+                id: 'id',
+                url: url,
+                async: false
+            };
+
+            var dataAdapter_per = new $.jqx.dataAdapter(source,
+                {
+                    contentType: 'application/json; charset=utf-8',
+                    loadComplete: function () {
+
+                        var length = dataAdapter_per.records.length;
+                        var records = dataAdapter_per.records;
+                        Data2 = "";
+                        Data2 += ' <ul class="submenu">';
+                        for (var i = 0; i < length; i++) {
+                            var record = records[i];
+                            var record = records[i];
+                            alert(x);
+                            Data2 += '<li id="Nav' + record.MM_iId + '" class="y">';
+                            Data2 += '<a href="' + record.MM_vURL + '">';
+                            Data2 += ' <i class="menu-icon fa ' + record.MM_vIcon + '"></i>';
+                            Data2 += '<span class="menu-text"> ' + record.MM_vMenu_Name + ' </span>';
+                            Data2 += '</a>';
+                            Data2 += '<b class="arrow"></b>';
+
+                            x = x + 1;
+
+                            Data2 += '</li>';
+                        }
+                        Data2 += '</Ul>';
+                        if (length == 0) {
+                            Data2 += '';
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        //alert(JSON.stringify(xhr));
+                    }
+                });
+            dataAdapter_per.dataBind();
+        }
+
+
+        function Get_submenu(Parent) {
+            Data = "";
+            var url = "../../Home/pr_getMenu_listbyParentnew?Role=" + Right + "&module=" + MID + "&ParentID=" + Parent;
+            var source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'MM_iId', type: 'string' },
+                    { name: 'Type', type: 'string' },
+                    { name: 'MM_vMenu_Name', type: 'string' },
+                    { name: 'MM_iMenu_Order', type: 'string' },
+                    { name: 'MM_iMenuLevel', type: 'string' },
+                    { name: 'MM_iParentID', type: 'string' },
+                    { name: 'MM_vURL', type: 'string' },
+                    { name: 'MM_vIcon', type: 'string' },
+                    { name: 'MM_vUpdatedBy', type: 'string' }
+                ],
+                id: 'id',
+                url: url,
+                async: false
+            };
+            var dataAdapter_per = new $.jqx.dataAdapter(source,
+                {
+                    contentType: 'application/json; charset=utf-8',
+                    loadComplete: function () {
+                        var length = dataAdapter_per.records.length;
+                        var records = dataAdapter_per.records;
+                        Data = "";
+                        for (var i = 0; i < length; i++) {
+                            var record = records[i];
+
+                            Data += '<li class="" id="' + record.MM_vUpdatedBy + '"><a href="' + record.MM_vURL + '"><i class="' + record.MM_vIcon + '"></i> ' + record.MM_vMenu_Name + ' </a></li>';
+                            Get_submenu_2(record.MM_iId);
+                            //Data += Data2;
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        //alert(JSON.stringify(xhr));
+                    }
+
+                });
+            dataAdapter_per.dataBind();
+        }
+    });
+</script>
+
+
+
+<body>
+    <div id="app" style="padding-top:64px;">
+
+        <nav id="main-navigation" style="background-color:#3c8dbc;">
+            <div class="nav-wrapper">
+                <div class="container" style="width:90%;">
+                    <div class="fixed-nav">
+
+                        <center>
+
+                            <img src="~/img/logos.png" class="responsive" />
+
+                        </center>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+
+        <div class="main-content">
+
+            <div class="container" style="padding-top:30px;">
+                <div class="login-form-wrapper">
+                    <div class="row" style="margin-bottom:0;">
+                        <form class="col s12" id="form1">
+
+                            <div class="panel-header" style="display:inline-block;">LOGIN</div>
+                            <div class="right" style="display:inline-block;margin-left:16px;"><span>Don't have an account?</span><a>Contact Admin</a></div>
+                            <div class="clr"></div>
+                            <div class="row">
+                                <div class="input-field col s12" id="email">
+                                    <input id="UserName" type="text" class="validate" name="email" value="" required="" aria-required="true">
+                                    <label for="email">User Name</label>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="input-field col s12" class="password">
+                                    <input id="Password" type="password" class="validate" name="password" required="" aria-required="true">
+                                    <label for="password">Password</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col s12" style="padding:16px 0;">
+                                    <center>
+                                        <button style=" margin: 0 10px 0 0;border-radius: 20px!important; padding-left:40px"
+                                                type="button" class="waves-effect waves-light btn" id="btnlogin">
+                                            LOGIN
+                                        </button>
+                                    </center>
+                                    <!--<span style="color:#555; font-weight:500;font-size:1rem;"> | </span>-->
+
+                                </div>
+
+                                @*<div class="col-md-12">
+                                       <div class="form-layout-submit">
+                                          <button type="button" id="btnlogin">LOGIN</button>
+                                       </div>
+                                    </div>*@
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer style="position:fixed; bottom:0px; width:100%; height:20px">
+        <span style="line-height:20px; font-family:Verdana; font-size:9px"> &copy;2022 Amara Raja. All rights reserved.</span>
+        <span class="pull-right" style="line-height:20px; font-family:Verdana; font-size:9px">V.1.0. 04.08.2022. Powered by Genuine IT Solution</span>
+    </footer>
+    <div class="spinner" id="spinner" hidden>
+        <div class="sk-fading-circle">
+            <div class="sk-circle1 sk-circle"></div>
+            <div class="sk-circle2 sk-circle"></div>
+            <div class="sk-circle3 sk-circle"></div>
+            <div class="sk-circle4 sk-circle"></div>
+            <div class="sk-circle5 sk-circle"></div>
+            <div class="sk-circle6 sk-circle"></div>
+            <div class="sk-circle7 sk-circle"></div>
+            <div class="sk-circle8 sk-circle"></div>
+            <div class="sk-circle9 sk-circle"></div>
+            <div class="sk-circle10 sk-circle"></div>
+            <div class="sk-circle11 sk-circle"></div>
+            <div class="sk-circle12 sk-circle"></div>
+        </div>
+    </div>
+
+    <!-- /.login-box -->
+    <!-- jQuery 3 -->
+    <script src="../../bower_components/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap 3.3.7 -->
+    <script src="../../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- iCheck -->
+    <script src="../../plugins/iCheck/icheck.min.js"></script>
+
+    <script type="text/javascript">
+        function spinner() {
+            $("#spinner").show();
+        }
+        //        if($(window).width()<480){
+        //            $('input[type=text]').on('click', function(){
+        //                $('footer').css('z-index','-1');
+        //            })
+        //        }
+    </script>
+    <script>
+        function gtag_report_conversion(url) {
+            var callback = function () {
+                if (typeof (url) != 'undefined') {
+                    //window.location = url;
+                }
+            };
+            gtag('event', 'conversion', {
+                'send_to': 'AW-938877606/r56eCPORn3gQpsXYvwM',
+                'event_callback': callback
+            });
+            return false;
+        }
+        window.addEventListener('load', function () {
+            jQuery('a[href="#desktop_dwnld"]').click(function () {
+                gtag_report_conversion();
+            });
+        });
+
+    </script>
+
+</body>
+</html>
+

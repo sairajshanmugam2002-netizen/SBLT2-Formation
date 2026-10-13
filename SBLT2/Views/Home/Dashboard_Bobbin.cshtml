@@ -1,0 +1,2045 @@
+﻿@{
+    /**/
+
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+<style>
+    .chart-inner-text {
+        fill: #00BAFF;
+        color: #00BAFF;
+        font-size: 30px;
+        font-family: Verdana;
+    }
+
+    .chart-inner-text1 {
+        fill: #080000;
+        color: #080000;
+        font-size: 20px;
+        font-family: Verdana;
+    }
+    /* Bottom right text */
+    .text-block {
+        position: inherit;
+        bottom: 140px;
+        right: 0px;
+        left: 80px;
+        /*background-color: black;*/
+        color: white;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .text-bl {
+        position: absolute;
+        bottom: 280px;
+        right: 100px;
+        /*background-color: black;*/
+        color: white;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .text-blo {
+        position: inherit;
+        bottom: 210px;
+        right: 0px;
+        left: 370px;
+        /*background-color: black;*/
+        color: white;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .text-bloc {
+        position: inherit;
+        bottom: 280px;
+        right: 0px;
+        left: 650px;
+        /*background-color: black;*/
+        color: white;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var ID = 0;
+        var User = sessionStorage.getItem("user");
+        var aaa = 0;
+
+        function image() {
+
+            $.ajax({
+                type: 'GET',
+                url: "pr_Fetch_Ready_To_Dispatch",
+                success: function (data) {
+                    var returnedData = JSON.parse(data);
+                    aaa = returnedData.record[0].value;
+                    var url = "pr_Fetch_Ready_To_Dispatch";
+                    var Source_ASG =
+                    {
+                        datatype: "json",
+                        datafields: [
+                            { name: 'value' },
+                            { name: 'max' }
+                        ],
+                        id: 'id',
+                        url: url
+                    };
+                    var dataAdapter_ASG = new $.jqx.dataAdapter(Source_ASG);
+                    var Source_MSG =
+                    {
+                        datatype: "json",
+                        datafields: [
+                            { name: 'value' },
+                            { name: 'max' }
+                        ],
+                        id: 'id',
+                        url: url
+                    };
+                    var dataAdapter_MSG = new $.jqx.dataAdapter(Source_MSG);
+                    for (var i = 0; i < returnedData.record.length; i++) {
+                        var data = [];
+                        data.push({ text: 'ASG-Ready to dispatch', value: returnedData.record[i].value }); // current
+                        data.push({ text: 'ASG-Already Diapatched', value: returnedData.record[i].max - returnedData.record[i].value }); // remaining
+                        data.push({ text1: 'MSG-Ready to dispatch', value1: returnedData.record[i].value1 }); // current
+                        data.push({ text1: 'MSG-Already Diapatched', value1: returnedData.record[i].max1 - returnedData.record[i].value1 }); // remaining
+                        var settings = {
+                            title: 'READY TO DISPATCH',
+                            description: '',
+                            enableAnimations: true,
+                            showLegend: false,
+                            showBorderLine: true,
+                            backgroundColor: '#FAFAFA',
+                            padding: { left: 5, top: 5, right: 5, bottom: 5 },
+                            titlePadding: { left: 5, top: 5, right: 5, bottom: 5 },
+                            source: data,
+                            showToolTips: true,
+                            seriesGroups:
+                                [
+                                    {
+                                        type: 'donut',
+                                        useGradientColors: false,
+
+                                        series:
+                                            [
+                                                {
+                                                    showLabels: false,
+                                                    enableSelection: true,
+                                                    displayText: 'text',
+                                                    dataField: 'value',
+                                                    labelRadius: 120,
+                                                    initialAngle: 90,
+                                                    radius: 80,
+                                                    innerRadius: 70,
+                                                    centerOffset: 0,
+                                                    // formatFunction: function (value) {
+                                                    //    if (isNaN(value))
+                                                    //        return value;
+                                                    //    return parseFloat(value);
+                                                    //}
+                                                }
+                                            ]
+                                    },
+                                    {
+                                        type: 'donut',
+
+                                        useGradientColors: false,
+                                        series:
+                                            [
+                                                {
+                                                    showLabels: false,
+                                                    enableSelection: true,
+                                                    displayText: 'text1',
+                                                    dataField: 'value1',
+                                                    labelRadius: 120,
+                                                    initialAngle: 90,
+                                                    radius: 50,
+                                                    innerRadius: 40,
+                                                    centerOffset: 0,
+                                                    // formatFunction: function (value) {
+                                                    //    if (isNaN(value))
+                                                    //        return value;
+                                                    //    return parseFloat(value);
+                                                    //}
+                                                }
+                                            ]
+                                    }
+                                ]
+                        };
+                        var selector = '#chartContainer5'; //+ (i + 5).tostring();
+
+                        //var valueText = aaa;//source[i].value.tostring();
+                        //settings.drawBefore = function (renderer, rect) {
+                        //    sz = renderer.measureText(valueText, 0, { 'class': 'chart-inner-text' });
+                        //    renderer.text(
+                        //        valueText,
+                        //        rect.x + (rect.width - sz.width) / 2,
+                        //        rect.y + rect.height / 2,
+                        //        0,
+                        //        0,
+                        //        0,
+                        //        { 'class': 'chart-inner-text' }
+                        //    );
+                        //}
+                        $('#chartContainer5').jqxChart(settings);
+                        var groups1 = $('#chartContainer5').jqxChart('seriesGroups');
+                        $('#chartContainer5').jqxChart({ seriesGroups: groups1 });
+                        $(selector).jqxChart(settings);
+                        $(selector).jqxChart('addColorScheme', 'customColorScheme', ['#00BAFF', '#EDE6E7']);
+                        $(selector).jqxChart({ colorScheme: 'customColorScheme' });
+                    }
+                }
+            })
+
+        }
+
+        function image1() {
+
+            $.ajax({
+                type: 'GET',
+                url: "pr_Fetch_Ready_To_Unloading",
+                success: function (data) {
+                    var returnedData = JSON.parse(data);
+                    aaa = returnedData.record[0].value;
+                    //alert(aaa);
+                    var url = "pr_Fetch_Ready_To_Unloading";
+                    var Source =
+                    {
+                        datatype: "json",
+                        datafields: [
+                            { name: 'value' },
+                            { name: 'max' }
+
+                        ],
+                        id: 'id',
+                        url: url
+                    };
+                    var dataAdapter = new $.jqx.dataAdapter(Source);
+
+                    for (var i = 0; i < returnedData.record.length; i++) {
+                        var data = [];
+                        data.push({ text: 'ASG-Ready to unloading', value: returnedData.record[i].value }); // current
+                        data.push({ text: 'ASG-Available', value: returnedData.record[i].max - returnedData.record[i].value }); // remaining
+                        data.push({ text1: 'MSG-Ready to unloading', value1: returnedData.record[i].value1 }); // current
+                        data.push({ text1: 'MSG-Available', value1: returnedData.record[i].max1 - returnedData.record[i].value1 }); // remaining
+                        var settings = {
+                            title: 'READY TO UNLOADING',
+                            description: '',
+                            enableAnimations: true,
+                            showLegend: false,
+                            showBorderLine: true,
+                            backgroundColor: '#FAFAFA',
+                            padding: { left: 5, top: 5, right: 5, bottom: 5 },
+                            titlePadding: { left: 5, top: 5, right: 5, bottom: 5 },
+                            source: data,
+                            showToolTips: true,
+                            seriesGroups:
+                                [
+                                    {
+                                        type: 'donut',
+                                        useGradientColors: false,
+                                        series:
+                                            [
+                                                {
+                                                    showLabels: false,
+                                                    enableSelection: true,
+                                                    displayText: 'text',
+                                                    dataField: 'value',
+                                                    labelRadius: 120,
+                                                    initialAngle: 90,
+                                                    radius: 80,
+                                                    innerRadius: 70,
+                                                    centerOffset: 0,
+                                                    // formatFunction: function (value) {
+                                                    //    if (isNaN(value))
+                                                    //        return value;
+                                                    //    return parseFloat(value);
+                                                    //}
+                                                }
+                                            ]
+                                    },
+                                    {
+                                        type: 'donut',
+
+                                        useGradientColors: false,
+                                        series:
+                                            [
+                                                {
+                                                    showLabels: false,
+                                                    enableSelection: true,
+                                                    displayText: 'text1',
+                                                    dataField: 'value1',
+                                                    labelRadius: 120,
+                                                    initialAngle: 90,
+                                                    radius: 50,
+                                                    innerRadius: 40,
+                                                    centerOffset: 0,
+                                                    // formatFunction: function (value) {
+                                                    //    if (isNaN(value))
+                                                    //        return value;
+                                                    //    return parseFloat(value);
+                                                    //}
+                                                }
+                                            ]
+                                    }
+                                ]
+                        };
+
+
+                        var selector = '#chartContainer6'; //+ (i + 5).toString();
+
+                        //var valueText = aaa;//Source[i].value.toString();
+                        //settings.drawBefore = function (renderer, rect) {
+                        //    sz = renderer.measureText(valueText, 0, { 'class': 'chart-inner-text' });
+                        //    renderer.text(
+                        //        valueText,
+                        //        rect.x + (rect.width - sz.width) / 2,
+                        //        rect.y + rect.height / 2,
+                        //        0,
+                        //        0,
+                        //        0,
+                        //        { 'class': 'chart-inner-text' }
+                        //    );
+                        //}
+                        $('#chartContainer6').jqxChart(settings);
+                        var groups1 = $('#chartContainer6').jqxChart('seriesGroups');
+                        $('#chartContainer6').jqxChart({ seriesGroups: groups1 });
+                        $(selector).jqxChart(settings);
+                        $(selector).jqxChart('addColorScheme', 'customColorScheme', ['#00BAFF', '#EDE6E7']);
+                        $(selector).jqxChart({ colorScheme: 'customColorScheme' });
+                    }
+                }
+            })
+
+        }
+
+        function image2() {
+
+            $.ajax({
+                type: 'GET',
+                url: "pr_Fetch_Ready_To_Return",
+                success: function (data) {
+                    var returnedData = JSON.parse(data);
+                    aaa = returnedData.record[0].value;
+                    //alert(aaa);
+                    var url = "pr_Fetch_Ready_To_Return";
+                    var Source =
+                    {
+                        datatype: "json",
+                        datafields: [
+                            { name: 'value' },
+                            { name: 'max' }
+
+                        ],
+                        id: 'id',
+                        url: url
+                    };
+                    var dataAdapter = new $.jqx.dataAdapter(Source);
+
+                    for (var i = 0; i < returnedData.record.length; i++) {
+                        var data = [];
+                        data.push({ text: 'ASG-Ready to return', value: returnedData.record[i].value }); // current
+                        data.push({ text: 'ASG-Available', value: returnedData.record[i].max - returnedData.record[i].value }); // remaining
+                        data.push({ text1: 'MSG-Ready to return', value1: returnedData.record[i].value1 }); // current
+                        data.push({ text1: 'MSG-Available', value1: returnedData.record[i].max1 - returnedData.record[i].value1 }); // remaining
+                        var settings = {
+                            title: 'READY TO RETURN',
+                            description: '',
+                            enableAnimations: true,
+                            showLegend: false,
+                            showBorderLine: true,
+                            backgroundColor: '#FAFAFA',
+                            padding: { left: 5, top: 5, right: 5, bottom: 5 },
+                            titlePadding: { left: 5, top: 5, right: 5, bottom: 5 },
+                            source: data,
+                            showToolTips: true,
+                            seriesGroups:
+                                [
+                                    {
+                                        type: 'donut',
+                                        useGradientColors: false,
+                                        series:
+                                            [
+                                                {
+                                                    showLabels: false,
+                                                    enableSelection: true,
+                                                    displayText: 'text',
+                                                    dataField: 'value',
+                                                    labelRadius: 120,
+                                                    initialAngle: 90,
+                                                    radius: 80,
+                                                    innerRadius: 70,
+                                                    centerOffset: 0,
+                                                    // formatFunction: function (value) {
+                                                    //    if (isNaN(value))
+                                                    //        return value;
+                                                    //    return parseFloat(value);
+                                                    //}
+                                                }
+                                            ]
+                                    },
+                                    {
+                                        type: 'donut',
+
+                                        useGradientColors: false,
+                                        series:
+                                            [
+                                                {
+                                                    showLabels: false,
+                                                    enableSelection: true,
+                                                    displayText: 'text1',
+                                                    dataField: 'value1',
+                                                    labelRadius: 120,
+                                                    initialAngle: 90,
+                                                    radius: 50,
+                                                    innerRadius: 40,
+                                                    centerOffset: 0,
+                                                    // formatFunction: function (value) {
+                                                    //    if (isNaN(value))
+                                                    //        return value;
+                                                    //    return parseFloat(value);
+                                                    //}
+                                                }
+                                            ]
+                                    }
+                                ]
+                        };
+
+
+                        var selector = '#chartContainer7'; //+ (i + 5).toString();
+
+                        //var valueText = aaa;//Source[i].value.toString();
+                        //settings.drawBefore = function (renderer, rect) {
+                        //    sz = renderer.measureText(valueText, 0, { 'class': 'chart-inner-text' });
+                        //    renderer.text(
+                        //        valueText,
+                        //        rect.x + (rect.width - sz.width) / 2,
+                        //        rect.y + rect.height / 2,
+                        //        0,
+                        //        0,
+                        //        0,
+                        //        { 'class': 'chart-inner-text' }
+                        //    );
+                        //}
+                        $('#chartContainer7').jqxChart(settings);
+                        var groups1 = $('#chartContainer7').jqxChart('seriesGroups');
+                        $('#chartContainer7').jqxChart({ seriesGroups: groups1 });
+                        $(selector).jqxChart(settings);
+                        $(selector).jqxChart('addColorScheme', 'customColorScheme', ['#00BAFF', '#EDE6E7']);
+                        $(selector).jqxChart({ colorScheme: 'customColorScheme' });
+                    }
+                }
+            })
+
+        }
+
+        function image3() {
+
+            $.ajax({
+                type: 'GET',
+                url: "pr_Fetch_Ready_To_Production",
+                success: function (data) {
+                    var returnedData = JSON.parse(data);
+                    aaa = returnedData.record[0].value;
+                    //alert(aaa);
+                    var url = "pr_Fetch_Ready_To_Production";
+                    var Source =
+                    {
+                        datatype: "json",
+                        datafields: [
+                            { name: 'value' },
+                            { name: 'max' }
+
+                        ],
+                        id: 'id',
+                        url: url
+                    };
+                    var dataAdapter = new $.jqx.dataAdapter(Source);
+
+                    for (var i = 0; i < returnedData.record.length; i++) {
+                        var data = [];
+                        data.push({ text: 'ASG-Already in production', value: returnedData.record[i].value }); // current
+                        data.push({ text: 'ASG-Ready to production', value: returnedData.record[i].max - returnedData.record[i].value }); // remaining
+                        data.push({ text1: 'MSG-Already in production', value1: returnedData.record[i].value1 }); // current
+                        data.push({ text1: 'MSG-Ready to production', value1: returnedData.record[i].max1 - returnedData.record[i].value1 }); // remaining
+                        var settings = {
+                            title: 'READY TO PRODUCTION',
+                            description: '',
+                            enableAnimations: true,
+                            showLegend: false,
+                            showBorderLine: true,
+                            backgroundColor: '#FAFAFA',
+                            padding: { left: 5, top: 5, right: 5, bottom: 5 },
+                            titlePadding: { left: 5, top: 5, right: 5, bottom: 5 },
+                            source: data,
+                            showToolTips: true,
+                            seriesGroups:
+                                [
+                                    {
+                                        type: 'donut',
+                                        useGradientColors: false,
+                                        series:
+                                            [
+                                                {
+                                                    showLabels: false,
+                                                    enableSelection: true,
+                                                    displayText: 'text',
+                                                    dataField: 'value',
+                                                    labelRadius: 120,
+                                                    initialAngle: 90,
+                                                    radius: 80,
+                                                    innerRadius: 70,
+                                                    centerOffset: 0,
+                                                    // formatFunction: function (value) {
+                                                    //    if (isNaN(value))
+                                                    //        return value;
+                                                    //    return parseFloat(value);
+                                                    //}
+                                                }
+                                            ]
+                                    },
+                                    {
+                                        type: 'donut',
+
+                                        useGradientColors: false,
+                                        series:
+                                            [
+                                                {
+                                                    showLabels: false,
+                                                    enableSelection: true,
+                                                    displayText: 'text1',
+                                                    dataField: 'value1',
+                                                    labelRadius: 120,
+                                                    initialAngle: 90,
+                                                    radius: 50,
+                                                    innerRadius: 40,
+                                                    centerOffset: 0,
+                                                    // formatFunction: function (value) {
+                                                    //    if (isNaN(value))
+                                                    //        return value;
+                                                    //    return parseFloat(value);
+                                                    //}
+                                                }
+                                            ]
+                                    }
+                                ]
+                        };
+
+
+                        var selector = '#chartContainer8'; //+ (i + 5).toString();
+
+                        //var valueText = returnedData.record[i].max - returnedData.record[i].value;//Source[i].value.toString();
+                        //settings.drawBefore = function (renderer, rect) {
+                        //    sz = renderer.measureText(valueText, 0, { 'class': 'chart-inner-text' });
+                        //    renderer.text(
+                        //        valueText,
+                        //        rect.x + (rect.width - sz.width) / 2,
+                        //        rect.y + rect.height / 2,
+                        //        0,
+                        //        0,
+                        //        0,
+                        //        { 'class': 'chart-inner-text' }
+                        //    );
+                        //}
+                        $('#chartContainer8').jqxChart(settings);
+                        var groups1 = $('#chartContainer8').jqxChart('seriesGroups');
+                        $('#chartContainer8').jqxChart({ seriesGroups: groups1 });
+                        $(selector).jqxChart(settings);
+                        $(selector).jqxChart('addColorScheme', 'customColorScheme', ['#00BAFF', '#EDE6E7']);
+                        $(selector).jqxChart({ colorScheme: 'customColorScheme' });
+                    }
+                }
+            })
+
+        }
+
+        function image4() {
+            $.ajax({
+                type: 'GET',
+                url: "pr_Fetch_ASG_Full_Bobbin",
+                success: function (data) {
+                    var returnedData = JSON.parse(data);
+                    aaa = returnedData.record[0].value;
+                    //alert(aaa);
+                    var url = "pr_Fetch_ASG_Full_Bobbin";
+                    var Source =
+                    {
+                        datatype: "json",
+                        datafields: [
+                            { name: 'max' },
+                            { name: 'value' }
+
+                        ],
+                        id: 'id',
+                        url: url
+                    };
+                    var dataAdapter = new $.jqx.dataAdapter(Source);
+
+                    //for (var i = 0; i < returnedData.record.length; i++) {
+                        //var data = [];
+                        //data.push({ text: 'Dispatched', value: returnedData.record[i].value }); // current
+                        //data.push({ text: 'Available', value: returnedData.record[i].max - returnedData.record[i].value }); // remaining
+                        var settings = {
+                            title: 'ASG Full Bobbin',
+                            description: '',
+                            enableAnimations: true,
+                            showLegend: false,
+                            showBorderLine: false,
+                            //showXAxis: true,
+                            //yAxis: true,
+                            backgroundColor: '#68a82c',
+                            //padding: { left: 65, top: 10, right: 25, bottom: 2 },
+                            //titlePadding: { left: 0, top: 0, right: 25, bottom: 10 },
+                            padding: { left: 5, top: 5, right: 5, bottom: 0 },
+                            titlePadding: { left: 0, top: 0, right: 25, bottom: 10 },
+                            source: dataAdapter,
+                            //showToolTips: true,
+                            xAxis:
+                            {
+                                dataField: 'max',
+                                //minValue: 0,
+                                //maxValue: 23,
+                                //unitInterval: 1,
+                                valuesOnTicks: false,
+                                //labels: {
+                                //    angle: 0,
+                                //    formatFunction: function (value) {
+                                //        return value.toString();
+                                //    }
+                                //},
+                                //tickMarks: {
+                                //    visible: true,
+                                //    interval: 1
+                                //},
+                                //gridLines: {
+                                //    visible: false,
+                                //    interval: 3
+                                //}
+                            },
+                            columnSeriesOverlap: false,
+                            colorScheme: 'scheme13',
+                            //valueAxis:
+                            //{
+                            //    visible: true,
+                            //    minValue: 0,
+                            //    maxValue: 200,
+                            //    unitInterval: 50,
+                            //    title: { text: 'value ($)<br>' },
+                            //    labels: { horizontalAlignment: 'right' }
+                            //},
+                            seriesGroups:
+                                [
+                                    {
+                                        type: 'column',
+                                        //useGradientColors: false,
+                                        valueAxis:
+                                        {
+                                            visible: true,
+                                            //minValue: 0,
+                                            //maxValue: 200,
+                                            unitInterval: 1500,
+                                            //title: { text: 'value ($)<br>' },
+                                            //labels: { horizontalAlignment: 'right' }
+                                        },
+                                        series:
+                                            [
+                                                {
+                                                    dataField: 'value', displayText: 'value',
+                                                    showLabels: true,
+                                                    //enableSelection: true,
+                                                    //displayText: 'text',
+                                                    //dataField: 'value',
+                                                    //labelRadius: 120,
+                                                    //initialAngle: 90,
+                                                    //radius: 60,
+                                                    //innerRadius: 50,
+                                                    //centerOffset: 0,
+                                                    // formatFunction: function (value) {
+                                                    //    if (isNaN(value))
+                                                    //        return value;
+                                                    //    return parseFloat(value);
+                                                    //}
+                                                }
+                                            ]
+                                    }
+                                ]
+                        };
+                    var selector = '#chartContainer9'; //+ (i + 5).toString();
+                    //var valueText = aaa;//Source[i].value.toString();
+                    //    settings.drawBefore = function (renderer, rect) {
+
+                    //        sz = renderer.measureText(valueText, 0, { 'class': 'chart-inner-text1' });
+                    //        renderer.text(
+                    //            valueText,
+                    //            rect.x + (rect.width - sz.width) / 40,
+                    //            rect.y + rect.height / 2,
+                    //            0,
+                    //            0,
+                    //            0,
+                    //            { 'class': 'chart-inner-text1' }
+                    //        );
+                    //    }
+                    $('#chartContainer9').jqxChart(settings);
+                    //$('#chartContainer9').jqxChart({ borderLineColor: 'Orange' });
+                    $('#chartContainer9').jqxChart({ showBorderLine: 'true' });
+                    $('#chartContainer9').jqxChart({ crosshairsDashStyle: '1,1' });
+                    $('#chartContainer9').jqxChart({ crosshairsLineWidth: 2.0 });
+                    $('#chartContainer9').jqxChart({ roundEdges: 'true' });
+                    $('#chartContainer9').jqxChart({ showXAxis: 'false' });
+                        var groups1 = $('#chartContainer9').jqxChart('seriesGroups');
+                        $('#chartContainer9').jqxChart({ seriesGroups: groups1 });
+                        //$(selector).jqxChart(settings);
+                        //$(selector).jqxChart('addColorScheme', 'customColorScheme', ['#00BAFF', '#EDE6E7']);
+                        //$(selector).jqxChart({ colorScheme: 'customColorScheme' });
+                    }
+                })
+            //})
+        }
+
+        function image5() {
+            $.ajax({
+                type: 'GET',
+                url: "pr_Fetch_ASG_Empty_Bobbin",
+                success: function (data) {
+                    var returnedData = JSON.parse(data);
+                    aaa = returnedData.record[0].value;
+                    //alert(aaa);
+                    var url = "pr_Fetch_ASG_Empty_Bobbin";
+                    var Source =
+                    {
+                        datatype: "json",
+                        datafields: [
+                            { name: 'value' },
+                            { name: 'max' }
+
+                        ],
+                        id: 'id',
+                        url: url
+                    };
+                    var dataAdapter = new $.jqx.dataAdapter(Source);
+
+                    //for (var i = 0; i < returnedData.record.length; i++) {
+                    //var data = [];
+                    //data.push({ text: 'Dispatched', value: returnedData.record[i].value }); // current
+                    //data.push({ text: 'Available', value: returnedData.record[i].max - returnedData.record[i].value }); // remaining
+                    var settings = {
+                        title: 'Empty Bobbin',
+                        description: '',
+                        enableAnimations: true,
+                        showLegend: false,
+                        showBorderLine: false,
+                        backgroundColor: '#68a82c',
+                        padding: { left: 5, top: 5, right: 5, bottom: 5 },
+                        titlePadding: { left: 0, top: 0, right: 25, bottom: 10 },
+                        source: dataAdapter,
+                        //showToolTips: true,
+                        xAxis:
+                        {
+                            dataField: 'max',
+                            //minValue: 0,
+                            //maxValue: 23,
+                            //unitInterval: 1,
+                            valuesOnTicks: false,
+                            //labels: {
+                            //    angle: 0,
+                            //    formatFunction: function (value) {
+                            //        return value.toString();
+                            //    }
+                            //},
+                            //tickMarks: {
+                            //    visible: true,
+                            //    interval: 1
+                            //},
+                            //gridLines: {
+                            //    visible: false,
+                            //    interval: 3
+                            //}
+                        },
+                        columnSeriesOverlap: false,
+                        colorScheme: 'scheme13',
+                        //valueAxis:
+                        //{
+                        //    visible: true,
+                        //    minValue: 0,
+                        //    maxValue: 200,
+                        //    unitInterval: 50,
+                        //    title: { text: 'value ($)<br>' },
+                        //    labels: { horizontalAlignment: 'right' }
+                        //},
+                        seriesGroups:
+                            [
+                                {
+                                    type: 'column',
+                                    //useGradientColors: false,
+                                    valueAxis:
+                                    {
+                                        visible: true,
+                                        //minValue: 0,
+                                        //maxValue: 200,
+                                        unitInterval: 1500,
+                                        //title: { text: 'value ($)<br>' },
+                                        //labels: { horizontalAlignment: 'right' }
+                                    },
+                                    series:
+                                        [
+                                            {
+                                                dataField: 'value', displayText: 'value',
+                                                showLabels: true,
+                                                //enableSelection: true,
+                                                //displayText: 'text',
+                                                //dataField: 'value',
+                                                //labelRadius: 120,
+                                                //initialAngle: 90,
+                                                //radius: 60,
+                                                //innerRadius: 50,
+                                                //centerOffset: 0,
+                                                // formatFunction: function (value) {
+                                                //    if (isNaN(value))
+                                                //        return value;
+                                                //    return parseFloat(value);
+                                                //}
+                                            }
+                                        ]
+                                }
+                            ]
+                    };
+                    var selector = '#chartContainer10'; //+ (i + 5).toString();
+                    //var valueText = aaa;//Source[i].value.toString();
+                    //settings.drawBefore = function (renderer, rect) {
+
+                    //    sz = renderer.measureText(valueText, 0, { 'class': 'chart-inner-text1' });
+                    //    renderer.text(
+                    //        valueText,
+                    //        rect.x + (rect.width - sz.width) / 40,
+                    //        rect.y + rect.height / 2,
+                    //        0,
+                    //        0,
+                    //        0,
+                    //        { 'class': 'chart-inner-text1' }
+                    //    );
+                    //}
+                    $('#chartContainer10').jqxChart(settings);
+                    var groups1 = $('#chartContainer10').jqxChart('seriesGroups');
+                    $('#chartContainer10').jqxChart({ seriesGroups: groups1 });
+                    //$(selector).jqxChart(settings);
+                    //$(selector).jqxChart('addColorScheme', 'customColorScheme', ['#00BAFF', '#EDE6E7']);
+                    //$(selector).jqxChart({ colorScheme: 'customColorScheme' });
+                }
+            })
+            //})
+        }
+
+        function image6() {
+            $.ajax({
+                type: 'GET',
+                url: "pr_Fetch_ASG_Rework_Bobbin",
+                success: function (data) {
+                    var returnedData = JSON.parse(data);
+                    aaa = returnedData.record[0].value;
+                    //alert(aaa);
+                    var url = "pr_Fetch_ASG_Rework_Bobbin";
+                    var Source =
+                    {
+                        datatype: "json",
+                        datafields: [
+                            { name: 'value' },
+                            { name: 'max' }
+
+                        ],
+                        id: 'id',
+                        url: url
+                    };
+                    var dataAdapter = new $.jqx.dataAdapter(Source);
+
+                    //for (var i = 0; i < returnedData.record.length; i++) {
+                    //var data = [];
+                    //data.push({ text: 'Dispatched', value: returnedData.record[i].value }); // current
+                    //data.push({ text: 'Available', value: returnedData.record[i].max - returnedData.record[i].value }); // remaining
+                    var settings = {
+                        title: 'Hold/Rework Bobbin',
+                        description: '',
+                        enableAnimations: true,
+                        showLegend: false,
+                        showBorderLine: false,
+                        backgroundColor: '#68a82c',
+                        padding: { left: 5, top: 5, right: 5, bottom: 5 },
+                        titlePadding: { left: 0, top: 0, right: 0, bottom: 10 },
+                        source: dataAdapter,
+                        //showToolTips: true,
+                        xAxis:
+                        {
+                            dataField: 'max',
+                            //minValue: 0,
+                            //maxValue: 23,
+                            //unitInterval: 1,
+                            valuesOnTicks: false,
+                            //labels: {
+                            //    angle: 0,
+                            //    formatFunction: function (value) {
+                            //        return value.toString();
+                            //    }
+                            //},
+                            //tickMarks: {
+                            //    visible: true,
+                            //    interval: 1
+                            //},
+                            //gridLines: {
+                            //    visible: false,
+                            //    interval: 3
+                            //}
+                        },
+                        columnSeriesOverlap: false,
+                        colorScheme: 'scheme13',
+                        //valueAxis:
+                        //{
+                        //    visible: true,
+                        //    minValue: 0,
+                        //    maxValue: 200,
+                        //    unitInterval: 50,
+                        //    title: { text: 'value ($)<br>' },
+                        //    labels: { horizontalAlignment: 'right' }
+                        //},
+                        seriesGroups:
+                            [
+                                {
+                                    type: 'column',
+                                    //useGradientColors: false,
+                                    valueAxis:
+                                    {
+                                        visible: true,
+                                        //minValue: 0,
+                                        //maxValue: 200,
+                                        unitInterval: 100,
+                                        //title: { text: 'value ($)<br>' },
+                                        //labels: { horizontalAlignment: 'right' }
+                                    },
+                                    series:
+                                        [
+                                            {
+                                                dataField: 'value', displayText: 'value',
+                                                showLabels: true,
+                                                //enableSelection: true,
+                                                //displayText: 'text',
+                                                //dataField: 'value',
+                                                //labelRadius: 120,
+                                                //initialAngle: 90,
+                                                //radius: 60,
+                                                //innerRadius: 50,
+                                                //centerOffset: 0,
+                                                // formatFunction: function (value) {
+                                                //    if (isNaN(value))
+                                                //        return value;
+                                                //    return parseFloat(value);
+                                                //}
+                                            }
+                                        ]
+                                }
+                            ]
+                    };
+                    var selector = '#chartContainer11'; //+ (i + 5).toString();
+                    //var valueText = aaa;//Source[i].value.toString();
+                    //settings.drawBefore = function (renderer, rect) {
+
+                    //    sz = renderer.measureText(valueText, 0, { 'class': 'chart-inner-text1' });
+                    //    renderer.text(
+                    //        valueText,
+                    //        rect.x + (rect.width - sz.width) / 40,
+                    //        rect.y + rect.height / 2,
+                    //        0,
+                    //        0,
+                    //        0,
+                    //        { 'class': 'chart-inner-text1' }
+                    //    );
+                    //}
+                    $('#chartContainer11').jqxChart(settings);
+                    var groups1 = $('#chartContainer11').jqxChart('seriesGroups');
+                    $('#chartContainer11').jqxChart({ seriesGroups: groups1 });
+                    //$(selector).jqxChart(settings);
+                    //$(selector).jqxChart('addColorScheme', 'customColorScheme', ['#00BAFF', '#EDE6E7']);
+                    //$(selector).jqxChart({ colorScheme: 'customColorScheme' });
+                }
+            })
+            //})
+        }
+
+        function image7() {
+            $.ajax({
+                type: 'GET',
+                url: "pr_Fetch_MSG_Full_Bobbin",
+                success: function (data) {
+                    var returnedData = JSON.parse(data);
+                    aaa = returnedData.record[0].value;
+                    //alert(aaa);
+                    var url = "pr_Fetch_MSG_Full_Bobbin";
+                    var Source =
+                    {
+                        datatype: "json",
+                        datafields: [
+                            { name: 'value' },
+                            { name: 'max' }
+
+                        ],
+                        id: 'id',
+                        url: url
+                    };
+                    var dataAdapter = new $.jqx.dataAdapter(Source);
+
+                    //for (var i = 0; i < returnedData.record.length; i++) {
+                    //var data = [];
+                    //data.push({ text: 'Dispatched', value: returnedData.record[i].value }); // current
+                    //data.push({ text: 'Available', value: returnedData.record[i].max - returnedData.record[i].value }); // remaining
+                    var settings = {
+                        title: 'MSG Full Bobbin',
+                        description: '',
+                        enableAnimations: true,
+                        showLegend: false,
+                        showBorderLine: false,
+                        backgroundColor: '#6389ba',
+                        padding: { left: 5, top: 5, right: 5, bottom: 5 },
+                        titlePadding: { left: 0, top: 0, right: 25, bottom: 10 },
+                        source: dataAdapter,
+                        //showToolTips: true,
+                        xAxis:
+                        {
+                            dataField: 'max',
+                            //minValue: 0,
+                            //maxValue: 23,
+                            //unitInterval: 1,
+                            valuesOnTicks: false,
+                            //labels: {
+                            //    angle: 0,
+                            //    formatFunction: function (value) {
+                            //        return value.toString();
+                            //    }
+                            //},
+                            //tickMarks: {
+                            //    visible: true,
+                            //    interval: 1
+                            //},
+                            //gridLines: {
+                            //    visible: false,
+                            //    interval: 3
+                            //}
+                        },
+                        columnSeriesOverlap: false,
+                        colorScheme: 'scheme27',
+                        //valueAxis:
+                        //{
+                        //    visible: true,
+                        //    minValue: 0,
+                        //    maxValue: 200,
+                        //    unitInterval: 50,
+                        //    title: { text: 'value ($)<br>' },
+                        //    labels: { horizontalAlignment: 'right' }
+                        //},
+                        seriesGroups:
+                            [
+                                {
+                                    type: 'column',
+                                    //useGradientColors: false,
+                                    valueAxis:
+                                    {
+                                        visible: true,
+                                        //minValue: 0,
+                                        //maxValue: 200,
+                                        unitInterval: 1500,
+                                        //title: { text: 'value ($)<br>' },
+                                        //labels: { horizontalAlignment: 'right' }
+                                    },
+                                    series:
+                                        [
+                                            {
+                                                dataField: 'value', displayText: 'value',
+                                                showLabels: true,
+                                                //enableSelection: true,
+                                                //displayText: 'text',
+                                                //dataField: 'value',
+                                                //labelRadius: 120,
+                                                //initialAngle: 90,
+                                                //radius: 60,
+                                                //innerRadius: 50,
+                                                //centerOffset: 0,
+                                                // formatFunction: function (value) {
+                                                //    if (isNaN(value))
+                                                //        return value;
+                                                //    return parseFloat(value);
+                                                //}
+                                            }
+                                        ]
+                                }
+                            ]
+                    };
+                    var selector = '#chartContainer12'; //+ (i + 5).toString();
+                    //var valueText = aaa;//Source[i].value.toString();
+                    //settings.drawBefore = function (renderer, rect) {
+
+                    //    sz = renderer.measureText(valueText, 0, { 'class': 'chart-inner-text1' });
+                    //    renderer.text(
+                    //        valueText,
+                    //        rect.x + (rect.width - sz.width) / 40,
+                    //        rect.y + rect.height / 2,
+                    //        0,
+                    //        0,
+                    //        0,
+                    //        { 'class': 'chart-inner-text1' }
+                    //    );
+                    //}
+                    $('#chartContainer12').jqxChart(settings);
+                    var groups1 = $('#chartContainer12').jqxChart('seriesGroups');
+                    $('#chartContainer12').jqxChart({ seriesGroups: groups1 });
+                    //$(selector).jqxChart(settings);
+                    //$(selector).jqxChart('addColorScheme', 'customColorScheme', ['#00BAFF', '#EDE6E7']);
+                    //$(selector).jqxChart({ colorScheme: 'customColorScheme' });
+                }
+            })
+            //})
+        }
+
+        function image8() {
+            $.ajax({
+                type: 'GET',
+                url: "pr_Fetch_MSG_Empty_Bobbin",
+                success: function (data) {
+                    var returnedData = JSON.parse(data);
+                    aaa = returnedData.record[0].value;
+                    //alert(aaa);
+                    var url = "pr_Fetch_MSG_Empty_Bobbin";
+                    var Source =
+                    {
+                        datatype: "json",
+                        datafields: [
+                            { name: 'value' },
+                            { name: 'max' }
+
+                        ],
+                        id: 'id',
+                        url: url
+                    };
+                    var dataAdapter = new $.jqx.dataAdapter(Source);
+
+                    //for (var i = 0; i < returnedData.record.length; i++) {
+                    //var data = [];
+                    //data.push({ text: 'Dispatched', value: returnedData.record[i].value }); // current
+                    //data.push({ text: 'Available', value: returnedData.record[i].max - returnedData.record[i].value }); // remaining
+                    var settings = {
+                        title: 'Empty Bobbin',
+                        description: '',
+                        enableAnimations: true,
+                        showLegend: false,
+                        showBorderLine: false,
+                        backgroundColor: '#6389ba',
+                        padding: { left: 5, top: 5, right: 5, bottom: 5 },
+                        titlePadding: { left: 0, top: 0, right: 25, bottom: 10 },
+                        source: dataAdapter,
+                        //showToolTips: true,
+                        xAxis:
+                        {
+                            dataField: 'max',
+                            //minValue: 0,
+                            //maxValue: 23,
+                            //unitInterval: 1,
+                            valuesOnTicks: false,
+                            //labels: {
+                            //    angle: 0,
+                            //    formatFunction: function (value) {
+                            //        return value.toString();
+                            //    }
+                            //},
+                            //tickMarks: {
+                            //    visible: true,
+                            //    interval: 1
+                            //},
+                            //gridLines: {
+                            //    visible: false,
+                            //    interval: 3
+                            //}
+                        },
+                        columnSeriesOverlap: false,
+                        colorScheme: 'scheme27',
+                        //valueAxis:
+                        //{
+                        //    visible: true,
+                        //    minValue: 0,
+                        //    maxValue: 200,
+                        //    unitInterval: 50,
+                        //    title: { text: 'value ($)<br>' },
+                        //    labels: { horizontalAlignment: 'right' }
+                        //},
+                        seriesGroups:
+                            [
+                                {
+                                    type: 'column',
+                                    //useGradientColors: false,
+                                    valueAxis:
+                                    {
+                                        visible: true,
+                                        //minValue: 0,
+                                        //maxValue: 200,
+                                        unitInterval: 1500,
+                                        //title: { text: 'value ($)<br>' },
+                                        //labels: { horizontalAlignment: 'right' }
+                                    },
+                                    series:
+                                        [
+                                            {
+                                                dataField: 'value', displayText: 'value',
+                                                showLabels: true,
+                                                //enableSelection: true,
+                                                //displayText: 'text',
+                                                //dataField: 'value',
+                                                //labelRadius: 120,
+                                                //initialAngle: 90,
+                                                //radius: 60,
+                                                //innerRadius: 50,
+                                                //centerOffset: 0,
+                                                // formatFunction: function (value) {
+                                                //    if (isNaN(value))
+                                                //        return value;
+                                                //    return parseFloat(value);
+                                                //}
+                                            }
+                                        ]
+                                }
+                            ]
+                    };
+                    var selector = '#chartContainer13'; //+ (i + 5).toString();
+                    //var valueText = aaa;//Source[i].value.toString();
+                    //settings.drawBefore = function (renderer, rect) {
+
+                    //    sz = renderer.measureText(valueText, 0, { 'class': 'chart-inner-text1' });
+                    //    renderer.text(
+                    //        valueText,
+                    //        rect.x + (rect.width - sz.width) / 40,
+                    //        rect.y + rect.height / 2,
+                    //        0,
+                    //        0,
+                    //        0,
+                    //        { 'class': 'chart-inner-text1' }
+                    //    );
+                    //}
+                    $('#chartContainer13').jqxChart(settings);
+                    var groups1 = $('#chartContainer13').jqxChart('seriesGroups');
+                    $('#chartContainer13').jqxChart({ seriesGroups: groups1 });
+                    //$(selector).jqxChart(settings);
+                    //$(selector).jqxChart('addColorScheme', 'customColorScheme', ['#00BAFF', '#EDE6E7']);
+                    //$(selector).jqxChart({ colorScheme: 'customColorScheme' });
+                }
+            })
+            //})
+        }
+
+        function image9() {
+            $.ajax({
+                type: 'GET',
+                url: "pr_Fetch_MSG_Rework_Bobbin",
+                success: function (data) {
+                    var returnedData = JSON.parse(data);
+                    aaa = returnedData.record[0].value;
+                    //alert(aaa);
+                    var url = "pr_Fetch_MSG_Rework_Bobbin";
+                    var Source =
+                    {
+                        datatype: "json",
+                        datafields: [
+                            { name: 'value' },
+                            { name: 'max' }
+
+                        ],
+                        id: 'id',
+                        url: url
+                    };
+                    var dataAdapter = new $.jqx.dataAdapter(Source);
+
+                    //for (var i = 0; i < returnedData.record.length; i++) {
+                    //var data = [];
+                    //data.push({ text: 'Dispatched', value: returnedData.record[i].value }); // current
+                    //data.push({ text: 'Available', value: returnedData.record[i].max - returnedData.record[i].value }); // remaining
+                    var settings = {
+                        title: 'Hold/Rework Bobbin',
+                        description: '',
+                        enableAnimations: true,
+                        showLegend: false,
+                        showBorderLine: false,
+                        backgroundColor: '#6389ba',
+                        padding: { left: 5, top: 5, right: 5, bottom: 5 },
+                        titlePadding: { left: 0, top: 0, right: 0, bottom: 10 },
+                        source: dataAdapter,
+                        //showToolTips: true,
+                        xAxis:
+                        {
+                            dataField: 'max',
+                            //minValue: 0,
+                            //maxValue: 23,
+                            //unitInterval: 1,
+                            valuesOnTicks: false,
+                            //labels: {
+                            //    angle: 0,
+                            //    formatFunction: function (value) {
+                            //        return value.toString();
+                            //    }
+                            //},
+                            //tickMarks: {
+                            //    visible: true,
+                            //    interval: 1
+                            //},
+                            //gridLines: {
+                            //    visible: false,
+                            //    interval: 3
+                            //}
+                        },
+                        columnSeriesOverlap: false,
+                        colorScheme: 'scheme27',
+                        //valueAxis:
+                        //{
+                        //    visible: true,
+                        //    minValue: 0,
+                        //    maxValue: 200,
+                        //    unitInterval: 50,
+                        //    title: { text: 'value ($)<br>' },
+                        //    labels: { horizontalAlignment: 'right' }
+                        //},
+                        seriesGroups:
+                            [
+                                {
+                                    type: 'column',
+                                    //useGradientColors: false,
+                                    valueAxis:
+                                    {
+                                        visible: true,
+                                        //minValue: 0,
+                                        //maxValue: 200,
+                                        unitInterval: 100,
+                                        //title: { text: 'value ($)<br>' },
+                                        //labels: { horizontalAlignment: 'right' }
+                                    },
+                                    series:
+                                        [
+                                            {
+                                                dataField: 'value', displayText: 'value',
+                                                showLabels: true,
+                                                //enableSelection: true,
+                                                //displayText: 'text',
+                                                //dataField: 'value',
+                                                //labelRadius: 120,
+                                                //initialAngle: 90,
+                                                //radius: 60,
+                                                //innerRadius: 50,
+                                                //centerOffset: 0,
+                                                // formatFunction: function (value) {
+                                                //    if (isNaN(value))
+                                                //        return value;
+                                                //    return parseFloat(value);
+                                                //}
+                                            }
+                                        ]
+                                }
+                            ]
+                    };
+                    var selector = '#chartContainer14'; //+ (i + 5).toString();
+                    //var valueText = aaa;//Source[i].value.toString();
+                    //settings.drawBefore = function (renderer, rect) {
+
+                    //    sz = renderer.measureText(valueText, 0, { 'class': 'chart-inner-text1' });
+                    //    renderer.text(
+                    //        valueText,
+                    //        rect.x + (rect.width - sz.width) / 40,
+                    //        rect.y + rect.height / 2,
+                    //        0,
+                    //        0,
+                    //        0,
+                    //        { 'class': 'chart-inner-text1' }
+                    //    );
+                    //}
+                    $('#chartContainer14').jqxChart(settings);
+                    var groups1 = $('#chartContainer14').jqxChart('seriesGroups');
+                    $('#chartContainer14').jqxChart({ seriesGroups: groups1 });
+                    //$(selector).jqxChart(settings);
+                    //$(selector).jqxChart('addColorScheme', 'customColorScheme', ['#00BAFF', '#EDE6E7']);
+                    //$(selector).jqxChart({ colorScheme: 'customColorScheme' });
+                }
+            })
+            //})
+        }
+
+        //function image() {
+
+        //    var url = "pr_Fetch_Data";
+        //    var Source =
+        //    {
+        //        datatype: "json",
+        //        datafields: [
+        //            { name: 'count'},
+        //            //{ name: 'cm_CustomerName', type: 'string' }
+        //        ],
+        //        id: 'id',
+        //        url: url
+        //    };
+
+        //    var adapter = new $.jqx.dataAdapter(Source);
+        //    //$("#img").jqxInput({ source: adapter, valueMember: "count" });
+        //    $("#img").jqxDropDownList({ selectedIndex: 0, source: adapter, displayMember: "count", valueMember: "count", width: '100%', height: '30', autoDropDownHeight: true });
+        //    //$("#img").text(Source);
+        //}
+        //function image1() {
+
+        //    var url = "pr_Fetch_Data";
+        //    var Source =
+        //    {
+        //        datatype: "json",
+        //        datafields: [
+        //            { name: 'count', type: 'number' },
+        //            //{ name: 'cm_CustomerName', type: 'string' }
+        //        ],
+        //        id: 'id',
+        //        url: url
+        //    };
+        //    var adapter = new $.jqx.dataAdapter(Source);
+        //    $("#img1").jqxDropDownList({ selectedIndex: 0, source: adapter, displayMember: "count", valueMember: "count", width: '100%', height: '30', autoDropDownHeight: true });
+        //    //$("#img").attr("src", "../../img/BOTTOM.png");
+        //}
+        //function image2() {
+
+        //    var url = "pr_Fetch_Data";
+        //    var Source =
+        //    {
+        //        datatype: "json",
+        //        datafields: [
+        //            { name: 'count', type: 'number' },
+        //            //{ name: 'cm_CustomerName', type: 'string' }
+        //        ],
+        //        id: 'id',
+        //        url: url
+        //    };
+        //    var adapter = new $.jqx.dataAdapter(Source);
+        //    $("#img2").jqxDropDownList({ selectedIndex: 0, source: adapter, displayMember: "count", valueMember: "count", width: '100%', height: '30', autoDropDownHeight: true });
+        //    //$("#img").attr("src", "../../img/BOTTOM.png");
+        //}
+        //function image3() {
+
+        //    var url = "pr_Fetch_Data";
+        //    var Source =
+        //    {
+        //        datatype: "json",
+        //        datafields: [
+        //            { name: 'count', type: 'number' },
+        //            //{ name: 'cm_CustomerName', type: 'string' }
+        //        ],
+        //        id: 'id',
+        //        url: url
+        //    };
+        //    var adapter = new $.jqx.dataAdapter(Source);
+        //    $("#img3").jqxDropDownList({ selectedIndex: 0, source: adapter, displayMember: "count", valueMember: "count", width: '100%', height: '30', autoDropDownHeight: true });
+        //    //$("#img").attr("src", "../../img/BOTTOM.png");
+        //}
+
+
+
+        function chart1() {
+
+
+            // ----------------------------Page 1  start---------------------------------
+            //Absent list line chart......................................................
+            var url = "pr_Stock_Available_Pie";
+            var source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'Bobbins', type: 'string' },
+                    { name: 'Plant', type: 'string' }
+
+
+                ],
+                id: 'id',
+                url: url
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            // prepare jqxChart settings
+            // prepare jqxChart settings
+            var settings = {
+                title: "Plant Stock",
+                description: "",
+                enableAnimations: true,
+                showLegend: true,
+                showBorderLine: true,
+                //legendPosition: { left: 520, top: 140, width: 100, height: 100 },
+                legendLayout: { left: 50, top: 130, width: 300, height: 300, flow: 'vertical' },
+                padding: { left: 110, top: 5, right: 5, bottom: 5 },
+                titlePadding: { left: 0, top: 0, right: 0, bottom: 10 },
+                source: dataAdapter,
+                colorScheme: 'scheme03',
+                seriesGroups:
+                    [
+                        {
+                            type: 'pie',
+                            showLabels: true,
+                            series:
+                                [
+                                    {
+                                        dataField: 'Bobbins',
+                                        displayText: 'Plant',
+                                        labelRadius: 100,
+                                        initialAngle: 15,
+                                        radius: 125,
+                                        //innerRadius: 70,
+                                        centerOffset: 0,
+                                        formatFunction: function (value) {
+                                            if (isNaN(value))
+                                                return value;
+                                            return parseFloat(value);
+                                        }
+                                        //formatSettings: { sufix: '', decimalPlaces: 1 }
+                                    }
+                                ]
+                        }
+                    ]
+            };
+            // setup the chart
+            $('#chartContainer2').jqxChart(settings);
+
+            var groups1 = $('#chartContainer2').jqxChart('seriesGroups');
+
+            $('#chartContainer2').jqxChart({ seriesGroups: groups1 });
+        }
+        function chartcolumn() {
+
+
+            // ----------------------------Page 1  start---------------------------------
+            //Absent list line chart......................................................
+            var url = "pr_Avg_Cycle_Time_Plant";
+            var source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'status', type: 'string' },
+                    { name: 'ASG', type: 'string' },
+                    { name: 'MSG', type: 'string' },
+                    { name: 'ASG1', type: 'string' },
+                    { name: 'MSG1', type: 'string' },
+                    //{ name: 'model1', type: 'string' },
+                    { name: 'hours1', type: 'string' },
+                    //{ name: 'model2', type: 'string' },
+                    { name: 'hours2', type: 'string' },
+                    //{ name: 'model3', type: 'string' },
+                    { name: 'hours3', type: 'string' },
+
+                ],
+                id: 'id',
+                url: url
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            // prepare jqxChart settings
+            // prepare jqxChart settings
+            var settings = {
+                title: "Amararaja Batteries",
+                description: "Transit Time > 72 Hours",
+                showLegend: true,
+                enableAnimations: true,
+                padding: { left: 5, top: 5, right: 5, bottom: 5 },
+                titlePadding: { left: 90, top: 0, right: 0, bottom: 10 },
+                source: dataAdapter,
+                xAxis:
+
+                {
+                    dataField: 'status',
+                    gridLines: { visible: true },
+                    valuesOnTicks: false
+                },
+
+                colorScheme: 'scheme05',
+                columnSeriesOverlap: false,
+                seriesGroups:
+                    [
+                        {
+                            type: 'column',
+                            valueAxis:
+                            {
+                                visible: true,
+                                unitInterval: 20,
+                                title: { text: 'Plant Avg Cycletime<br>' }
+                            },
+                            series: [
+                                { dataField: 'ASG', displayText: 'ASG' },
+                                { dataField: 'MSG', displayText: 'MSG' },
+                                //{ dataField: 'ASG1', displayText: 'ASG' },
+                                //{ dataField: 'MSG1', displayText: 'MSG' },
+                                //{ dataField: 'hours1', displayText: 'hours' },
+                                //{ dataField: 'hours2', displayText: 'hours' },
+                                //{ dataField: 'hours3', displayText: 'hours' },
+
+                            ]
+                        }
+                    ]
+            };
+            // setup the chart
+            $('#chartContainer1').jqxChart(settings);
+
+            var groups1 = $('#chartContainer1').jqxChart('seriesGroups');
+            //second chart events
+
+            //if (groups1.length > 0) {
+            //    groups1[0].mouseover = function (e) {
+            //        $("#window_ab").hide();
+            //        var records = dataAdapter.records;
+            //        var record = records[e.elementIndex];
+            //        //alert(record.wm_wing);
+
+            //        today_absentlist_staff = "../Settings/getsettingsdata.aspx?str=pr_today_staffabsents_deptwise&wing=" + record.wm_wing + "&id=" + school;
+            //        var source_staff =
+            //    {
+            //        datatype: "json",
+            //        datafields: [
+            //         { name: 'dept', type: 'string' },
+            //            { name: 'Absent', type: 'string' },
+            //            { name: 'wing', type: 'string' }
+
+            //        ],
+            //        id: 'id',
+            //        url: today_absentlist_staff
+            //    };
+            //        var dataAdapter_staff = new $.jqx.dataAdapter(source_staff);
+            //        $("#today_staffabsentlist_sum").jqxGrid(
+            //        {
+            //            theme: 'darkblue',
+            //            width: 400,
+            //            source: dataAdapter_staff,
+            //            columnsresize: true,
+            //            //pageable: true,
+            //            enabletooltips: false,
+            //            autoHeight: true,
+
+            //            columns: [
+            //             { text: 'WING', datafield: 'wing', width: 200 },
+            //             { text: 'DEPARTMENT', datafield: 'dept', width: 150 },
+            //             { text: 'ABS', datafield: 'Absent', width: 50 },
+            //            ]
+            //        });
+
+            //        //
+            //        today_absentlist_staff_sum = "../Settings/getsettingsdata.aspx?str=pr_today_staffabsents&wing=" + record.wm_wing + "&id=" + school;
+            //        var source_absum =
+            //    {
+            //        datatype: "json",
+            //        datafields: [
+            //        { name: 'firstname', type: 'string' },
+            //            { name: 'Absent', type: 'string' },
+
+            //        ],
+            //        id: 'id',
+            //        url: today_absentlist_staff_sum
+            //    };
+            //        var dataAdapter_ab = new $.jqx.dataAdapter(source_absum);
+            //        $("#today_staffabsentlist").jqxGrid(
+            //        {
+            //            theme: 'darkblue',
+            //            width: 250,
+            //            source: dataAdapter_ab,
+            //            columnsresize: true,
+            //            //pageable: true,
+            //            enabletooltips: false,
+            //            autoHeight: true,
+
+            //            columns: [
+
+            //             { text: 'STAFF NAME', datafield: 'firstname', width: 150 },
+            //             { text: 'STATUS', datafield: 'Absent', width: 100 }
+            //            ]
+
+
+            //        });
+
+
+            //        $('#window_ab_staff').show();
+            //    }
+
+            // update the group
+            $('#chartContainer1').jqxChart({ seriesGroups: groups1 });
+        }
+
+        function chartcolumn1() {
+
+
+            // ----------------------------Page 1  start---------------------------------
+            //Absent list line chart......................................................
+            var url = "pr_Stock_Available_asg";
+            var source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'Bobbins', type: 'string' },
+                    { name: 'Plant', type: 'string' },
+                    { name: 'Qty', type: 'string' }
+
+
+                ],
+                id: 'id',
+                url: url
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            // prepare jqxChart settings
+            // prepare jqxChart settings
+            var settings = {
+                title: "Amararaja Batteries",
+                description: "ASG Plant Stock",
+                showLegend: true,
+                enableAnimations: true,
+                padding: { left: 5, top: 5, right: 5, bottom: 5 },
+                titlePadding: { left: 90, top: 0, right: 0, bottom: 10 },
+                source: dataAdapter,
+                xAxis:
+                {
+                    dataField: 'Plant',
+                    displayText: 'Type',
+                    gridLines: { visible: true },
+                    valuesOnTicks: false
+                },
+                colorScheme: 'scheme03',
+                columnSeriesOverlap: false,
+                seriesGroups:
+                    [
+                        {
+                            type: 'column',
+                            valueAxis:
+                            {
+                                visible: true,
+                                unitInterval: 20,
+                                title: { text: 'ASG Stock Modelwise<br>' }
+                            },
+                            series: [
+                                { dataField: 'Bobbins', displayText: 'Count' }
+
+                            ]
+                        }
+                    ]
+            };
+            // setup the chart
+            $('#chartContainer3').jqxChart(settings);
+
+            var groups1 = $('#chartContainer3').jqxChart('seriesGroups');
+
+            $('#chartContainer3').jqxChart({ seriesGroups: groups1 });
+        }
+
+        function chartcolumn2() {
+
+
+            // ----------------------------Page 1  start---------------------------------
+            //Absent list line chart......................................................
+            var url = "pr_Stock_Available_msg";
+            var source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'Bobbins', type: 'string' },
+                    { name: 'Plant', type: 'string' }
+
+
+                ],
+                id: 'id',
+                url: url
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            // prepare jqxChart settings
+            // prepare jqxChart settings
+            var settings = {
+                title: "Amararaja Batteries",
+                description: "MSG Plant Stock",
+                showLegend: true,
+                enableAnimations: true,
+                padding: { left: 5, top: 5, right: 5, bottom: 5 },
+                titlePadding: { left: 90, top: 0, right: 0, bottom: 10 },
+                source: dataAdapter,
+                xAxis:
+                {
+                    dataField: 'Plant',
+                    gridLines: { visible: true },
+                    valuesOnTicks: false
+                },
+                colorScheme: 'scheme02',
+                columnSeriesOverlap: false,
+                seriesGroups:
+                    [
+                        {
+                            type: 'column',
+                            valueAxis:
+                            {
+                                visible: true,
+                                unitInterval: 20000,
+                                title: { text: 'MSG Stock Modelwise<br> ' }
+                            },
+                            series: [
+                                { dataField: 'Bobbins', displayText: 'Type' }
+
+                            ]
+                        }
+                    ]
+            };
+            // setup the chart
+            $('#chartContainer4').jqxChart(settings);
+
+            var groups1 = $('#chartContainer4').jqxChart('seriesGroups');
+
+            $('#chartContainer4').jqxChart({ seriesGroups: groups1 });
+        }
+
+        function image10() {
+
+
+            // ----------------------------Page 1  start---------------------------------
+            //Absent list line chart......................................................
+            var url = "pr_Today_Production_ASG_MSG";
+            var source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'Number', type: 'string' },
+                    { name: 'Plant', type: 'string' }
+
+
+                ],
+                id: 'id',
+                url: url
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            // prepare jqxChart settings
+            // prepare jqxChart settings
+            var settings = {
+                title: "Amararaja Batteries",
+                description: "ASG & MSG Plant Today's Production",
+                showLegend: true,
+                enableAnimations: true,
+                padding: { left: 5, top: 5, right: 5, bottom: 5 },
+                titlePadding: { left: 90, top: 0, right: 0, bottom: 10 },
+                source: dataAdapter,
+                xAxis:
+                {
+                    dataField: 'Plant',
+                    gridLines: { visible: true },
+                    valuesOnTicks: false
+                },
+                colorScheme: 'scheme03',
+                columnSeriesOverlap: false,
+                seriesGroups:
+                    [
+                        {
+                            type: 'column',
+                            valueAxis:
+                            {
+                                visible: true,
+                                unitInterval: 50,
+                                title: { text: 'ASG Stock Modelwise<br>' }
+                            },
+                            series: [
+                                { dataField: 'Number', displayText: 'Number' }
+
+                            ]
+                        }
+                    ]
+            };
+            // setup the chart
+            $('#chartContainer15').jqxChart(settings);
+
+            var groups1 = $('#chartContainer15').jqxChart('seriesGroups');
+
+            $('#chartContainer15').jqxChart({ seriesGroups: groups1 });
+        }
+
+
+
+        // chart1();
+        //if (User.toUpperCase() == "ADMIN") {
+        //chartcolumn();
+        //chart1();
+        //chartcolumn1();
+        //chartcolumn2();
+
+       // image();
+        //image1();
+        //image2();
+        //image3();
+        image4();
+        image5();
+        image6();
+        image7();
+        image8();
+        image9();
+        image10();
+        //}
+
+
+        $("#spinner").hide();
+        $("#Data").show();
+        //$("#img").show();
+
+        //$('#bottom').attr('src', "../../img/BOTTOM.png");
+    });
+
+</script>
+
+
+
+<div class="content-wrapper">
+    <section class="content" style="padding-left:5px;padding-right:5px">
+        <div class="row">
+            <div class="col-lg-12">
+
+                @*<div class="col-lg-1" style="border:groove;  height:300px;">
+            <div class="col-lg-1" height:381px;">
+                <button id="btnToday" class="btn btn-white btn-info btn-bold" style="height:100px; width:100px">
+                    <i class="ace-icon fa fa-search bigger-120 bg-blue"></i>
+                    <span id="btn_save_label" style="align-content:center">Today</span>
+                </button>
+            </div>
+            <p></p>
+            <div class="col-lg-2" height:381px;">
+                <button id="btnToday" class="btn btn-white btn-info btn-bold" style="height:100px; width:100px">
+                    <i class="ace-icon fa fa-search bigger-120 orange"></i>
+                    <span id="btn_save_label" style="align-content:center">Empty</span>
+                </button>
+            </div>
+            <div class="col-lg-3" height:381px;">
+                <button id="btnToday" class="btn btn-white btn-info btn-bold" style="height:100px; width:100px">
+                    <i class="ace-icon fa fa-search bigger-120 bg-green"></i>
+                    <span id="btn_save_label" style="align-content:center">Remain</span>
+                </button>
+            </div>
+        </div>*@
+                <div class="overlay" id="spinner" style="margin-left:15%;margin-top:40%">
+                    <i class="fa fa-refresh fa-spin"></i>
+                </div>
+                @*<div class="col-lg-6">
+            <div id='chartContainer3' style="width:100%; height:300px;"> </div>
+        </div>*@
+                @*<div class="col-lg-6">
+            <div id='chartContainer4' style="width:100%; height:300px;"> </div>
+        </div>*@
+                @*<div class="col-lg-1" style="border:groove;  height:300px;">
+
+        </div>*@
+                <div class="col-lg-3">
+                    @*<label>ASG Full Bobbin </label>*@
+                    <div id='chartContainer9' style="width:100%; height:140px;"> </div>
+                    <div id='chartContainer10' style="width:100%; height:140px;"> </div>
+                    <div id='chartContainer11' style="width:100%; height:140px;"> </div>
+                </div>
+                <div class="col-lg-6">
+                    <div id='chartContainer15' style="width:100%; height:420px;"> </div>
+                </div>
+                @*<div class="col-lg-3"></div>*@
+                <div class="col-lg-3">
+                    <div id='chartContainer12' style="width:100%; height:140px;"> </div>
+                    <div id='chartContainer13' style="width:100%; height:140px;"> </div>
+                    <div id='chartContainer14' style="width:100%; height:140px;"> </div>
+                </div>
+            </div>
+            @*<div class="col-lg-12">*@
+                @*<div class="col-lg-6">
+                    <div id='chartContainer1' style="width:100%; height:300px;"> </div>
+                </div>*@
+                @*<div class="col-lg-6">
+                    <div id='chartContainer2' style="width:100%; height:300px;"> </div>
+                </div>*@
+            @*</div>*@
+
+            @*<div class="col-lg-12">
+                <div class="col-lg-3">
+                    <div id='chartContainer5' style="width:100%; height:200px;"> </div>
+                </div>
+                <div class="col-lg-3">
+                    <div id='chartContainer6' style="width:100%; height:200px;"> </div>
+                </div>
+                <div class="col-lg-3">
+                    <div id='chartContainer7' style="width:100%; height:200px;"> </div>
+                </div>
+                <div class="col-lg-3">
+                    <div id='chartContainer8' style="width:100%; height:200px;"> </div>
+                </div>
+            </div>*@
+
+            @*<div class="row">*@
+            @*<div class="col-lg-12">
+                <div class="col-lg-3">*@
+                    @*<label>ASG Full Bobbin </label>*@
+                    @*<div id='chartContainer9' style="width:100%; height:140px;"> </div>
+                    <div id='chartContainer10' style="width:100%; height:140px;"> </div>
+                    <div id='chartContainer11' style="width:100%; height:140px;"> </div>
+                </div>
+                <div class="col-lg-6">
+                    <div id='chartContainer15' style="width:100%; height:420px;"> </div>
+                </div>*@
+                @*<div class="col-lg-3"></div>*@
+                @*<div class="col-lg-3">
+                    <div id='chartContainer12' style="width:100%; height:140px;"> </div>
+                    <div id='chartContainer13' style="width:100%; height:140px;"> </div>
+                    <div id='chartContainer14' style="width:100%; height:140px;"> </div>
+                </div>
+            </div>*@
+            @*<div class="col-lg-12">
+                    <div class="col-lg-3">
+                        <div id='chartContainer10' style="width:100%; height:140px;"> </div>
+                    </div>
+                    <div class="col-lg-3"></div>
+                    <div class="col-lg-3"></div>
+                    <div class="col-lg-3">
+                        <div id='chartContainer13' style="width:100%; height:140px;"> </div>
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <div class="col-lg-3">
+                        <div id='chartContainer11' style="width:100%; height:140px;"> </div>
+                    </div>
+                    <div class="col-lg-3"></div>
+                    <div class="col-lg-3"></div>
+                    <div class="col-lg-3">
+                        <div id='chartContainer14' style="width:100%; height:140px;"> </div>
+                    </div>
+                </div>*@
+            @*</div>*@
+            @*<div class="col-lg-3">
+                    <div id='chartContainer7' style="width:100%; height:200px;"> </div>
+                </div>
+                <div class="col-lg-3">
+                    <div id='chartContainer8' style="width:100%; height:200px;"> </div>
+                </div>*@
+
+
+
+
+            @*<div id="bottom" class="col-lg-12">
+                    <div class="col-lg-12">
+                        <img src="../../img/BOTTOM.png" style="height:100%;width:100%" />
+
+
+                        <div class="text-block">
+
+                            <span id="img"></span>
+
+                        </div>
+                        <div class="text-bl">
+                            <span id="img1"></span>
+
+                        </div>
+                        <div class="text-blo">
+                            <span id="img2"></span>
+
+                        </div>
+                        <div class="text-bloc">
+                            <span id="img3"></span>
+
+                        </div>
+
+                    </div>
+                </div>*@
+
+
+            @*<h1>32 hours</h1>*@
+
+        </div>
+    </section>
+</div>
+
+
+
+

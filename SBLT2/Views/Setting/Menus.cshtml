@@ -1,0 +1,622 @@
+﻿@{
+    ViewBag.Title = "Menus";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var ID = 0;
+        var User = sessionStorage.getItem("user");
+        var ORG_ID = 1;
+
+        var MD_iid_ID = 0;
+        var MD_vModuleName_Name = '';
+        var url = "Pr_Load_MD_vModuleName";
+        var Source =
+        {
+            datatype: "json",
+            datafields: [
+            { name: 'MD_iid', type: 'int' },
+            { name: 'MD_vModuleName', type: 'string' }
+            ],
+            id: 'id',
+            url: url
+        };
+        var adapter = new $.jqx.dataAdapter(Source);
+        $("#MM_vModule").jqxDropDownList({ selectedIndex: 0, source: adapter, displayMember: "MD_vModuleName", valueMember: "MD_iid", width: '100%', height: '30', autoDropDownHeight: true });
+        $("#MM_vModule").on('select', function (event) {
+            if (event.args) {
+                var item = event.args.item;
+                if (item) {
+                    MD_iid_ID = item.value;
+                    MD_vModuleName_Name = item.label;
+                }
+            }
+        });
+
+
+        $("#Settings").addClass("active");
+        $("#Menus").addClass("active");
+
+
+        var source1 = [
+        "1",
+        "2",
+        "3"
+
+
+        ];
+
+
+        // Create a jqxDropDownList
+        $("#MM_iMenuLevel").jqxDropDownList({ source: source1, selectedIndex:-1, width: '100%', height: '30', autoDropDownHeight: true });
+
+        $("#MM_iMenuLevel").on('select', function (event) {
+            if (event.args) {
+                var item = event.args.item;
+                if (item) {
+                    Load_Data();
+                }
+            }
+        });
+        $("#MM_iParentID").jqxDropDownList({ width: '100%', height: '30' });
+
+        Load_Data();
+        function Load_Data() {
+            var MM_iParentID_ID = 0;
+            var MM_iParentID_Name = '';
+            var url = 'Pr_Load_MM_vMenu_Name?ID=' + $("#MM_iMenuLevel").val() + "&module=" + $("#MM_vModule").val()
+            var Source =
+            {
+                datatype: "json",
+                datafields: [
+            { name: 'MM_iId', type: 'int' },
+            { name: 'MM_vMenu_Name', type: 'string' }
+                ],
+                id: 'id',
+                async: false,
+                url: url
+            };
+            var adapter = new $.jqx.dataAdapter(Source);
+            $("#MM_iParentID").jqxDropDownList({ selectedIndex: -1, source: adapter, displayMember: "MM_vMenu_Name", valueMember: "MM_iId", width: '100%', height: '30' });
+            $("#MM_iParentID").on('select', function (event) {
+                if (event.args) {
+                    var item = event.args.item;
+                    if (item) {
+                        MM_iParentID_ID = item.value;
+                        MM_iParentID_Name = item.label;
+                    }
+                }
+            });
+
+        }
+
+        var url = "Pr_Fetch_T_Setting_Menu_Master_Details";
+        var source = {
+            datatype: "json",
+            datafields: [{
+                name: 'MM_iId',
+                type: 'string'
+            },
+                {
+                    name: 'MM_vModule',
+                    type: 'string'
+                },
+                {
+                    name: 'MM_vMenu_Name',
+                    type: 'string'
+                },
+                {
+                    name: 'MM_iMenu_Order',
+                    type: 'string'
+                },
+                {
+                    name: 'MM_iMenuLevel',
+                    type: 'string'
+                },
+                {
+                    name: 'MM_iParentID',
+                    type: 'string'
+                },
+                {
+                    name: 'MM_vURL',
+                    type: 'string'
+                },
+                {
+                    name: 'MM_vIcon',
+                    type: 'string'
+                },
+                {
+                    name: 'MM_iOrganization',
+                    type: 'string'
+                },
+                {
+                    name: 'MM_vCreatedby',
+                    type: 'string'
+                },
+                {
+                    name: 'MM_dCreatedDate',
+                    type: 'string'
+                },
+                {
+                    name: 'MM_vUpdatedBy',
+                    type: 'string'
+                },
+            ],
+            id: 'id',
+            url: url
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#Grid").jqxGrid({
+            theme: 'ui-sunny',
+            width: '100%',
+            height: '460px',
+            source: dataAdapter,
+            columnsresize: true,
+            pageable: true,
+            enabletooltips: false,
+            pagermode: 'simple',
+            enabletooltips: true,
+            showfilterrow: true,
+            filterable: true,
+            pagesize: 15,
+            columns: [{
+                text: 'Id',
+                datafield: 'MM_iId',
+                width: '100px',
+                hidden: true
+            },
+                {
+                    text: 'Module',
+                    datafield: 'MM_vModule'
+                },
+                {
+                    text: 'Menu Name',
+                    datafield: 'MM_vMenu_Name',
+                    width: '15%'
+                },
+                {
+                    text: 'Menu Order',
+                    datafield: 'MM_iMenu_Order',
+                    width: '11%'
+                },
+                {
+                    text: 'MenuLevel',
+                    datafield: 'MM_iMenuLevel',
+                    width: '11%'
+                },
+                {
+                    text: 'ParentID',
+                    datafield: 'MM_iParentID',
+                    width: '11%',
+                    hidden: true
+                },
+                {
+                    text: 'URL',
+                    datafield: 'MM_vURL',
+                    width: '11%'
+                },
+                {
+                    text: 'Icon',
+                    datafield: 'MM_vIcon',
+                    width: '11%'
+                },
+                {
+                    text: 'Organization',
+                    datafield: 'MM_iOrganization',
+                    width: '11%'
+                },
+                {
+                    text: 'Edit',
+                    datafield: 'Edit',
+                    columntype: 'button',
+                    width: '50px',
+                    cellsrenderer: function () {
+                        return "Edit";
+                    },
+                    buttonclick: function (row) {
+                        var dataRecord = $("#Grid").jqxGrid('getrowdata', row);
+                        ID = dataRecord.MM_iId;
+                        var url = "Pr_Fetch_T_Setting_Menu_Master_ByID?ID=" + ID;
+                        var source = {
+                            datatype: "json",
+                            datafields: [{
+                                name: 'MM_iId',
+                                type: 'string'
+                            },
+                                {
+                                    name: 'MM_vModule',
+                                    type: 'string'
+                                },
+                                {
+                                    name: 'MM_vMenu_Name',
+                                    type: 'string'
+                                },
+                                {
+                                    name: 'MM_iMenu_Order',
+                                    type: 'string'
+                                },
+                                {
+                                    name: 'MM_iMenuLevel',
+                                    type: 'string'
+                                },
+                                {
+                                    name: 'MM_iParentID',
+                                    type: 'string'
+                                },
+                                {
+                                    name: 'MM_vURL',
+                                    type: 'string'
+                                },
+                                {
+                                    name: 'MM_vIcon',
+                                    type: 'string'
+                                },
+                                {
+                                    name: 'MM_iOrganization',
+                                    type: 'string'
+                                },
+                                {
+                                    name: 'MM_vCreatedby',
+                                    type: 'string'
+                                },
+                                {
+                                    name: 'MM_dCreatedDate',
+                                    type: 'string'
+                                },
+                            ],
+                            id: 'id',
+                            url: url
+                        };
+                        var dataAdapter_per = new $.jqx.dataAdapter(source, {
+                            contentType: 'application/json; charset=utf-8',
+                            loadComplete: function () {
+                                var length = dataAdapter_per.records.length;
+                                var records = dataAdapter_per.records;
+                                var record = records[0];
+                                $('#MM_iId').val(record.MM_iId);
+                                $('#MM_vModule').val(record.MM_vModule);
+                                $('#MM_vMenu_Name').val(record.MM_vMenu_Name);
+                                $('#MM_iMenu_Order').val(record.MM_iMenu_Order);
+                                $('#MM_iMenuLevel').val(record.MM_iMenuLevel);
+                                Load_Data();
+                                $('#MM_iParentID').val(record.MM_iParentID);
+                                $('#MM_vURL').val(record.MM_vURL);
+                                $('#MM_vIcon').val(record.MM_vIcon);
+                                $('#MM_iOrganization').val(record.MM_iOrganization);
+                                $("#btn_save_label").text('Update');
+                                $('#myModal').modal('show');
+                            },
+                            error: function (xhr, status, error) {
+                                alert(JSON.stringify(xhr));
+                            }
+                        })
+                        dataAdapter_per.dataBind();
+                    }
+                },
+                {
+                    text: 'Delete',
+                    datafield: 'Delete',
+                    width: '65px',
+                    columntype: 'button',
+                    cellsrenderer: function () {
+                        return "Delete";
+                    },
+                    buttonclick: function (row) {
+                        var dataRecord = $("#Grid").jqxGrid('getrowdata', row);
+                        var id = dataRecord.UM_iID;
+                        var a = confirm("Are you sure want to delete press OK");
+                        if (a == true) {
+                            $.ajax({
+                                type: 'POST',
+                                contentType: "application/json; charset=utf-8",
+                                url: 'Pr_Delete_T_Setting_Menu_Master',
+                                data: "{'ID':'" + dataRecord.MM_iId + "'}",
+                                async: false,
+                                success: function (response) {
+                                    $("#Grid").jqxGrid('updatebounddata');
+                                    alert('Recode Deleted Success');
+                                },
+                                error: function () {
+                                    console.log('there is some error');
+                                }
+                            });
+                        }
+                    }
+                }
+            ]
+        });
+
+        $('#form1').jqxValidator({
+            hintType: 'label',
+            animationDuration: 2,
+            rules: [
+
+         {
+             input: '#MM_iMenu_Order',
+             message: 'Menu Order Required..!',
+             action: 'keyup, blur',
+             rule:
+                          function (input) {
+                              if ($("#MM_iMenu_Order").val() == "") return false; else return true;
+                          },
+             focus: true
+         }, {
+             input: '#MM_vModule',
+             message: 'Please choose Module Name',
+             action: 'change, keyup, blur',
+             focus: true,
+             rule: function () {
+                 var selectedIndexSection = $('#MM_vModule').jqxDropDownList('selectedIndex');
+                 var result = selectedIndexSection >= 0;
+                 return result;
+             }
+         },
+          {
+              input: '#MM_iMenuLevel',
+              message: 'Please choose MenuLevel',
+              action: 'change, keyup, blur',
+              focus: true,
+              rule: function () {
+                  var selectedIndexSection = $('#MM_iMenuLevel').jqxDropDownList('selectedIndex');
+                  var result = selectedIndexSection >= 0;
+                  return result;
+              }
+          },
+           {
+               input: '#MM_iParentID',
+               message: 'Please choose Parent Menu',
+               action: 'change, keyup, blur',
+               focus: true,
+               rule: function () {
+                   var selectedIndexSection = $('#MM_iParentID').jqxDropDownList('selectedIndex');
+                   var result = selectedIndexSection >= 0;
+                   return result;
+               }
+           }, {
+               input: '#MM_vURL',
+               message: 'URL   Required..!',
+               action: 'keyup, blur',
+               rule: 'required',
+               focus: true
+             }, {
+                 input: '#MM_vIcon',
+                 message: 'Icon  Required..!',
+                 action: 'keyup, blur',
+                 rule: 'required',
+                 focus: true
+             }, {
+                 input: '#MM_vMenu_Name',
+                 message: ' Menu Name  Required..!',
+                 action: 'keyup, blur',
+                 rule: 'required',
+                 focus: true
+             }
+            ]
+        });
+        var flag = false;
+        $('#form1').on('validationSuccess', function (event) {
+            flag = true;
+        });
+
+        $("#btn_Save").click(function () {
+            $('#form1').jqxValidator('validate');
+            if (flag == true) {
+                if ($("#btn_save_label").text() == 'Save') {
+                    save();
+                } else {
+                    Update();
+                }
+                flag = false;
+            }
+        });
+
+        function save() {
+            $.ajax({
+                type: 'POST',
+                contentType: "application/json; charset=utf-8",
+                url: 'Pr_Insert_T_Setting_Menu_Master',
+                data: "{'MM_vModule':'" + $('#MM_vModule').val() +
+                    "', 'MM_vMenu_Name':'" + $('#MM_vMenu_Name').val() +
+                    "', 'MM_iMenu_Order':'" + $('#MM_iMenu_Order').val() +
+                    "', 'MM_iMenuLevel':'" + $('#MM_iMenuLevel').val() +
+                    "', 'MM_iParentID':'" + $('#MM_iParentID').val() +
+                    "', 'MM_vURL':'" + $('#MM_vURL').val() +
+                    "', 'MM_vIcon':'" + $('#MM_vIcon').val() +
+                    "', 'MM_iOrganization':'" + ORG_ID+
+                    "', 'MM_vCreatedby':'" + User +
+                    "'}",
+                async: false,
+                success: function (response) {
+                    if (response == 'True') {
+                        alert("Record Saved Successfully...!");
+                        $("#Grid").jqxGrid('updatebounddata');
+                        Clear();
+                        $('#myModal').modal('hide');
+                    } else {
+                        alert(response);
+                    }
+                },
+                error: function () {
+                    console.log('there is some error');
+                }
+            });
+        }
+
+        function Update() {
+            $.ajax({
+                type: 'POST',
+                contentType: "application/json; charset=utf-8",
+                url: 'Pr_update_T_Setting_Menu_Master',
+                data: "{'MM_iId':'" + ID +
+                    "', 'MM_vModule':'" + $('#MM_vModule').val() +
+                    "', 'MM_vMenu_Name':'" + $('#MM_vMenu_Name').val() +
+                    "', 'MM_iMenu_Order':'" + $('#MM_iMenu_Order').val() +
+                    "', 'MM_iMenuLevel':'" + $('#MM_iMenuLevel').val() +
+                    "', 'MM_iParentID':'" + $('#MM_iParentID').val() +
+                    "', 'MM_vURL':'" + $('#MM_vURL').val() +
+                    "', 'MM_vIcon':'" + $('#MM_vIcon').val() +
+                    "', 'MM_iOrganization':'" + ORG_ID +
+                    "', 'MM_vUpdatedBy':'" + User +
+                    "'}",
+                async: false,
+                success: function (response) {
+                    if (response == "True") {
+                        alert("Record Updated Successfully...!");
+                        $("#btn_save_label").text('Save');
+                        $("#Grid").jqxGrid('updatebounddata');
+                        $('#myModal').modal('hide');
+                        Clear();
+                    }
+                    else {
+                        alert(response);
+                    }
+                },
+                error: function () {
+                    console.log('there is some error');
+                }
+            });
+        }
+
+        function Clear() {
+            $('#MM_vModule').val('');
+            $('#MM_vMenu_Name').val('');
+            $('#MM_iMenu_Order').val('');
+            $('#MM_iMenuLevel').jqxDropDownList({ selectedIndex: -1 });
+            $('#MM_iParentID').jqxDropDownList({ selectedIndex: -1 });
+            $('#MM_vURL').val('');
+            $('#MM_vIcon').val('')
+            $("#btn_save_label").text('Save');
+            flag = false;
+        }
+        $("#btn_AddNew").click(function () {
+            $("#btn_save_label").text('Save');
+            Clear();
+        })
+        $("#sidebar-collapse").click(function () {
+            $("#Grid").jqxGrid('updatebounddata');
+        });
+        $("#btn_Clear").click(function () {
+            Clear();
+        })
+        $("#btn_Refresh").click(function () {
+            $("#Grid").jqxGrid('updatebounddata');
+        })
+        $("#btn_Excel").click(function () { })
+        $("#btn_Pdf").click(function () { })
+        $("#btn_Chart").click(function () { })
+        $("#btn_Help").click(function () { })
+    });
+</script>
+
+
+
+    <div class="content-wrapper">
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12" style="padding:5px;  padding-top:0px">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">User Master</h3>
+                        <div class="box-tools pull-right">
+                         <button type="button" id="btn_AddNew" title="Add New" data-rel="tooltip" class="btn btn-white btn-pink btn-sm" data-toggle="modal" data-target="#myModal" style="padding:5px"><span class='fa fa fa-plus-square  bigger-130 green'></span></button>
+                    <button type="button" id="btn_Refresh" title="Refresh" data-rel="tooltip" class="btn btn-white btn-pink btn-sm" style="padding:5px"><span class='fa fa-refresh bigger-130 vilote'></span></button>
+                    <button type="button" id="btn_Excel" title="Export to Excel" data-rel="tooltip" class="btn btn-white btn-danger btn-sm" style="padding:5px"><span class='fa fa-file-excel-o bigger-130 green'></span></button>
+                    <button type="button" id="btn_Pdf" title="Export to Pdf" data-rel="tooltip" class="btn btn-white btn-yellow btn-sm" style="padding:5px"><span class='fa fa-file-pdf-o bigger-130 red'> </span></button>
+                          </div>
+                        <!-- /.nav-search -->
+                    </div>
+
+    <div class="box-bodyt">
+        <div class="col-md-12" style="padding-left:0px; padding-right:0px">
+            <div id="Grid"></div>
+        </div>
+        
+    </div>
+</div>
+                </div>
+            </div>
+        </section>
+        </div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="col-xs-12 col-sm-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Menu Master <span class="pull-right ">
+  <a href="#"   data-dismiss="modal" aria-label="Close">
+  <i class="ace-icon fa fa-times"></i>
+ </a>
+ </span> </h3>
+                </div>
+                <div class="panel-body">
+                    <form class="form-horizontal" role="form" id="form1">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1"><Span CLASS="star">*</Span> Module </label>
+                            <div class="col-sm-7">
+                                <div id="MM_vModule"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1"><Span CLASS="star">*</Span> Menu Name </label>
+                            <div class="col-sm-7">
+                                <input id="MM_vMenu_Name" type="text" placeholder="Menu Name" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1"><Span CLASS="star">*</Span> Menu Order </label>
+                            <div class="col-sm-7">
+                                <input id="MM_iMenu_Order" type="text" placeholder="Menu Order" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1"><Span CLASS="star">*</Span> MenuLevel </label>
+                            <div class="col-sm-7">
+                                <div id="MM_iMenuLevel" ></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1"><Span CLASS="star">*</Span>  Parent Menu </label>
+                            <div class="col-sm-7">
+                                <div id="MM_iParentID" ></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1"><Span CLASS="star">*</Span>  URL </label>
+                            <div class="col-sm-7">
+                                <input id="MM_vURL" type="text" placeholder="URL" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1"><Span CLASS="star">*</Span>  Icon </label>
+                            <div class="col-sm-7">
+                                <input id="MM_vIcon" type="text" placeholder="Icon" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="form-group hidden">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> Organization </label>
+                            <div class="col-sm-7">
+                                <input id="MM_iOrganization" type="text" placeholder="Organization" class="form-control" />
+                            </div>
+                        </div>
+                    </form>
+                    <div class="col-sm-5"></div>
+                    <p>
+                        <button id="btn_Save" class="btn btn-white btn-info btn-bold">
+ 						<i class="ace-icon fa fa-floppy-o bigger-120 blue"></i>
+ 			<span id="btn_save_label">Save</span>
+ </button>
+                        <button id="btn_Clear" class="btn btn-white btn-warning btn-bold">
+ 		<i class="ace-icon fa fa-trash-o bigger-120 orange"></i>
+Clear
+ </button>
+                        <button class="btn btn-white btn-default btn-round" data-dismiss="modal">
+ <i class="ace-icon fa fa-times red2"></i>
+ Close
+ </button>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

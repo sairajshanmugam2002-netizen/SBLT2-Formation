@@ -1,0 +1,859 @@
+﻿@{
+    ViewBag.Title = "MVRLA";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var ID = 0;
+        var User = sessionStorage.getItem("user");
+
+        var source = ['A', 'B', 'C'];
+            $("#mv_Shift").jqxComboBox({ selectedIndex: -1, source: source, width: '100%', height: '30' });
+
+        var url = "../../Transaction/pr_fetch_BatteryTypeCombos"//?ID=" + User;
+        var Source =
+        {
+            datatype: "json",
+            datafields: [
+                { name: 'RGV_iRG_ID', type: 'string' },
+                { name: 'RGV_vDesciption', type: 'string' }
+            ],
+            id: 'id',
+            url: url
+        };
+        var adapter = new $.jqx.dataAdapter(Source);
+        $("#mv_BatteryType").jqxComboBox({ selectedIndex: -1, source: adapter, displayMember: "RGV_vDesciption", valueMember: "RGV_vDesciption", width: '100%', height: '30' });
+
+        var url = "../../Transaction/pr_fetch_ReadingOperatorCombos"//?ID=" + User;
+        var Source =
+        {
+            datatype: "json",
+            datafields: [
+                { name: 'RGV_iRG_ID', type: 'string' },
+                { name: 'RGV_vDesciption', type: 'string' }
+            ],
+            id: 'id',
+            url: url
+        };
+        var adapter = new $.jqx.dataAdapter(Source);
+        $("#mv_ReadingOperator").jqxComboBox({ selectedIndex: -1, source: adapter, displayMember: "RGV_vDesciption", valueMember: "RGV_vDesciption", width: '100%', height: '30' });
+
+        var url = "../../Transaction/pr_fetch_BankNoCombos"//?ID=" + User;
+        var Source =
+        {
+            datatype: "json",
+            datafields: [
+                { name: 'RGV_iRG_ID', type: 'string' },
+                { name: 'RGV_vDesciption', type: 'string' }
+            ],
+            id: 'id',
+            url: url
+        };
+        var adapter = new $.jqx.dataAdapter(Source);
+        $("#mv_BankNo").jqxComboBox({ selectedIndex: -1, source: adapter, displayMember: "RGV_vDesciption", valueMember: "RGV_vDesciption", width: '100%', height: '30' });
+
+        var url = "../../Transaction/pr_fetch_OperatorCombos"//?ID=" + User;
+        var Source =
+        {
+            datatype: "json",
+            datafields: [
+                { name: 'RGV_iRG_ID', type: 'string' },
+                { name: 'RGV_vDesciption', type: 'string' }
+            ],
+            id: 'id',
+            url: url
+        };
+        var adapter = new $.jqx.dataAdapter(Source);
+        $("#mv_FillingOperator").jqxComboBox({ selectedIndex: -1, source: adapter, displayMember: "RGV_vDesciption", valueMember: "RGV_vDesciption", width: '100%', height: '30' });
+
+        var url = "../../Transaction/pr_fetch_LineCombos"//?ID=" + User;
+        var Source =
+        {
+            datatype: "json",
+            datafields: [
+                { name: 'RGV_iRG_ID', type: 'string' },
+                { name: 'RGV_vDesciption', type: 'string' }
+            ],
+            id: 'id',
+            url: url
+        };
+        var adapter = new $.jqx.dataAdapter(Source);
+        $("#mv_FillingLine").jqxComboBox({ selectedIndex: -1, source: adapter, displayMember: "RGV_vDesciption", valueMember: "RGV_vDesciption", width: '100%', height: '30' });
+
+        var url = "../../Transaction/pr_fetch_ShiftEngineerCombos"//?ID=" + User;
+        var Source =
+        {
+            datatype: "json",
+            datafields: [
+                { name: 'RGV_iRG_ID', type: 'string' },
+                { name: 'RGV_vDesciption', type: 'string' }
+            ],
+            id: 'id',
+            url: url
+        };
+        var adapter = new $.jqx.dataAdapter(Source);
+        $("#mv_ShiftEngineer").jqxComboBox({ selectedIndex: -1, source: adapter, displayMember: "RGV_vDesciption", valueMember: "RGV_vDesciption", width: '100%', height: '30' });
+
+        var url = "../../Transaction/pr_fetch_InspectorCombos"//?ID=" + User;
+        var Source =
+        {
+            datatype: "json",
+            datafields: [
+                { name: 'RGV_iRG_ID', type: 'string' },
+                { name: 'RGV_vDesciption', type: 'string' }
+            ],
+            id: 'id',
+            url: url
+        };
+        var adapter = new $.jqx.dataAdapter(Source);
+        $("#mv_QAInspector").jqxComboBox({ selectedIndex: -1, source: adapter, displayMember: "RGV_vDesciption", valueMember: "RGV_vDesciption", width: '100%', height: '30' });
+
+        var url = "../../Transaction/pr_fetch_SupervisorCombos"//?ID=" + User;
+        var Source =
+        {
+            datatype: "json",
+            datafields: [
+                { name: 'RGV_iRG_ID', type: 'string' },
+                { name: 'RGV_vDesciption', type: 'string' }
+            ],
+            id: 'id',
+            url: url
+        };
+        var adapter = new $.jqx.dataAdapter(Source);
+        $("#mv_PRDSupervisior").jqxComboBox({ selectedIndex: -1, source: adapter, displayMember: "RGV_vDesciption", valueMember: "RGV_vDesciption", width: '100%', height: '30' });
+
+        var url = "../../Transaction/pr_fetch_CKTCombos"//?ID=" + User;
+        var Source =
+        {
+            datatype: "json",
+            datafields: [
+                { name: 'RGV_iRG_ID', type: 'string' },
+                { name: 'RGV_vDesciption', type: 'string' }
+            ],
+            id: 'id',
+            url: url
+        };
+        var adapter = new $.jqx.dataAdapter(Source);
+        $("#mv_CKTNo").jqxComboBox({ selectedIndex: -1, source: adapter, displayMember: "RGV_vDesciption", valueMember: "RGV_vDesciption", width: '100%', height: '30' });
+
+        var url = "../../Transaction/pr_fetch_TubCombos"//?ID=" + User;
+        var Source =
+        {
+            datatype: "json",
+            datafields: [
+                { name: 'RGV_iRG_ID', type: 'string' },
+                { name: 'RGV_vDesciption', type: 'string' }
+            ],
+            id: 'id',
+            url: url
+        };
+        var adapter = new $.jqx.dataAdapter(Source);
+        $("#mv_TubNo").jqxComboBox({ selectedIndex: -1, source: adapter, displayMember: "RGV_vDesciption", valueMember: "RGV_vDesciption", width: '100%', height: '30' });
+
+        $("#mv_FillingStartTime").on('change', function (event) {
+            debugger
+            if (Date.parse($("#mv_FillingStartTime").val()) > Date.parse($("#mv_FillingEndTime").val())) {
+                $.toaster({ priority: 'danger', title: 'Notice', message: "Invalid Date Range" });
+                $("#mv_FillingStartTime").val("");
+            }
+            //if ($("#In_Time").val() != '') {
+            //    $("#btn_Save").removeAttr("disabled");
+            //}
+        });
+
+        $("#mv_FillingEndTime").on('change', function (event) {
+            debugger
+            if (Date.parse($("#mv_FillingStartTime").val()) > Date.parse($("#mv_FillingEndTime").val())) {
+                $.toaster({ priority: 'danger', title: 'Notice', message: "Invalid Date Range" });
+                $("#mv_FillingEndTime").val("");
+            }
+            //if ($("#Out_Time").val() != '') {
+            //    $("#btn_SaveOut").removeAttr("disabled");
+            //}
+        });
+
+        //$('#mv_Date').on('select', function (event) {
+        //    debugger
+        //    var args = event.args;
+        //    if (args) {
+        //        var item = args.item;
+        //        var originalItem = item.originalItem.mm_ID;
+        //    }
+        //    Bind(originalItem);
+        //    //Bind1(originalItem);
+        //    //Bind3(originalItem);
+        //});
+
+        //Bind(0);
+
+        function Bind(ID) {
+            var url = "../../Transaction/pr_FetchProductDetails?ID=" + ID;
+            var Source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'mm_ID', type: 'string' }, { name: 'mm_MaterialCode', type: 'string' },
+                    { name: 'mm_CustomerName', type: 'string' }, { name: 'mm_Location', type: 'string' },
+                    { name: 'mm_Model', type: 'string' },
+                ],
+                id: 'id',
+                url: url
+            };
+            var dataAdapter_per = new $.jqx.dataAdapter(Source, {
+                contentType: 'application/json; charset=utf-8',
+                loadComplete: function () {
+                    var length = dataAdapter_per.records.length;
+                    var records = dataAdapter_per.records;
+                    var record = records[0];
+                    $('#mv_NoOfCells').val(record.mm_MaterialCode); $('#mv_CDPassedQty').val(record.mm_CustomerName);
+                    $('#mv_AcidSPG').val(record.mm_Location); $('#mv_FillingStartTime').val(record.mm_Model);
+                },
+                error: function (xhr, status, error) {
+                    alert(JSON.stringify(xhr));
+                }
+            })
+            dataAdapter_per.dataBind();
+        }
+
+        //Bind3(0);
+
+        //function Bind3(ID) {
+        //var url = "../../Transaction/pr_FetchSource";//?ID=" + ID;
+        //    var Source =
+        //    {
+        //        datatype: "json",
+        //        datafields: [
+        //            //{ name: 'sm_ID', type: 'string' },
+        //            { name: 'sm_Source', type: 'string' }
+        //        ],
+        //        id: 'id',
+        //        url: url
+        //    };
+        //    var adapter = new $.jqx.dataAdapter(Source);
+        //$("#mr_Source").jqxComboBox({ selectedIndex: -1, source: adapter, displayMember: "sm_Source", valueMember: "sm_Source", width: '100%', height: '30' });
+        //}
+
+        //Bind1(0);
+
+        function Bind1(ID) {
+            debugger
+            var url = "../../Transaction/pr_FetchSupplierName?ID=" + ID;
+            var Source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'sm_ID', type: 'string' },
+                    { name: 'sm_Supplier', type: 'string' }
+                ],
+                id: 'id',
+                url: url
+            };
+            var adapter = new $.jqx.dataAdapter(Source);
+            $("#mr_SupplierName").jqxComboBox({ selectedIndex: -1, source: adapter, displayMember: "sm_Supplier", valueMember: "sm_ID", width: '100%', height: '30' });
+        }
+
+        //$('#mr_SupplierName').on('select', function (event) {
+        //    debugger
+        //    var args = event.args;
+        //    if (args) {
+        //        var item = args.item;
+        //        var originalItem = item.originalItem.sm_ID;
+        //    }
+        //    Bind2(originalItem);
+        //});
+
+        //Bind2(0);
+
+        function Bind2(ID) {
+            debugger
+            var url = "../../Transaction/pr_FetchSupplierApproval?ID=" + ID;
+            var Source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'sm_ID', type: 'string' },
+                    { name: 'sm_ApprovedSupplier', type: 'string' },
+                ],
+                id: 'id',
+                url: url
+            };
+            var dataAdapter_per = new $.jqx.dataAdapter(Source, {
+                contentType: 'application/json; charset=utf-8',
+                loadComplete: function () {
+                    var length = dataAdapter_per.records.length;
+                    var records = dataAdapter_per.records;
+                    var record = records[0];
+                    if (record.sm_ApprovedSupplier == "yes" || record.sm_ApprovedSupplier == "Yes") {
+                        //return '<span style="margin: 4px; color: #ff0000;">' + $('#mr_ApprovedSource').val(record.sm_ApprovedSupplier); + '</span>';
+                        $('#mr_ApprovedSource').css('color', '#15c40c');
+                        $('#mr_ApprovedSource').val(record.sm_ApprovedSupplier);
+                    }
+                    if (record.sm_ApprovedSupplier == "No") {
+                        //return '<span style="margin: 4px; color: #15c40c;">' + $('#mr_ApprovedSource').val(record.sm_ApprovedSupplier); + '</span>';
+                        $('#mr_ApprovedSource').css('color', '#ff0000');
+                        $('#mr_ApprovedSource').val(record.sm_ApprovedSupplier);
+                    }
+                    if (record.sm_ApprovedSupplier == "Trial") {
+                        //return '<span style="margin: 4px; color: #15c40c;">' + $('#mr_ApprovedSource').val(record.sm_ApprovedSupplier); + '</span>';
+                        $('#mr_ApprovedSource').css('color', '#fcb80a');
+                        $('#mr_ApprovedSource').val(record.sm_ApprovedSupplier);
+                    }
+                    //$('#mr_ApprovedSource').val(record.sm_ApprovedSupplier);
+                },
+                error: function (xhr, status, error) {
+                    alert(JSON.stringify(xhr));
+                }
+            })
+            dataAdapter_per.dataBind();
+        }
+
+        getGrid();
+        function getGrid() {
+            var url = "Pr_Fetch_MVRLA";
+            var source = {
+                datatype: "json",
+                datafields: [{ name: 'mv_BatteryType', type: 'string' }, { name: 'mv_FillingLine',type: 'string'},
+                    { name: 'mv_BankNo', type: 'string' }, { name: 'mv_Date', type: 'string' }, { name: 'mv_Shift', type: 'string' },
+                    { name: 'mv_NoOfCells', type: 'string' }, { name: 'mv_FillingStartTime',type: 'string'},
+                    { name: 'mv_FillingEndTime', type: 'string' }, { name: 'mv_CDPassedQty',type: 'string'},
+                    { name: 'mv_CDFailQty', type: 'string' }, { name: 'mv_AcidSPG', type: 'string' },
+                    { name: 'mv_AcidVolume', type: 'string' }, { name: 'mv_TubNo', type: 'string' }, { name: 'mv_ReadingOperator', type: 'string' },
+                    { name: 'mv_CKTNo', type: 'string' }, { name: 'mv_CellShortQty', type: 'string' },
+                    { name: 'mv_Temperature', type: 'string' }, { name: 'mv_PRDSupervisior', type: 'string' },
+                    { name: 'mv_FillingOperator', type: 'string' }, { name: 'mv_QAInspector', type: 'string' },
+                    { name: 'mv_ShiftEngineer', type: 'string' }, { name: 'mv_QRCode', type: 'string' }, { name: 'mv_ID', type: 'string' },
+                ],
+                id: 'id',
+                url: url
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            $("#Grid").jqxGrid({theme: 'ui-sunny',width: '100%',height: '480px',source: dataAdapter,columnsresize: true,
+                pageable: true,enabletooltips: false,pagermode: 'simple',selectionmode: 'checkbox',enabletooltips: true,
+                showfilterrow: true,filterable: true,pagesize: 14,
+                columns: [
+                    //{text: 'Edit',datafield: 'Edit',filterable: false,width: 40,
+                    //cellsrenderer: function () {
+                    //    return '<div style="width: 100%"><img src="../../../img/Edit1.png" style="margin-left: 25%"/></div>';
+                    //}
+                    //},
+                    //{text: 'Print',datafield: 'Print',filterable: false,width: 40,
+                    //    cellsrenderer: function () {
+                    //        return '<div style="width: 100%"><img src="../../../img/download.png" style="margin-left: 25%"/></div>';
+                    //    }
+                    //},
+                //{
+                //    text: 'Del',
+                //    datafield: 'delete',
+                //    filterable: false,
+                //    width: 40,
+                //    cellsrenderer: function () {
+                //        return '<div style="width: 100%"><img src="../../../img/del.png" style="margin-left: 25%" /></div>';
+                //    }
+                //},
+                    { text: 'id', datafield: 'mv_ID', width: '100px', hidden: true },{ text: 'QRCode', datafield: 'mv_QRCode', width: '8%' },
+                    { text: 'Battery type', datafield: 'mv_BatteryType', width: '10%' },{ text: 'Filling Line', datafield: 'mv_FillingLine', width: '10%' },
+                    { text: 'Bank No', datafield: 'mv_BankNo', width: '10%' }, { text: 'Date', datafield: 'mv_Date',width: '10%'},
+                    { text: 'No Of Cells', datafield: 'mv_NoOfCells', width: '12%' }, { text: 'Start Time', datafield: 'mv_FillingStartTime',width: '10%'},
+                    { text: 'End Time', datafield: 'mv_FillingEndTime', width: '15%' }, //{ text: 'Passed Qty', datafield: 'mv_CDPassedQty', width: '8%' },
+                    //{ text: 'Fail Qty', datafield: 'mv_CDFailQty', width: '8%' },
+                    { text: 'Acid SPG', datafield: 'mv_AcidSPG', width: '8%' },
+                    { text: 'Acid Volume', datafield: 'mv_AcidVolume', width: '8%' }, { text: 'Tub No', datafield: 'mv_TubNo', width: '8%' },
+                    { text: 'CKT No', datafield: 'mv_CKTNo', width: '8%' }, { text: 'Cell Short Qty', datafield: 'mv_CellShortQty', width: '8%' },
+                    { text: 'Temperature', datafield: 'mv_Temperature', width: '8%' }, { text: 'PRD Supervisor', datafield: 'mv_PRDSupervisior', width: '8%' },
+                    { text: 'Operator', datafield: 'mv_FillingOperator', width: '8%' }, { text: 'QAInspector', datafield: 'mv_QAInspector', width: '8%' },
+                    { text: 'Shift Engg', datafield: 'mv_ShiftEngineer', width: '8%' }, { text: 'Shift', datafield: 'mv_Shift', width: '8%' }, 
+                    { text: 'Reading Operator', datafield: 'mv_ReadingOperator', width: '8%' }, 
+                ]
+            });
+        }
+        $("#Grid").on("cellclick", function (event) {
+            var column = event.args.column;
+            var rowindex = event.args.rowindex;
+            var columnindex = event.args.columnindex;
+            //if (columnindex == 1) {
+            //    editrow = rowindex;
+            //    var dataRecord = $("#Grid").jqxGrid('getrowdata', editrow);
+            //    ID = dataRecord.mv_ID;
+            //    $('#mv_QRCode').val(dataRecord.mv_QRCode);
+            //    $('#mv_BatteryType').val(dataRecord.mv_BatteryType);
+            //    $('#mv_FillingLine').val(dataRecord.mv_FillingLine);
+            //    $('#blah1').attr('src', "../../" + dataRecord.TM_vDocumentLocation);
+            //    $('#mv_BankNo').val(dataRecord.mv_BankNo); $('#mv_Shift').val(dataRecord.mv_Shift);
+            //    $('#mv_Date').val(dataRecord.mv_Date); $('#mv_NoOfCells').val(dataRecord.mv_NoOfCells);
+            //    $('#mv_FillingStartTime').val(dataRecord.mv_FillingStartTime); $('#mv_FillingEndTime').val(dataRecord.mv_FillingEndTime);
+            //    $('#mv_CDPassedQty').val(dataRecord.mv_CDPassedQty); $('#mv_CDFailQty').val(dataRecord.mv_CDFailQty);
+            //    $('#mv_AcidSPG').val(dataRecord.mv_AcidSPG); $('#mv_AcidVolume').val(dataRecord.mv_AcidVolume);
+            //    $("#mv_TubNo").val(dataRecord.mv_TubNo);$('#mv_CKTNo').val(dataRecord.mv_CKTNo); $('#mv_CellShortQty').val(dataRecord.mv_CellShortQty);
+            //    $('#mv_Temperature').val(dataRecord.mv_Temperature); $('#mv_PRDSupervisior').val(dataRecord.mv_PRDSupervisior);
+            //    $('#mv_FillingOperator').val(dataRecord.mv_FillingOperator); $('#mv_QAInspector').val(dataRecord.mv_QAInspector);
+            //    $('#mv_ShiftEngineer').val(dataRecord.mv_ShiftEngineer);
+            //            $("#btn_save_label").text('Update');
+            //            $('#myModal').modal('show');
+            //    dataAdapter_per.dataBind();
+            //}
+            if (columnindex == 1) {
+                debugger
+                editrow = rowindex;
+                var selectedrows = $('#Grid').jqxGrid('getselectedrowindexes');
+                for (var i = 0; i < selectedrows.length; i++) {
+                    mv_QRCode = $('#Grid').jqxGrid('getcellvalue', selectedrows[i], "mv_BankNo");
+                    //var dataRecord = $("#Grid").jqxGrid('getrowdata', editrow);
+                    //var mv_QRCode = dataRecord.mv_QRCode;
+                    printpdf(mv_QRCode);
+                }
+            }
+        });
+
+        $('#Delete').click(function () {
+            debugger
+            var selectedrows = $('#Grid').jqxGrid('getselectedrowindexes');
+            if (selectedrows.length <= 0) {
+                alert('Please select row yoy want to Delete');
+                return;
+            }
+            else {
+                var a = confirm("Are you sure want to delete press OK");
+                if (a == true) {
+                    for (var i = 0; i < selectedrows.length; i++) {
+                        mv_ID = $('#Grid').jqxGrid('getcellvalue', selectedrows[i], "mv_ID");
+                        $.ajax({
+                            type: 'POST',
+                            contentType: "application/json; charset=utf-8",
+                            url: 'Pr_Delete_MVRLA',
+                            data: "{'ID':'" + mv_ID + "'}",
+                            async: false,
+                            success: function (response) {
+                                $("#Grid").jqxGrid('updatebounddata');
+                                alert('Record Deleted Successfully');
+                            },
+                            error: function () {
+                                console.log('there is some error');
+                            }
+                        });
+                    }
+                }
+                else {
+                    $('#Grid').jqxGrid('clearselection');
+                    return;
+                }
+            }
+        });
+
+        function printpdf(mv_QRCode) {
+            debugger
+            var url = ("../../Transaction/Pr_Fetch_MVRLA_PDF?FileName=Formation Log Sheet&Heading=Formation Log Sheet&Data=Pr_Fetch_MaterialReceipt_PDF " + "&mv_QRCode=" + mv_QRCode );
+            window.open(url, '_blank', '800', '700');        
+        }
+
+
+        $('#form1').jqxValidator({
+            hintType: 'label',
+            animationDuration: 2,
+            rules: [
+                {
+                input: '#mv_BatteryType',
+                message: 'Battery Type Required..!',
+                action: 'keyup, blur',
+                rule: 'required',
+                focus: true
+            },
+                //{
+                //    input: '#mr_Source',
+                //    message: 'Source Required..!',
+                //    action: 'keyup, blur',
+                //    rule: 'required',
+                //    focus: true
+                //},
+                //{
+                //    input: '#mv_CDPassedQty',
+                //    message: 'Material Code Required..!',
+                //    action: 'keyup',
+                //    rule: 'required',
+                //    focus: true
+                //},
+            ]
+        });
+        var flag = false;
+        var flag = false;
+        $('#form1').on('validationSuccess', function (event) {
+            flag = true;
+        });
+
+        $('#mv_QRCode').keypress(function (e) {
+            var flag = true;
+            if (e.keyCode == 13) {
+                var a = "false";
+                if ($('#mv_QRCode').val().length != 10) {
+                    alert("QRCode length exceeds more or less than 10");
+                    return;
+                }
+                else {
+                    $.ajax({
+                        type: "POST",
+                        url: "pr_Fetch_QRCode_Available?ID=" + $('#mv_QRCode').val(),
+                        dataType: "text",
+                        async: false,
+                        success: function (response) {
+                            a = response;
+                            //alert(a);
+                        }
+                    });
+                    if (a != "false") {
+                        alert("QR Code Already Scanned");
+                        $('#mv_QRCode').val("");
+                        $('#mv_QRCode').focus();
+                        return;
+                    }
+                    else {
+                        save();
+                    }
+                }
+            }
+        });
+
+
+        $("#btn_Save").click(function () {
+            debugger
+            $('#form1').jqxValidator('validate');
+            if (flag == true) {
+                if ($("#btn_save_label").text() == 'Save') {
+                    save();
+                } else {
+                    Update();
+                }
+                flag = false;
+            }
+        });
+
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#blah1').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $("#imgInp").change(function () {
+            readURL(this);
+        });
+
+        function save() {
+            var data = new FormData();
+            //var selectedIndexSection12 = $('#mv_BatteryType').jqxComboBox('selectedIndex');
+            //if (selectedIndexSection12 < 0) {
+            //    flag = false;
+            //    $("#mv_BatteryType").jqxComboBox('focus');
+            //    $.toaster({ priority: 'danger', title: 'Notice', message: "Please Select Product Name" });
+            //    return;
+            //}
+            //var selectedIndexSection13 = $('#mr_SupplierName').jqxComboBox('selectedIndex');
+            //if (selectedIndexSection13 < 0) {
+            //    flag = false;
+            //    $("#mr_SupplierName").jqxComboBox('focus');
+            //    $.toaster({ priority: 'danger', title: 'Notice', message: "Please Select Supplier Name" });
+            //    return;
+            //}
+            $.ajax({
+                url: "pr_insert_MVRLA??mv_Id=" + ID + "&mv_BatteryType=" + $('#mv_BatteryType').val() + "&mv_FillingLine=" + $('#mv_FillingLine').val() +
+                    "&mv_BankNo=" + $('#mv_BankNo').val() + "&mv_Date=" + $('#mv_Date').val() + "&mv_NoOfCells=" + $('#mv_NoOfCells').val() +
+                    "&mv_FillingStartTime=" + $('#mv_FillingStartTime').val() + "&mv_FillingEndTime=" + $('#mv_FillingEndTime').val() +
+                    "&mv_CDPassedQty=" + "" + "&mv_CDFailQty=" + "" + "&mv_AcidSPG=" + $('#mv_AcidSPG').val() + "&mv_ReadingOperator=" + $('#mv_ReadingOperator').val() +
+                    "&mv_AcidVolume=" + $('#mv_AcidVolume').val() + "&mv_TubNo=" + $('#mv_TubNo').val() + "&mv_CKTNo=" + $('#mv_CKTNo').val() +
+                    "&mv_CellShortQty=" + $('#mv_CellShortQty').val() + "&mv_Temperature=" + $('#mv_Temperature').val() + "&mv_PRDSupervisior=" + $('#mv_PRDSupervisior').val() +
+                    "&mv_FillingOperator=" + $('#mv_FillingOperator').val() + "&mv_QAInspector=" + $('#mv_QAInspector').val() + "&mv_Shift=" + $('#mv_Shift').val() +
+                    "&mv_ShiftEngineer=" + $('#mv_ShiftEngineer').val() + "&mv_QRCode=" + $('#mv_QRCode').val() + "&mv_User=" + User,
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: data,
+                async: false,
+                success: function (response) {
+                    if (response == 'True') {
+                        $.toaster({ priority: 'success', title: 'Notice', message: "Record Saved Successfully" });
+                        $('#blah1').attr('src', "../../");
+                        Clear();
+                    } else {
+                        $.toaster({ priority: 'danger', title: 'Notice', message: response });
+                    }
+                },
+                error: function (er) {
+                    alert(er.responseText);
+                }
+            });
+            getGrid();
+        }
+
+        function Update() {
+            var data = new FormData();
+            $.ajax({
+                url: "pr_update_MaterialReceipt?inv_Id=" + ID + "&mv_Date=" + $('#mv_Date').val() + "&mv_NoOfCells=" + $('#mv_NoOfCells').val() + "&mv_FillingStartTime=" + $('#mv_FillingStartTime').val() +
+                    "&mv_CDPassedQty=" + $('#mv_CDPassedQty').val() + "&mv_AcidSPG=" + $('#mv_AcidSPG').val() +
+                    "&mv_TubNo=" + $('#mv_TubNo').val() + "&inv_LabelCount=" + $('#inv_LabelCount').val() + "&mv_BatteryType=" + $('#mv_BatteryType').val() +
+                    "&mr_BE_No=" + $('#mr_BE_No').val() + "&mr_Place=" + $('#mr_Place').val() + "&mr_AvgWeight=" + $('#mr_AvgWeight').val() +
+                    "&mr_Lot_No=" + $('#mr_Lot_No').val() + "&mr_Source=" + $('#mr_Source').val() + "&mr_SupplierName=" + $('#mr_SupplierName').val() +
+                    "&mr_DOM=" + $('#mr_DOM').val() + "&mr_ApprovedSource=" + $('#mr_ApprovedSource').val() + "&mr_CreadtedBy=" + $('#mr_CreadtedBy').val() +
+                    "&mr_Remarks=" + $('#mr_Remarks').val(),
+               type: "POST",
+                processData: false,
+                contentType: false,
+                data: data,
+                async: false,
+                success: function (response) {
+                    if (response == 'True') {
+                        $.toaster({ priority: 'success', title: 'Notice', message: "Record Updated Successfully" });
+                        $("#Grid").jqxGrid('updatebounddata');
+                        Clear();
+                    } else {
+                        $.toaster({ priority: 'danger', title: 'Notice', message: response });
+                    }
+                },
+                error: function (er) {
+                    alert(er.responseText);
+                }
+            });
+        }
+
+        $("#inv_LabelCount").change(function () {
+            debugger
+            if ($('#inv_LabelCount').val() != "") {
+                $('#mr_AvgWeight').val(parseInt($('#mv_TubNo').val()) / parseInt($('#inv_LabelCount').val()))
+            }
+        });
+
+        $("#mv_TubNo").change(function () {
+            debugger
+            if ($('#mv_TubNo').val() != "") {
+                $('#mr_AvgWeight').val(parseInt($('#mv_TubNo').val()) / parseInt($('#inv_LabelCount').val()))
+            }
+        });
+
+        $('#Dep_Period').focusout(function (e) {
+            debugger
+            var d = $('#Dep_Period').val();
+            var iNum = parseInt(d);
+            var a = $('#Dep_date').jqxDateTimeInput('getDate');
+            a.setHours(0, 0, 0, 0);
+            var current = new Date(a);
+            current.setMonth(a.getMonth() + iNum);
+            $('#Dep_Maturitydate ').jqxDateTimeInput('setDate', new Date(current));
+        });
+
+        $("#btnApp").click(function () {
+            var url = ("../../Transaction/pr_print_application?FileName=Bond&Heading=Bond&Data=pr_print_bond " + "&mv_Date=" + $('#mv_Date').val());
+            window.open(url, '_blank', '800', '700');
+        })
+
+        function Clear() {
+            $('#mv_QRCode').val('');
+            $("#btn_save_label").text('Save');
+            $('#blah1').attr('src', "../../");
+            flag = false;
+        }
+
+        $("#Transactions").addClass("active");
+        $("#CHN_Inward").addClass("active");
+
+        $("#btn_AddNew").click(function () {
+            $("#btn_save_label").text('Save');
+            Clear();
+        })
+        $("#sidebar-collapse").click(function () {
+            $("#Grid").jqxGrid('updatebounddata');
+        });
+        $("#btn_Clear").click(function () {
+            Clear();
+        })
+        $("#btn_Refresh").click(function () {
+            $("#Grid").jqxGrid('updatebounddata');
+        })
+        $("#btn_Excel").click(function () {
+            window.open("../../Master/Export_To_Excel?FileName=Material_Receipt&Heading=Material Receipt&Data=Pr_Fetch_MaterialReceipt_Excel");
+        })
+        $("#btn_Pdf").click(function () { })
+        $("#btn_Chart").click(function () { })
+        $("#btn_Help").click(function () { })
+    });
+</script>
+
+<div class="content-wrapper">
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12" style="padding:5px;  padding-top:0px">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">MVRLA</h3>
+                        <div class="box-tools pull-right">
+                            @*<button type="button" id="btn_AddNew" title="Add New" data-rel="tooltip" class="btn btn-box-tool" data-toggle="modal" data-target="#myModal" style="padding:5px"><span class='fa fa fa-plus-square bigger-130 green'></span></button>*@
+                            <button type="button" id="btn_Refresh" title="Refresh" data-rel="tooltip" class="btn btn-box-tool" style="padding:5px"><span class='fa fa-refresh bigger-130 vilote'></span></button>
+                            <button type="button" id="btn_Excel" title="Export to Excel" data-rel="tooltip" class="btn btn-box-tool" style="padding:5px"><span class='fa fa-file-excel-o bigger-130 green'></span></button>
+                            @*<button type="button" id="btn_Pdf" title="Export to Pdf" data-rel="tooltip" class="btn btn-box-tool" style="padding:5px"><span class='fa fa-file-pdf-o bigger-130 red'></span></button>*@
+                        </div>
+                    </div>
+
+
+                    <div class="panel-body">
+                        <form class="form-horizontal" role="form" id="form1">
+                            <div class="col-md-12">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star">*</span>Battery Type</label>
+                                            <div id="mv_BatteryType"></div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star">*</span>Filling Line</label>
+                                            <div id="mv_FillingLine"></div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star">*</span>Bank No</label>
+                                            <div id="mv_BankNo"></div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Date</label>
+                                            <input id="mv_Date" type="datetime-local" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>No Of Cells</label>
+                                            <input id="mv_NoOfCells" type="text" placeholder="No Of Cells" class="form-control" />
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Filling Start Time</label>
+                                            <input id="mv_FillingStartTime" type="datetime-local" class="form-control" />
+                                        </div>
+                                        @*<div class="col-md-3">
+            <label control-label no-padding-right" for="form-field-1"> <span class="star"></span>CD Passed Qty</label>
+            <input id="mv_CDPassedQty" type="text" placeholder="CD Passed Qty" class="form-control" />
+        </div>*@
+                                        <div class="col-md-3">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Acid.SPG</label>
+                                            <input id="mv_AcidSPG" type="text" placeholder="Acid.SPG" class="form-control" />
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>TUB No</label>
+                                            <div id="mv_TubNo"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row">
+
+                                        <div class="col-md-3">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Filling End Time</label>
+                                            <input id="mv_FillingEndTime" type="datetime-local" class="form-control" />
+                                        </div>
+                                        @*<div class="col-md-3">
+            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>CD Fail Qty</label>
+            <input id="mv_CDFailQty" type="text" placeholder="CD Fail Qty" class="form-control" />
+        </div>*@
+                                        <div class="col-md-3">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Acid Volume</label>
+                                            <input id="mv_AcidVolume" type="text" placeholder="Acid Volume" class="form-control" />
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>CKT No</label>
+                                            <div id="mv_CKTNo"></div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Cell Short Qty</label>
+                                            <input id="mv_CellShortQty" type="text" placeholder="Cell Short Qty" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row">
+
+                                        <div class="col-md-3">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Temperature</label>
+                                            <input id="mv_Temperature" type="text" placeholder="Temperature" class="form-control" />
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>PRD Supervisor</label>
+                                            <div id="mv_PRDSupervisior"></div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>QA Inspector</label>
+                                            <div id="mv_QAInspector"></div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Filling Operator</label>
+                                            <div id="mv_FillingOperator"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row">
+
+                                        <div class="col-md-3">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Shift Engineer</label>
+                                            <div id="mv_ShiftEngineer"></div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Shift</label>
+                                            <div id="mv_Shift"></div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Reading Operator</label>
+                                            <div id="mv_ReadingOperator"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>QR Code</label>
+                                            <input id="mv_QRCode" type="text" placeholder="QR Code" class="form-control" />
+                                        </div>                                      
+                                    </div>
+                                </div>
+
+                            </div>
+                        </form>
+                        @*<div class="col-sm-5"></div>*@
+                        <p>
+                            <div class="col-md-12">
+                                <div class="col-md-6">
+                                    @*<button id="btn_Save" class="btn btn-white btn-info btn-bold">
+                                            <i class="ace-icon fa fa-floppy-o bigger-120 blue"></i>
+                                            <span id="btn_save_label">Save</span>
+                                        </button>*@
+                                    <button id="btn_Clear" class="btn btn-white btn-warning btn-bold">
+                                        <i class="ace-icon fa fa-trash-o bigger-120 orange"></i>
+                                        Clear
+                                    </button>
+                                    <button class="btn btn-white btn-default btn-round" data-dismiss="modal">
+                                        <i class="ace-icon fa fa-times red2"></i>
+                                        Close
+                                    </button>
+                                </div>
+                            </div>
+                        </p>
+                    </div>
+
+                    <div class="box-body">
+                        <div class="col-sm-4" style="max-width: 70px; padding-left: 0px; padding-right: 0px">
+                            <button type="button" id="Delete" style="width: 100px;background-color: red">Delete</button>
+                        </div>
+                        <div class="col-md-12" style="padding-left:0px; padding-right:0px">
+                            <div id="Grid"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+</div>
+
+
+
+
+
+

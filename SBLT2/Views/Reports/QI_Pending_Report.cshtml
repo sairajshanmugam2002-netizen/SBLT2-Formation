@@ -1,0 +1,293 @@
+﻿@{
+    ViewBag.Title = "QI_Pending_Report";
+}
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var ID = 0;
+        var User = sessionStorage.getItem("user");
+
+        $("#from_Date").jqxDateTimeInput({ width: '110px', height: '25px', formatString: 'dd-MMM-yyyy' });
+        $("#to_Date").jqxDateTimeInput({ width: '110px', height: '25px', formatString: 'dd-MMM-yyyy' });
+
+        getgrid();
+        function getgrid() {
+            var Rights = sessionStorage.getItem('rights');
+            var User = sessionStorage.getItem('Code');
+            var url = "";
+            if (Rights == 19) {
+                $("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+                $("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+
+                url = "pr_FetchQIPendingReport?from=" + $('#from_Date').val() + "&to=" + $('#to_Date').val();
+
+                $("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+                $("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+            }
+            else {
+                $("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+                $("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+
+                url = "pr_FetchQIPendingReport?from=" + $('#from_Date').val() + "&to=" + $('#to_Date').val();
+
+                $("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+                $("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+            }
+            var source = {
+                datatype: "json",
+                datafields: [{
+                    name: 'mr_MRC_No',
+                    type: 'string'
+                },
+                {
+                    name: 'mr_DOR',
+                    type: 'string'
+                    },
+                {
+                    name: 'mr_MaterialCode',
+                    type: 'string'
+                    },
+                    {
+                        name: 'mr_MaterialDescription',
+                        type: 'string'
+                    }, {
+                        name: 'Qty',
+                        type: 'string'
+                    },
+                {
+                    name: 'UOM',
+                    type: 'string'
+                },
+                {
+                    name: 'mr_SupplierName',
+                    type: 'string'
+                    }, {
+                    name: 'Pending Days',
+                        type: 'string'
+                    },
+                ],
+                id: 'id',
+                url: url
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            $("#Grid").jqxGrid({
+                theme: 'ui-sunny',
+                width: '100%',
+                autoheight: true,
+                source: dataAdapter,
+                columnsresize: true,
+                pageable: true,
+                enabletooltips: false,
+                pagermode: 'simple',
+                enabletooltips: true,
+                showfilterrow: true,
+                filterable: true,
+                pagesize: 14,
+                columns: [{
+                        text: 'Tag No',
+                        datafield: 'mr_MRC_No',
+                        width: '20%'
+                    },                   
+                    {
+                        text: 'DOR',
+                        datafield: 'mr_DOR',
+                        width: '20%'
+                    }, {
+                        text: 'Material Code',
+                        datafield: 'mr_MaterialCode',
+                        width: '20%'
+                    },
+                    {
+                        text: 'Material Description',
+                        datafield: 'mr_MaterialDescription',
+                        width: '18%',
+                    },
+                    {
+                        text: 'Qty',
+                        datafield: 'Qty',
+                        width: '20%'
+                }, {
+                    text: 'UOM',
+                        datafield: 'UOM',
+                        width: '20%',
+                    }, {
+                        text: 'Supplier',
+                        datafield: 'mr_SupplierName',
+                        width: '20%',
+                    }, {
+                        text: 'Pending Days',
+                        datafield: 'Pending Days',
+                        width: '20%',
+                    },
+                    //{
+                    //    text: 'Edit',
+                    //    datafield: 'Edit',
+                    //    filterable: false,
+                    //    width: 40,
+                    //    cellsrenderer: function () {
+                    //        return '<div style="width: 100%"><img src="../../../img/Edit1.png" style="margin-left: 25%" /></div>';
+                    //    }
+                    //},
+                    //{
+                    //    text: 'Del',
+                    //    datafield: 'delete',
+                    //    filterable: false,
+                    //    width: 40,
+                    //    cellsrenderer: function () {
+                    //        return '<div style="width: 100%"><img src="../../../img/del.png" style="margin-left: 25%" /></div>';
+                    //    }
+                    //},
+                ]
+            });
+        }
+
+        $("#btnshow").click(function () {
+            $('#myModal').modal('hide');
+            getgrid();
+        })
+
+        $("#Reports").addClass("active");
+        $("#QI_Pending_Report").addClass("active");
+
+        $("#sidebar-collapse").click(function () {
+            $("#Grid").jqxGrid('updatebounddata');
+        });
+        $("#btn_Clear").click(function () {
+            Clear();
+        })
+        $("#btn_Refresh").click(function () {
+            $("#Grid").jqxGrid('updatebounddata');
+        })
+        $("#btn_Excel").click(function () {
+            var from = $('#from_Date').val();
+            var to = $('#to_Date').val();
+            $("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+            $("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
+            window.open("../../Master/Export_To_Excel?FileName=Quality Inspection Pending Report&Heading=Material QI Report for the particular period from " + from + " to " +  to + "&Data=pr_FetchQIPendingReport_Excel '" + $('#from_Date').val() + "','" + $('#to_Date').val() + "'");
+            $("#from_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+            $("#to_Date").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
+        })
+
+        $("#Reports").addClass("active");
+        $("#QI_Pending_Report").addClass("active");
+
+        $("#btn_Pdf").click(function () { })
+        $("#btn_Chart").click(function () { })
+        $("#btn_Help").click(function () { })
+    });
+</script>
+
+
+<div class="content-wrapper">
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12" style="padding: 5px; padding-top: 0px">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">QI Pending Report</h3>
+                        <div class="box-tools pull-right">
+                            @*<button type="button" id="btn_AddNew" title="Add New" data-rel="tooltip" class="btn btn-box-tool" data-toggle="modal" data-target="#myModal" style="padding: 5px"><span class='fa fa fa-plus-square  bigger-130 green'></span></button>*@
+                            <button type="button" id="btn_Refresh" title="Refresh" data-rel="tooltip" class="btn btn-box-tool" style="padding: 5px"><span class='fa fa-refresh bigger-130 vilote'></span></button>
+                            <button type="button" id="btn_Excel" title="Export to Excel" data-rel="tooltip" class="btn btn-box-tool" style="padding: 5px"><span class='fa fa-file-excel-o bigger-130 green'></span></button>
+                            @*<button type="button" id="btn_Pdf" title="Export to Pdf" data-rel="tooltip" class="btn btn-box-tool" style="padding:5px"><span class='fa fa-file-pdf-o bigger-130 red'> </span></button>*@
+                        </div>
+                        <!-- /.nav-search -->
+                    </div>
+                    <div class="box-body">
+                        <form class="form-horizontal" role="form" id="form1">
+                            <div class="box-body">
+                                <div class="col-md-12" style="padding-left: 0px; padding-right: 0px">
+
+                                    <div class="col-sm-4" style="margin-top: 3px; max-width: 50px; padding-left: 6px; padding-right: 0px">
+                                        From&nbsp;:&nbsp;
+                                    </div>
+
+                                    <div class="col-sm-7" style="max-width: 200px; padding-right: 0px; padding-left: 3px">
+                                        <div id="from_Date"></div>
+                                    </div>
+
+                                    <div class="col-sm-4" style="padding-left: 0px; max-width: 30px; padding-right: 0px; margin-top: 3px; color: MenuText">
+                                        To&nbsp;:&nbsp;
+                                    </div>
+
+                                    <div class="col-sm-7" style="padding-left: 3px; max-width: 200px;">
+                                        <div id="to_Date"></div>
+                                    </div>
+
+
+                                    <div class="col-sm-4 " style="max-width: 200px; padding-left: 0px; padding-right: 0px">
+                                        <button type="button" id="btnshow" style="width: 100px"><span class="fa fa-search  "></span>Search</button>
+                                    </div>
+
+                                    @*<div class="col-sm-7" style="margin-top: 3px; max-width: 120px; padding-left: 0px; padding-right: 0px">
+                                            Total Amount&nbsp;:&nbsp;
+                                        </div>
+                                        <div class="col-sm-4" style="max-width: 200px; padding-right: 0px; padding-left: 3px">
+                                            <input type="text" id="total" />
+                                        </div>*@
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-12" style="padding-left: 0px; padding-right: 0px; padding-top: 10px">
+                        <div id="Grid"></div>
+                    </div>
+                </div>
+                @*<div class="modal fade  bd-example-modal-lg" id="myModal">
+                                        <div class="modal-dialog modal-lg">
+                                            <div>
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <h3 class="panel-title">
+                                                            Daily Collection Report <span class="pull-right ">
+                                                                <a href="#" data-dismiss="modal" aria-label="Close">
+                                                                    <i class="ace-icon fa fa-times"></i>
+                                                                </a>
+                                                            </span>
+                                                        </h3>
+                                                    </div>
+                                                    <div class="panel-body">
+                                                        <form class="form-horizontal" role="form" id="form1">
+                                                            <div class="col-md-8">
+                                                                <div class="col-md-12" style="padding-left: 0px; padding-right: 0px">
+
+                                                                    <div class="col-xs-6 col-sm-4 col-md-2 " style="margin-top: 3px; max-width: 50px; padding-left: 0px; padding-right: 0px">
+                                                                        From&nbsp;:&nbsp;
+                                                                    </div>
+
+                                                                    <div class="col-xs-6 col-sm-4 " style="max-width: 20px; padding-right: 0px; padding-left: 3px">
+                                                                        <div id="from_Date"></div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-md-12" style="padding-left: 0px; padding-right: 0px">
+                                                                    <div class="col-xs-6 col-sm-4   " style="padding-left: 0px; max-width: 50px; padding-left: 0px;padding-right: 0px; margin-top: 3px; color: MenuText">
+                                                                        To&nbsp;:&nbsp;
+                                                                    </div>
+
+                                                                    <div class=" col-xs-6 col-sm-4   " style="padding-left: 0px; max-width: 20px;">
+                                                                        <div id="to_Date"></div>
+                                                                    </div></div>
+
+                                                                    <div class=" col-xs-6 col-sm-4 col-md-3  " style="max-width: 70px; padding-left: 0px; padding-right: 0px">
+                                                                        <button type="button" id="btnshow" style="width: 100px"><span class="fa fa-search  "></span>Search</button>
+                                                                    </div>
+                                                                </div>
+                    </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>*@
+            </div>
+        </div>
+    </section>
+</div>
+
+
+
+
+
+
+

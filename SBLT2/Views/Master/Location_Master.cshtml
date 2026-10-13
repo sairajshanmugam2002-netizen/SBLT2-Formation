@@ -1,0 +1,467 @@
+﻿@{
+    ViewBag.Title = "Location_Master";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var ID = 0;
+        var User = sessionStorage.getItem("user");
+        FetchTeamCode();
+        function FetchTeamCode() {
+            var url = "Pr_GetLocationCode";
+            var source = {
+                datatype: "json",
+                datafields: [{
+                    name: 'INC',
+                    type: 'string'
+                }],
+                id: 'id',
+                url: url,
+                async: false
+            };
+            var dataAdapter_per = new $.jqx.dataAdapter(source, {
+                contentType: 'application/json; charset=utf-8',
+                loadComplete: function () {
+                    var length = dataAdapter_per.records.length;
+                    var records = dataAdapter_per.records;
+                    var record = records[0];
+                    $('#lm_LocationCode').val(record.INC);
+                    //$('#SM_vSupplier_Code').prop('disabled', true);
+                },
+                error: function (xhr, status, error) {
+                    alert(JSON.stringify(xhr));
+                }
+            })
+            dataAdapter_per.dataBind();
+        }
+
+        var url = "Pr_Fetch_Location_Master_Details";
+        var source = {
+            datatype: "json",
+            datafields: [{
+                name: 'lm_Id',
+                type: 'string'
+            },
+            {
+                name: 'lm_LocationCode',
+                type: 'string'
+                },
+                {
+                    name: 'lm_LocationName',
+                    type: 'string'
+                },
+            {
+                name: 'lm_User',
+                type: 'string'
+            },
+            {
+                name: 'lm_CreatedDate',
+                type: 'string'
+            },
+            ],
+            id: 'id',
+            url: url
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#Grid").jqxGrid({
+            theme: 'ui-sunny',
+            width: '100%',
+            height: '480px',
+            source: dataAdapter,
+            columnsresize: true,
+            pageable: true,
+            enabletooltips: false,
+            pagermode: 'simple',
+            enabletooltips: true,
+            showfilterrow: true, selectionmode: 'checkbox',
+            filterable: true,
+            pagesize: 14,
+            columns: [{
+                text: 'Edit',
+                datafield: 'Edit',
+                filterable: false,
+                width: 40,
+                cellsrenderer: function () {
+                    return '<div style="width: 100%"><img src="../../../img/Edit1.png" style="margin-left: 25%" /></div>';
+                }
+            },
+               {
+                text: 'id',
+                datafield: 'lm_Id',
+                width: '100px',
+                hidden: true
+            },
+                {
+                    text: 'Location',
+                    datafield: 'lm_LocationCode',
+                    width: '20%'
+                },
+                {
+                    text: 'Location Name',
+                    datafield: 'lm_LocationName',
+                    width: '20%'
+                },
+           
+            ]
+        });
+        $("#Grid").on("cellclick", function (event) {
+            var column = event.args.column;
+            var rowindex = event.args.rowindex;
+            var columnindex = event.args.columnindex;
+            if (columnindex == 1) {
+                editrow = rowindex;
+                var dataRecord = $("#Grid").jqxGrid('getrowdata', editrow);
+                ID = dataRecord.lm_Id;
+                var url = "Pr_Fetch_Location_Master_Details_ById?ID=" + ID;
+                var source = {
+                    datatype: "json",
+                    datafields: [{
+                        name: 'lm_Id',
+                        type: 'string'
+                    },
+                    {
+                        name: 'lm_LocationCode',
+                        type: 'string'
+                    },
+                    {
+                        name: 'lm_LocationName',
+                        type: 'string'
+                        },
+                        {
+                            name: 'lm_User',
+                            type: 'string'
+                        },
+                    ],
+                    id: 'id',
+                    url: url
+                };
+                var dataAdapter_per = new $.jqx.dataAdapter(source, {
+                    contentType: 'application/json; charset=utf-8',
+                    loadComplete: function () {
+                        var length = dataAdapter_per.records.length;
+                        var records = dataAdapter_per.records;
+                        var record = records[0];
+                        $('#lm_Id').val(record.lm_Id);
+                        $('#blah1').attr('src', "../../" + record.TM_vDocumentLocation);
+                        $('#lm_LocationCode').val(record.lm_LocationCode);
+                        $('#lm_LocationName').val(record.lm_LocationName);
+                        $("#btn_save_label").text('Update');
+                        $('#myModal').modal('show');
+                    },
+                    error: function (xhr, status, error) {
+                        alert(JSON.stringify(xhr));
+                    }
+                })
+                dataAdapter_per.dataBind();
+            }
+            //if (columnindex == 1) {
+            //    editrow = rowindex;
+            //    var dataRecord = $("#Grid").jqxGrid('getrowdata', editrow);
+            //    var id = dataRecord.lm_Id;
+            //    var a = confirm("Are you sure want to delete press OK");
+            //    if (a == true) {
+            //        $.ajax({
+            //            type: 'POST',
+            //            contentType: "application/json; charset=utf-8",
+            //            url: 'Pr_Delete_Location_Master',
+            //            data: "{'ID':'" + dataRecord.lm_Id + "'}",
+            //            async: false,
+            //            success: function (response) {
+            //                $("#Grid").jqxGrid('updatebounddata');
+            //                alert('Recode Deleted Success');
+            //            },
+            //            error: function () {
+            //                console.log('there is some error');
+            //            }
+            //        });
+            //    }
+            //}
+        });
+
+        $('#Delete').click(function () {
+            debugger
+            var selectedrows = $('#Grid').jqxGrid('getselectedrowindexes');
+            if (selectedrows.length <= 0) {
+                alert('Please select row want to Delete');
+                return;
+            }
+            else {
+                var a = confirm("Are you sure want to delete press OK");
+                if (a == true) {
+                    for (var i = 0; i < selectedrows.length; i++) {
+                        lm_Id = $('#Grid').jqxGrid('getcellvalue', selectedrows[i], "lm_Id");
+                        $.ajax({
+                            type: 'POST',
+                            contentType: "application/json; charset=utf-8",
+                            url: 'Pr_Delete_Location_Master',
+                            data: "{'ID':'" + lm_Id + "'}",
+                            async: false,
+                            success: function (response) {
+                                //$("#Grid").jqxGrid('updatebounddata');
+                                //alert('Record Deleted Successfully');
+                            },
+                            error: function () {
+                                console.log('there is some error');
+                            }
+                        });
+                    }
+                }
+                else {
+                    $('#Grid').jqxGrid('clearselection');
+                    return;
+                }
+            }
+            alert("Record Saved Successfully...!");
+            $('#Grid').jqxGrid('clearselection');
+            $("#Grid").jqxGrid('updatebounddata');
+        });
+
+
+        $('#form1').jqxValidator({
+            hintType: 'label',
+            animationDuration: 2,
+            rules: [ {
+                input: '#lm_LocationCode',
+                message: 'Location Code Required..!',
+                action: 'keyup, blur',
+                rule: 'required',
+                focus: true
+            }, {
+                    input: '#lm_LocationName',
+                    message: 'LOcation Name Required..!',
+                action: 'keyup, blur',
+                rule: 'required',
+                focus: true
+            }, ]
+        });
+        var flag = false;
+        var flag = false;
+        $('#form1').on('validationSuccess', function (event) {
+            flag = true;
+        });
+
+
+        $("#btn_Save").click(function () {
+            $('#form1').jqxValidator('validate');
+            if (flag == true) {
+                if ($("#btn_save_label").text() == 'Save') {
+                    save();
+                } else {
+                    Update();
+                }
+                flag = false;
+            }
+        });
+
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#blah1').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $("#imgInp").change(function () {
+            readURL(this);
+        });
+
+        function save() {
+            var data = new FormData();
+            $.ajax({
+                url: "Pr_Insert_Location_Master?lm_LocationCode=" + $('#lm_LocationCode').val() + "&lm_LocationName=" + $('#lm_LocationName').val() + "&lm_User=" + User,
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: data,
+                async: false,
+                success: function (response) {
+                    if (response == 'True') {
+                        $.toaster({ priority: 'success', title: 'Notice', message: "Record Saved Successfully" });
+                        $("#Grid").jqxGrid('updatebounddata');
+                        $('#blah1').attr('src', "../../");
+                        Clear();
+                    } else {
+                        $.toaster({ priority: 'danger', title: 'Notice', message: response });
+                    }
+                },
+                error: function (er) {
+                    alert(er.responseText);
+                }
+            });
+        }
+
+        function Update() {
+            var data = new FormData();
+            $.ajax({
+                url: "Pr_Update_Location_Master?lm_Id=" + ID + "&lm_LocationCode=" + $('#lm_LocationCode').val() + "&lm_LocationName=" + $('#lm_LocationName').val(),
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: data,
+                async: false,
+                success: function (response) {
+                    if (response == 'True') {
+                        $.toaster({ priority: 'success', title: 'Notice', message: "Record Saved Successfully" });
+                        $("#Grid").jqxGrid('updatebounddata');
+                        Clear();
+                    } else {
+                        $.toaster({ priority: 'danger', title: 'Notice', message: response });
+                    }
+                },
+                error: function (er) {
+                    alert(er.responseText);
+                }
+            });
+        }
+
+        function Clear() {
+            //$('#lm_BranchCode').val('');
+            $('#lm_CustomerCode').val('');
+            $('#lm_LocationName').val('');
+            $('#lm_LocationCode').val('');
+            $('#lm_Address').val('');
+            $("#btn_save_label").text('Save');
+            FetchTeamCode();
+            $('#blah1').attr('src', "../../");
+            flag = false;
+        }
+
+        $("#Master").addClass("active");
+        $("#Location_Master").addClass("active");
+
+        $("#btn_AddNew").click(function () {
+            $("#btn_save_label").text('Save');
+            Clear();
+        })
+        $("#sidebar-collapse").click(function () {
+            $("#Grid").jqxGrid('updatebounddata');
+        });
+        $("#btn_Clear").click(function () {
+            Clear();
+        })
+        $("#btn_Refresh").click(function () {
+            $("#Grid").jqxGrid('updatebounddata');
+        })
+        $("#btn_Excel").click(function () {
+            window.open("../../Master/Export_To_Excel?FileName=Team_Master&Heading=Team Master&Data=Pr_Fetch_Team_Master_Details_Excel");
+        })
+        $("#btn_Pdf").click(function () { })
+        $("#btn_Chart").click(function () { })
+        $("#btn_Help").click(function () { })
+    });
+</script>
+
+<div class="content-wrapper">
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12" style="padding:5px;  padding-top:0px">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Location Master</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" id="btn_AddNew" title="Add New" data-rel="tooltip" class="btn btn-box-tool" data-toggle="modal" data-target="#myModal" style="padding:5px"><span class='fa fa fa-plus-square  bigger-130 green'></span></button>
+                            <button type="button" id="btn_Refresh" title="Refresh" data-rel="tooltip" class="btn btn-box-tool" style="padding:5px"><span class='fa fa-refresh bigger-130 vilote'></span></button>
+                            <button type="button" id="btn_Excel" title="Export to Excel" data-rel="tooltip" class="btn btn-box-tool" style="padding:5px"><span class='fa fa-file-excel-o bigger-130 green'></span></button>
+                            @*<button type="button" id="btn_Pdf" title="Export to Pdf" data-rel="tooltip" class="btn btn-box-tool" style="padding:5px"><span class='fa fa-file-pdf-o bigger-130 red'> </span></button>*@
+                        </div>
+                        <!-- /.nav-search -->
+                    </div>
+                    <div class="box-body">
+                        <div class="col-sm-4" style="max-width: 70px; padding-left: 0px; padding-right: 0px">
+                            <button type="button" id="Delete" style="width: 100px;background-color: red">Delete</button>
+                        </div>
+                        <p></p>
+                        <div class="col-md-12" style="padding-left:0px; padding-right:0px">
+                            <div id="Grid"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade  bd-example-modal-lg" id="myModal">
+                    <div class="modal-dialog modal-lg">
+                        <div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">
+                                        Location Master <span class="pull-right ">
+                                            <a href="#" data-dismiss="modal" aria-label="Close">
+                                                <i class="ace-icon fa fa-times"></i>
+                                            </a>
+                                        </span>
+                                    </h3>
+                                </div>
+                                <div class="panel-body">
+                                    <form class="form-horizontal" role="form" id="form1">
+                                        <div class="col-md-8">
+                                            @*<div class="form-group">
+            <label class="col-sm-4 control-label no-padding-right" for="form-field-1"><span class="star">*</span> Branch Code</label>
+            <div class="col-sm-7">
+                <input id="lm_BranchCode" type="text" placeholder="Branch Code" class="form-control" />
+            </div>
+        </div>*@
+                                            @*<div class="form-group">
+            <label class="col-sm-4 control-label no-padding-right" for="form-field-1"><span class="star">*</span> Customer Name </label>
+            <div class="col-sm-7">
+                <input id="lm_CustomerCode" type="text" placeholder="Customer Name" class="form-control" />
+            </div>
+        </div>*@
+                                            <div class="form-group">
+                                                <label class="col-sm-4 control-label no-padding-right" for="form-field-1"> <span class="star">*</span>Location Code </label>
+                                                <div class="col-sm-7">
+                                                    <input id="lm_LocationCode" type="text" placeholder="Location Code" class="form-control" />
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-4 control-label no-padding-right" for="form-field-1"> <span class="star">*</span>Location Name </label>
+                                                <div class="col-sm-7">
+                                                    <input id="lm_LocationName" type="text" placeholder="Location Name" class="form-control" />
+                                                </div>
+                                            </div>
+                                            @*<div class="form-group">
+            <label class="col-sm-4 control-label no-padding-right" for="form-field-1"> <span class="star">*</span>Address</label>
+            <div class="col-sm-7">
+                <input id="lm_Address" type="text" placeholder="Location Name" class="form-control" />
+            </div>
+        </div>*@
+                                            @*<div class="form-group">
+                <label class="col-sm-4 control-label no-padding-right" for="form-field-1"> <span class="star">*</span>Status </label>
+                <div class="col-sm-7">
+                    <input id="lm_Status" type="text" placeholder="Status" class="form-control" />
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <img class="profile-user-img img-responsive img-circle" id="blah1" style="width: 60%; height: 150px" alt="User profile picture">
+                <label for="exampleInputFile"></label>
+                <input type="file" id="imgInp">
+            </div>*@
+                                        </div>
+
+                                    </form>
+                                    <div class="col-sm-5"></div>
+                                    <p>
+                                        <button id="btn_Save" class="btn btn-white btn-info btn-bold">
+                                            <i class="ace-icon fa fa-floppy-o bigger-120 blue"></i>
+                                            <span id="btn_save_label">Save</span>
+                                        </button>
+                                        <button id="btn_Clear" class="btn btn-white btn-warning btn-bold">
+                                            <i class="ace-icon fa fa-trash-o bigger-120 orange"></i>
+                                            Clear
+                                        </button>
+                                        <button class="btn btn-white btn-default btn-round" data-dismiss="modal">
+                                            <i class="ace-icon fa fa-times red2"></i>
+                                            Close
+                                        </button>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+

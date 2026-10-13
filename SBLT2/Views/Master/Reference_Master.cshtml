@@ -1,0 +1,351 @@
+﻿@{
+    ViewBag.Title = "Reference_Master";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var ID = 0;
+        var User = sessionStorage.getItem("user");
+
+        var url = "../../Master/Pr_Load_RG_vDescription"//?ID=" + User;
+        var Source =
+        {
+            datatype: "json",
+            datafields: [
+                { name: 'RG_iID', type: 'string' },
+                { name: 'RG_vDescription', type: 'string' }
+            ],
+            id: 'id',
+            url: url
+        };
+        var adapter = new $.jqx.dataAdapter(Source);
+        $("#RG_vDescription").jqxComboBox({ selectedIndex: -1, source: adapter, displayMember: "RG_vDescription", valueMember: "RG_iID", width: '100%', height: '30' });
+
+        $('#RG_vDescription').on('select', function (event) {
+            debugger
+            var args = event.args;
+            if (args) {
+                var item = args.item;
+                var originalItem = item.originalItem.RG_iID;
+            }
+            grid(originalItem);
+            //Bind1(originalItem);
+            //Bind3(originalItem);
+        });
+        grid(0);
+        function grid(ID) {
+            var url = "Pr_Fetch_ReferenceGroup_Value_Details?ID=" + ID;
+            var source = {
+                datatype: "json",
+                datafields: [{name: 'ID',type: 'string'},{name: 'Code',type: 'string'},
+                {name: 'Desciption',type: 'string'},            
+                ],
+                id: 'id',
+                url: url
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            $("#Grid").jqxGrid({theme: 'ui-sunny',width: '100%',height: '480px',source: dataAdapter,
+                columnsresize: true,pageable: true,enabletooltips: false,pagermode: 'simple',
+                enabletooltips: true,showfilterrow: true, selectionmode: 'checkbox',filterable: true,
+                pagesize: 14,
+                columns: [{text: 'Edit',datafield: 'Edit',filterable: false,width: 40,
+                    cellsrenderer: function () {
+                        return '<div style="width: 100%"><img src="../../../img/Edit1.png" style="margin-left: 25%" /></div>';
+                    }
+                },
+                {text: 'id',datafield: 'ID',width: '100px',hidden: true},
+                {text: 'Code',datafield: 'Code',width: '20%'},
+                {text: 'Desciption',datafield: 'Desciption',width: '20%'},
+                ]
+            });
+        }
+        $("#Grid").on("cellclick", function (event) {
+            debugger
+            var column = event.args.column;
+            var rowindex = event.args.rowindex;
+            var columnindex = event.args.columnindex;
+            if (columnindex == 1) {
+                editrow = rowindex;
+                var dataRecord = $("#Grid").jqxGrid('getrowdata', editrow);
+                ID = dataRecord.ID;
+                $('#RGV_vCode').val(dataRecord.Code);
+                $('#RGV_vDesciption').val(dataRecord.Desciption);     
+                $("#btn_save_label").text('Update');
+            }
+            //if (columnindex == 1) {
+            //    editrow = rowindex;
+            //    var dataRecord = $("#Grid").jqxGrid('getrowdata', editrow);
+            //    var id = dataRecord.lm_Id;
+            //    var a = confirm("Are you sure want to delete press OK");
+            //    if (a == true) {
+            //        $.ajax({
+            //            type: 'POST',
+            //            contentType: "application/json; charset=utf-8",
+            //            url: 'Pr_Delete_Location_Master',
+            //            data: "{'ID':'" + dataRecord.lm_Id + "'}",
+            //            async: false,
+            //            success: function (response) {
+            //                $("#Grid").jqxGrid('updatebounddata');
+            //                alert('Recode Deleted Success');
+            //            },
+            //            error: function () {
+            //                console.log('there is some error');
+            //            }
+            //        });
+            //    }
+            //}
+        });
+
+        $('#Delete').click(function () {
+            debugger
+            var selectedrows = $('#Grid').jqxGrid('getselectedrowindexes');
+            if (selectedrows.length <= 0) {
+                alert('Please select row want to Delete');
+                return;
+            }
+            else {
+                var a = confirm("Are you sure want to delete press OK");
+                if (a == true) {
+                    for (var i = 0; i < selectedrows.length; i++) {
+                        ID = $('#Grid').jqxGrid('getcellvalue', selectedrows[i], "ID");
+                        $.ajax({
+                            type: 'POST',
+                            contentType: "application/json; charset=utf-8",
+                            url: 'Pr_Delete_Reference_Master',
+                            data: "{'ID':'" + ID + "'}",
+                            async: false,
+                            success: function (response) {
+                                $("#Grid").jqxGrid('updatebounddata');
+                                alert('Record Deleted Successfully');
+                            },
+                            error: function () {
+                                console.log('there is some error');
+                            }
+                        });
+                    }
+                }
+                else {
+                    $('#Grid').jqxGrid('clearselection');
+                    return;
+                }
+            }
+        });
+
+
+        $('#form1').jqxValidator({
+            hintType: 'label',
+            animationDuration: 2,
+            rules: [
+                //{
+                //input: '#RGV_vCode',
+                //message: 'Location Code Required..!',
+                //action: 'keyup, blur',
+                //rule: 'required',
+                //focus: true
+                //},
+                {
+                input: '#RGV_vDesciption',
+                message: 'LOcation Name Required..!',
+                action: 'keyup, blur',
+                rule: 'required',
+                focus: true
+            }, ]
+        });
+        var flag = false;
+        var flag = false;
+        $('#form1').on('validationSuccess', function (event) {
+            flag = true;
+        });
+
+
+        $("#btn_Save").click(function () {
+            $('#form1').jqxValidator('validate');
+            if (flag == true) {
+                if ($("#btn_save_label").text() == 'Save') {
+                    save();
+                } else {
+                    Update();
+                }
+                flag = false;
+            }
+        });
+
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#blah1').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $("#imgInp").change(function () {
+            readURL(this);
+        });
+
+        function save() {
+            var data = new FormData();
+            $.ajax({
+                url: "Pr_Insert_ReferenceGroup_Value?RGV_iRG_ID=" + $('#RG_vDescription').val() + "&RGV_vCode=" + $('#RGV_vCode').val() +
+                    "&RGV_vDesciption=" + $('#RGV_vDesciption').val(),
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: data,
+                async: false,
+                success: function (response) {
+                    if (response == 'True') {
+                        $.toaster({ priority: 'success', title: 'Notice', message: "Record Saved Successfully" });
+                        $("#Grid").jqxGrid('updatebounddata');
+                        $('#blah1').attr('src', "../../");
+                        Clear();
+                    } else {
+                        $.toaster({ priority: 'danger', title: 'Notice', message: response });
+                    }
+                },
+                error: function (er) {
+                    alert(er.responseText);
+                }
+            });
+        }
+
+        function Update() {
+            var data = new FormData();
+            $.ajax({
+                url: "Pr_Update_ReferenceGroup_Value?RGV_iID=" + ID + "&RGV_vCode=" + $('#RGV_vCode').val() + "&RGV_vDesciption=" + $('#RGV_vDesciption').val(),
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: data,
+                async: false,
+                success: function (response) {
+                    if (response == 'True') {
+                        $.toaster({ priority: 'success', title: 'Notice', message: "Record Saved Successfully" });
+                        $("#Grid").jqxGrid('updatebounddata');
+                        Clear();
+                    } else {
+                        $.toaster({ priority: 'danger', title: 'Notice', message: response });
+                    }
+                },
+                error: function (er) {
+                    alert(er.responseText);
+                }
+            });
+        }
+
+        function Clear() {
+            //$('#lm_BranchCode').val('');
+            $('#lm_CustomerCode').val('');
+            $('#RGV_vDesciption').val('');
+            $('#RGV_vCode').val('');
+            $('#lm_Address').val('');
+            $("#btn_save_label").text('Save');
+            FetchTeamCode();
+            $('#blah1').attr('src', "../../");
+            flag = false;
+        }
+
+        $("#Master").addClass("active");
+        $("#Reference_Master").addClass("active");
+
+        $("#btn_AddNew").click(function () {
+            $("#btn_save_label").text('Save');
+            Clear();
+        })
+        $("#sidebar-collapse").click(function () {
+            $("#Grid").jqxGrid('updatebounddata');
+        });
+        $("#btn_Clear").click(function () {
+            Clear();
+        })
+        $("#btn_Refresh").click(function () {
+            $("#Grid").jqxGrid('updatebounddata');
+        })
+        $("#btn_Excel").click(function () {
+            window.open("../../Master/Export_To_Excel?FileName=Team_Master&Heading=Team Master&Data=Pr_Fetch_Team_Master_Details_Excel");
+        })
+        $("#btn_Pdf").click(function () { })
+        $("#btn_Chart").click(function () { })
+        $("#btn_Help").click(function () { })
+    });
+</script>
+
+<div class="content-wrapper">
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12" style="padding:5px;  padding-top:0px">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Reference Master</h3>
+                        <div class="box-tools pull-right">
+                            @*<button type="button" id="btn_AddNew" title="Add New" data-rel="tooltip" class="btn btn-box-tool" data-toggle="modal" data-target="#myModal" style="padding:5px"><span class='fa fa fa-plus-square  bigger-130 green'></span></button>*@
+                            <button type="button" id="btn_Refresh" title="Refresh" data-rel="tooltip" class="btn btn-box-tool" style="padding:5px"><span class='fa fa-refresh bigger-130 vilote'></span></button>
+                            <button type="button" id="btn_Excel" title="Export to Excel" data-rel="tooltip" class="btn btn-box-tool" style="padding:5px"><span class='fa fa-file-excel-o bigger-130 green'></span></button>
+                            @*<button type="button" id="btn_Pdf" title="Export to Pdf" data-rel="tooltip" class="btn btn-box-tool" style="padding:5px"><span class='fa fa-file-pdf-o bigger-130 red'> </span></button>*@
+                        </div>
+                        <!-- /.nav-search -->
+                    </div>
+
+
+
+
+                    <div class="panel-body">
+                        <form class="form-horizontal" role="form" id="form1">
+                            <div class="col-md-8">
+
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label no-padding-right" for="form-field-1"><span class="star">*</span> Reference Type </label>
+                                    <div class="col-sm-7">
+                                        <div id="RG_vDescription"></div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label no-padding-right" for="form-field-1"> <span class="star"></span>Reference Code </label>
+                                    <div class="col-sm-7">
+                                        <input id="RGV_vCode" type="text" placeholder="Reference Code" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label no-padding-right" for="form-field-1"> <span class="star">*</span>Description</label>
+                                    <div class="col-sm-7">
+                                        <input id="RGV_vDesciption" type="text" placeholder="Description" class="form-control" />
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </form>
+                        <div class="col-sm-5"></div>
+                        <p>
+                            <button id="btn_Save" class="btn btn-white btn-info btn-bold">
+                                <i class="ace-icon fa fa-floppy-o bigger-120 blue"></i>
+                                <span id="btn_save_label">Save</span>
+                            </button>
+                            <button id="btn_Clear" class="btn btn-white btn-warning btn-bold">
+                                <i class="ace-icon fa fa-trash-o bigger-120 orange"></i>
+                                Clear
+                            </button>
+                            <button class="btn btn-white btn-default btn-round" data-dismiss="modal">
+                                <i class="ace-icon fa fa-times red2"></i>
+                                Close
+                            </button>
+                        </p>
+                    </div>
+                    <div class="box-body">
+                        <div class="col-sm-4" style="max-width: 70px; padding-left: 0px; padding-right: 0px">
+                            <button type="button" id="Delete" style="width: 100px;background-color: red">Delete</button>
+                        </div>
+                        <p></p>
+                        <div class="col-md-12" style="padding-left:0px; padding-right:0px">
+                            <div id="Grid"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+

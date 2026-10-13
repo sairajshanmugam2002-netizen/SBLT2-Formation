@@ -1,0 +1,31 @@
+alter proc pr_getBillNo             
+@bill_No  varchar(44),      
+@Type_No varchar(50)            
+as            
+begin            
+            
+select *,case when SAD_Item_ID=0 then IM_ItemName else SAD_Item_Name end as SAD_Item_Name from SalesDetails            
+left outer join Sales on SA_BillNo_Label=SAD_BillNo_Label      
+AND CONVERT(VARCHAR,SA_Bill_Date,112) = CONVERT(VARCHAR,GETDATE(),112)            
+left outer join Item_Master on IM_ID=SAD_Item_ID   and IM_Bill_Type=@Type_No        
+where SAD_BillNo_Label=@bill_No   and convert(varchar,SAD_Createdate,112)=convert(varchar,getdate(),112)        
+end
+
+go
+
+alter Proc Pr_Fetch_SalesDetails_Details          
+@billno varchar(44)          
+as          
+Begin          
+select           
+SAD_iid as iid,          
+IM_ItemCode as Code,          
+--IM_ItemName as  [Item Name],   
+case when SAD_Item_ID=0 then IM_ItemName  else SAD_Item_Name  end as      [Item Name],    
+SAD_Price as Price,          
+SAD_Qty as Qty,          
+SAD_TotalPrice as  TotalPrice          
+from  SalesDetails          
+left outer join Item_Master on IM_ID=SAD_Item_ID           
+where  SAD_Status='A' and SAD_BillNo_Label=@billno and convert(varchar,SAD_Createdate,112)=convert(varchar,getdate(),112)          
+End 
