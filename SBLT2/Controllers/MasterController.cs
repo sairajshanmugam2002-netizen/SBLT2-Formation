@@ -11,7 +11,7 @@ using System.Web.Mvc;
 
 namespace SBLT2.Controllers
 {
-    public class MasterController : Controller
+    public class MasterController : Controller 
     {
         //
         // GET: /Master/

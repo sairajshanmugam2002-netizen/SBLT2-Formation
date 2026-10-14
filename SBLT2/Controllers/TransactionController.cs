@@ -1,4 +1,4 @@
-﻿using SriPravanTech;
+using SriPravanTech;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -50,6 +50,66 @@ namespace SBLT2.Controllers
         public ActionResult APR_Inward()
         {
             return View();
+        }
+
+        public ActionResult Rework_Rejection()
+        {
+            return View();
+        }
+
+        public string pr_fetch_Rework_Rejection_Types()
+        {
+            DataTable dt = dbFunctions.getTable("pr_fetch_Rework_Rejection_Types");
+            string s = dbFunctions.GetJSONString(dt);
+            return s;
+        }
+
+        public string pr_fetch_Active_Employees()
+        {
+            DataTable dt = dbFunctions.getTable("pr_fetch_Active_Employees");
+            string s = dbFunctions.GetJSONString(dt);
+            return s;
+        }
+
+        public string pr_insert_Formation_Rework_Rejection(
+            string FRR_Type_ID,
+            string FRR_Type_Name,
+            string FRR_Reason,
+            string FRR_Employee_ID,
+            string FRR_Employee_Name,
+            string FRR_Created_By
+        )
+        {
+            SqlConnection con = new SqlConnection(dbFunctions.connectionstring);
+            try
+            {
+                con.Open();
+                SqlCommand com = new SqlCommand();
+                com.Connection = con;
+                com.CommandType = CommandType.StoredProcedure;
+                com.CommandText = "pr_insert_Formation_Rework_Rejection";
+                com.Parameters.Add("@FRR_Formation_ID", SqlDbType.Int).Value = 68;
+                com.Parameters.Add("@FRR_Type_ID", SqlDbType.Int).Value = Convert.ToInt32(FRR_Type_ID);
+                com.Parameters.Add("@FRR_Type_Name", SqlDbType.VarChar, 50).Value = FRR_Type_Name ?? "";
+                com.Parameters.Add("@FRR_Reason", SqlDbType.VarChar, 500).Value = FRR_Reason ?? "";
+                com.Parameters.Add("@FRR_Employee_ID", SqlDbType.Int).Value = Convert.ToInt32(FRR_Employee_ID);
+                com.Parameters.Add("@FRR_Employee_Name", SqlDbType.VarChar, 100).Value = FRR_Employee_Name ?? "";
+                com.Parameters.Add("@FRR_Created_By", SqlDbType.VarChar, 50).Value = FRR_Created_By ?? "System";
+                com.ExecuteNonQuery();
+                con.Close();
+                return "True";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        public string pr_fetch_Formation_Rework_Rejection_List()
+        {
+            DataTable dt = dbFunctions.getTable("pr_fetch_Formation_Rework_Rejection_List");
+            string s = dbFunctions.GetJSONString(dt);
+            return s;
         }
 
         public string Pr_Fetch_MaterialReceipt_ByID(string ID)
