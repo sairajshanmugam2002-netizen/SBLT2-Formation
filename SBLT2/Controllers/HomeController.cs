@@ -1,4 +1,4 @@
-﻿using SriPravanTech;
+using SriPravanTech;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -21,7 +21,7 @@ namespace SBLT2.Controllers
         }
         public ActionResult Home()
         {
-            return View();
+            return RedirectToAction("Dashboard", "Home");
         }
 
 
@@ -43,6 +43,26 @@ namespace SBLT2.Controllers
             return View();
         }
 
+        public string pr_fetch_Today_Rework_Rejection_Counts(string Type = null)
+        {
+            string query = string.IsNullOrEmpty(Type)
+                ? "pr_fetch_Today_Rework_Rejection_Counts"
+                : "pr_fetch_Today_Rework_Rejection_Counts '" + Type.Replace("'", "''") + "'";
+            DataTable dt = dbFunctions.getTable(query);
+            string s = dbFunctions.GetJSONString(dt);
+            return s;
+        }
+
+        public string pr_fetch_Today_Rework_Count()
+        {
+            return pr_fetch_Today_Rework_Rejection_Counts("Rework");
+        }
+
+        public string pr_fetch_Today_Rejection_Count()
+        {
+            return pr_fetch_Today_Rework_Rejection_Counts("Rejection");
+        }
+
 
         public ActionResult LogoPage()
         {
@@ -60,6 +80,28 @@ namespace SBLT2.Controllers
         public string pr_fetch_passedqty_chart()
         {
             DataTable dt = dbFunctions.getTable("pr_fetch_passedqty_chart");
+            string s = dbFunctions.GetJSONString(dt);
+            return s;
+        }
+
+        public string pr_fetch_Today_Rework_Chart()
+        {
+            DataTable dt = dbFunctions.getTable("pr_fetch_Today_Rework_Chart");
+            if (dt.Rows.Count == 0)
+            {
+                return "{\"record\":[]}";
+            }
+            string s = dbFunctions.GetJSONString(dt);
+            return s;
+        }
+
+        public string pr_fetch_Today_Rejection_Chart()
+        {
+            DataTable dt = dbFunctions.getTable("pr_fetch_Today_Rejection_Chart");
+            if (dt.Rows.Count == 0)
+            {
+                return "{\"record\":[]}";
+            }
             string s = dbFunctions.GetJSONString(dt);
             return s;
         }

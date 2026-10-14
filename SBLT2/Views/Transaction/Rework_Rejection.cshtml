@@ -288,6 +288,34 @@
                 success: function (response) {
                     if (response === "True") {
                         $.toaster({ priority: 'success', title: 'Notice', message: "Record Saved Successfully...!" });
+                        try {
+                            var savedType = (selectedTypeItem && selectedTypeItem.label) ? selectedTypeItem.label : '';
+                            localStorage.setItem('rework_rejection_saved', JSON.stringify({ type: savedType, time: Date.now() }));
+                        } catch (e) { }
+                        try {
+                            if (window.parent && window.parent !== window) {
+                                if (typeof window.parent.refreshDashboardCounts === 'function') {
+                                    window.parent.refreshDashboardCounts(savedType);
+                                }
+                                if (savedType && savedType.toLowerCase() === 'rework' && typeof window.parent.refreshReworkChart === 'function') {
+                                    window.parent.refreshReworkChart();
+                                } else if (savedType && savedType.toLowerCase() === 'rejection' && typeof window.parent.refreshRejectionChart === 'function') {
+                                    window.parent.refreshRejectionChart();
+                                }
+                            }
+                        } catch (e) { }
+                        try {
+                            if (window.opener) {
+                                if (typeof window.opener.refreshDashboardCounts === 'function') {
+                                    window.opener.refreshDashboardCounts(savedType);
+                                }
+                                if (savedType && savedType.toLowerCase() === 'rework' && typeof window.opener.refreshReworkChart === 'function') {
+                                    window.opener.refreshReworkChart();
+                                } else if (savedType && savedType.toLowerCase() === 'rejection' && typeof window.opener.refreshRejectionChart === 'function') {
+                                    window.opener.refreshRejectionChart();
+                                }
+                            }
+                        } catch (e) { }
                         Clear();
                         getGrid();
                     } else {

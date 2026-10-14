@@ -1,48 +1,9 @@
-﻿@{
-    ViewBag.Title = "Home";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+@{
+    Layout = null;
 }
-
 <script type="text/javascript">
-    $(document).ready(function () {
-        var ID = 0;
-        var User = sessionStorage.getItem("user");
-
-        $("#spinner").hide();
-        $("#Data").show();
-    });
+    window.location.replace('@Url.Action("Dashboard", "Home")');
 </script>
-
-<style>
-        #background {
-            width: 50%;
-            height: 20%;
-            position: fixed;
-            left: 0px;
-            top: 0px;
-            z-index: -1; /* Ensure div tag stays behind content; -999 might work, too. */
-        }
-
-        .stretch {
-            width: 50%;
-            height: 20%;
-        }
-
-        /*.content1 {
-        min-height: 600px;
-        padding-top: 5px;
-        margin-right: auto;
-        margin-left: auto;
-        padding-left: 15px;
-        padding-right: 15px;
-        padding-bottom: 0px;
-    }*/
-</style>
-
-<div class="content-wrapper">
-    @*<img class="content stretch" src='../../img/MRFHome1.jpg' style="height:570px;width:1135px" />*@
-
-</div>
 
 
 

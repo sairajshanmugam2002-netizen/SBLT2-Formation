@@ -87,6 +87,48 @@ namespace SBLT2.Controllers
             return s;
         }
 
+        public string pr_fetch_Today_Rework_Rejection_Counts(string Type = null)
+        {
+            string query = string.IsNullOrEmpty(Type)
+                ? "pr_fetch_Today_Rework_Rejection_Counts"
+                : "pr_fetch_Today_Rework_Rejection_Counts '" + Type.Replace("'", "''") + "'";
+            DataTable dt = dbFunctions.getTable(query);
+            string s = dbFunctions.GetJSONString(dt);
+            return s;
+        }
+
+        public string pr_fetch_Today_Rework_Count()
+        {
+            return pr_fetch_Today_Rework_Rejection_Counts("Rework");
+        }
+
+        public string pr_fetch_Today_Rejection_Count()
+        {
+            return pr_fetch_Today_Rework_Rejection_Counts("Rejection");
+        }
+
+        public string pr_fetch_Today_Rework_Chart()
+        {
+            DataTable dt = dbFunctions.getTable("pr_fetch_Today_Rework_Chart");
+            if (dt.Rows.Count == 0)
+            {
+                return "{\"record\":[]}";
+            }
+            string s = dbFunctions.GetJSONString(dt);
+            return s;
+        }
+
+        public string pr_fetch_Today_Rejection_Chart()
+        {
+            DataTable dt = dbFunctions.getTable("pr_fetch_Today_Rejection_Chart");
+            if (dt.Rows.Count == 0)
+            {
+                return "{\"record\":[]}";
+            }
+            string s = dbFunctions.GetJSONString(dt);
+            return s;
+        }
+
         public string pr_insert_Formation_Rework_Rejection(
             string FRR_Type_ID,
             string FRR_Type_Name,

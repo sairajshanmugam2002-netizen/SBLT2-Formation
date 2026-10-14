@@ -1,4 +1,4 @@
-﻿@{
+@{
     Layout = null;
 }
 
@@ -259,14 +259,7 @@
                     Right = res[1];
 
                     Loaddetails(1);
-                    var menues = sessionStorage.getItem('Menu');
-                    //alert(menues);
-                    if (menues == null) {
-                        //Loaddetails(1);
-                    } else {
-                        //this function is executed after function1
-                        window.location = "../Home/Home";
-                    }
+                    window.location = '@Url.Action("Dashboard", "Home")';
                 }
             }
         }
@@ -415,9 +408,16 @@
                         var length = dataAdapter_per.records.length;
                         var records = dataAdapter_per.records;
                         Data = "";
+                        if (Parent == 97 || Parent == "97") {
+                            Data += '<li class="" id="Landing_Dashboard"><a href="../../Home/Dashboard"><i class="fa fa-circle-o"></i> Landing Dashboard </a></li>';
+                            return;
+                        }
                         for (var i = 0; i < length; i++) {
                             var record = records[i];
-
+                            if (record.MM_vURL && record.MM_vURL.indexOf("Home/Dashboard") !== -1) {
+                                Data += '<li class="" id="Landing_Dashboard"><a href="../../Home/Dashboard"><i class="fa fa-circle-o"></i> Landing Dashboard </a></li>';
+                                continue;
+                            }
                             Data += '<li class="" id="' + record.MM_vUpdatedBy + '"><a href="' + record.MM_vURL + '"><i class="' + record.MM_vIcon + '"></i> ' + record.MM_vMenu_Name + ' </a></li>';
                             Get_submenu_2(record.MM_iId);
                             //Data += Data2;
