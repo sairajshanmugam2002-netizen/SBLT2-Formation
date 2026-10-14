@@ -51,7 +51,7 @@ namespace SBLT2.Controllers
         public ActionResult Type_Master()
         {
             return View();
-        }
+        }   
 
         public ActionResult Supplier_Master()
         {
