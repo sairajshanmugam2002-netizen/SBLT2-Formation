@@ -1,0 +1,233 @@
+@{
+    ViewBag.Title = "Rework / Rejection Report";
+}
+
+<style>
+    .filter-label {
+        font-weight: 600;
+        color: #333;
+        margin-top: 5px;
+    }
+    .box-title {
+        font-size: 16px;
+        font-weight: bold;
+        color: #1e395b;
+    }
+</style>
+
+<div class="content-wrapper">
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12" style="padding: 5px; padding-top: 0px">
+                <div class="box box-primary">
+                    <div class="box-header with-border" style="background-color: #f7f9fa; border-bottom: 1px solid #e1e8ed;">
+                        <h3 class="box-title">
+                            <i class="fa fa-file-text-o text-primary" style="margin-right: 5px;"></i>
+                            Rework / Rejection Report
+                        </h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" id="btn_Refresh" title="Refresh" class="btn btn-box-tool" style="padding: 5px">
+                                <span class='fa fa-refresh bigger-130' style="color:#5c6bc0;"></span>
+                            </button>
+                            <button type="button" id="btn_Excel" title="Export to Excel" class="btn btn-box-tool" style="padding: 5px">
+                                <span class='fa fa-file-excel-o bigger-130' style="color:#4caf50;"></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="box-body" style="padding: 15px 20px 10px 20px;">
+                        <form class="form-horizontal" role="form" id="formReport" onsubmit="return false;">
+                            <div class="row">
+                                <!-- Filter 1: Type Dropdown -->
+                                <div class="col-md-3 col-sm-6" style="margin-bottom: 10px;">
+                                    <label for="ddlType" class="filter-label">Type:</label>
+                                    <div id="ddlType"></div>
+                                </div>
+
+                                <!-- Filter 2: From Date -->
+                                <div class="col-md-3 col-sm-6" style="margin-bottom: 10px;">
+                                    <label for="from_Date" class="filter-label">From Date:</label>
+                                    <div id="from_Date"></div>
+                                </div>
+
+                                <!-- Filter 3: To Date -->
+                                <div class="col-md-3 col-sm-6" style="margin-bottom: 10px;">
+                                    <label for="to_Date" class="filter-label">To Date:</label>
+                                    <div id="to_Date"></div>
+                                </div>
+
+                                <!-- Search & Clear Buttons -->
+                                <div class="col-md-3 col-sm-6" style="margin-bottom: 10px; margin-top: 25px;">
+                                    <button type="button" id="btnSearch" class="btn btn-white btn-info btn-bold" style="min-width: 90px;">
+                                        <i class="fa fa-search"></i> Search
+                                    </button>
+                                    <button type="button" id="btnClear" class="btn btn-white btn-warning btn-bold" style="min-width: 80px; margin-left: 5px;">
+                                        <i class="fa fa-eraser"></i> Clear
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Report Grid Section -->
+                    <div class="box-body" style="padding: 5px 20px 20px 20px; border-top: 1px solid #eee;">
+                        <div id="Grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        // Highlight active sidebar menu
+        $("#Report").addClass("active");
+        $("#Reports").addClass("active");
+        $("#Rework_Rejection_Report").addClass("active");
+
+        // Initialize Date Filters (Defaults to today)
+        $("#from_Date").jqxDateTimeInput({ width: '100%', height: '30px', formatString: 'dd-MMM-yyyy' });
+        $("#to_Date").jqxDateTimeInput({ width: '100%', height: '30px', formatString: 'dd-MMM-yyyy' });
+
+        // Set default date range: first day of current month to today
+        var now = new Date();
+        var firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        $("#from_Date").jqxDateTimeInput('setDate', firstDayOfMonth);
+        $("#to_Date").jqxDateTimeInput('setDate', now);
+
+        // =========================================================================
+        // Initialize Type Dropdown with Options: All, Rework, Rejection
+        // Default selected: All
+        // =========================================================================
+        var typeOptions = ['All', 'Rework', 'Rejection'];
+        $("#ddlType").jqxDropDownList({
+            source: typeOptions,
+            selectedIndex: 0,
+            width: '100%',
+            height: '30px',
+            autoDropDownHeight: true
+        });
+
+        // Filter Grid whenever Type dropdown changes
+        $("#ddlType").on('change', function (event) {
+            getGrid();
+        });
+
+        // Load Grid initially
+        getGrid();
+
+        // Search Button click
+        $("#btnSearch").click(function () {
+            getGrid();
+        });
+
+        // Clear Button click: resets Type to 'All' and reloads grid
+        $("#btnClear").click(function () {
+            $("#ddlType").jqxDropDownList('selectIndex', 0);
+            $("#from_Date").jqxDateTimeInput('setDate', firstDayOfMonth);
+            $("#to_Date").jqxDateTimeInput('setDate', now);
+            getGrid();
+        });
+
+        // Refresh Button in header
+        $("#btn_Refresh").click(function () {
+            getGrid();
+        });
+
+        // Export to Excel Button
+        $("#btn_Excel").click(function () {
+            var selectedType = $('#ddlType').val() || "All";
+            var from = "";
+            var to = "";
+            if ($("#from_Date").val()) {
+                $("#from_Date").jqxDateTimeInput({ formatString: 'yyyy-MM-dd' });
+                from = $("#from_Date").val();
+                $("#from_Date").jqxDateTimeInput({ formatString: 'dd-MMM-yyyy' });
+            }
+            if ($("#to_Date").val()) {
+                $("#to_Date").jqxDateTimeInput({ formatString: 'yyyy-MM-dd' });
+                to = $("#to_Date").val();
+                $("#to_Date").jqxDateTimeInput({ formatString: 'dd-MMM-yyyy' });
+            }
+            window.open("../../Master/Export_To_Excel?FileName=Rework_Rejection_Report&Heading=Rework / Rejection Report&Data=pr_fetch_Rework_Rejection_Report '" + selectedType + "','" + from + "','" + to + "'");
+        });
+
+        // =========================================================================
+        // Fetch and Render Report Grid
+        // =========================================================================
+        function getGrid() {
+            var selectedType = $('#ddlType').val() || "All";
+            var from = "";
+            var to = "";
+
+            if ($("#from_Date").val()) {
+                $("#from_Date").jqxDateTimeInput({ formatString: 'yyyy-MM-dd' });
+                from = $("#from_Date").val();
+                $("#from_Date").jqxDateTimeInput({ formatString: 'dd-MMM-yyyy' });
+            }
+            if ($("#to_Date").val()) {
+                $("#to_Date").jqxDateTimeInput({ formatString: 'yyyy-MM-dd' });
+                to = $("#to_Date").val();
+                $("#to_Date").jqxDateTimeInput({ formatString: 'dd-MMM-yyyy' });
+            }
+
+            var url = "../../Reports/pr_fetch_Rework_Rejection_Report?Type=" + encodeURIComponent(selectedType) + "&from=" + encodeURIComponent(from) + "&to=" + encodeURIComponent(to);
+            var source = {
+                datatype: "json",
+                datafields: [
+                    { name: 'SNo', type: 'int' },
+                    { name: 'FRR_ID', type: 'int' },
+                    { name: 'Formation_ID', type: 'string' },
+                    { name: 'FRR_Formation_ID', type: 'string' },
+                    { name: 'FRR_Type_Name', type: 'string' },
+                    { name: 'FRR_Reason', type: 'string' },
+                    { name: 'FRR_Employee_Name', type: 'string' },
+                    { name: 'FRR_Created_By', type: 'string' },
+                    { name: 'FRR_Created_Date', type: 'string' },
+                    { name: 'FRR_Status', type: 'string' }
+                ],
+                id: 'FRR_ID',
+                url: url,
+                async: true
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            $("#Grid").jqxGrid({
+                theme: 'ui-sunny',
+                width: '100%',
+                autoheight: true,
+                source: dataAdapter,
+                columnsresize: true,
+                pageable: true,
+                pagermode: 'simple',
+                pagesize: 14,
+                showfilterrow: true,
+                filterable: true,
+                sortable: true,
+                columns: [
+                    { text: 'S.No', datafield: 'SNo', width: '6%', align: 'center', cellsalign: 'center' },
+                    { text: 'Formation ID', datafield: 'Formation_ID', width: '12%', align: 'center', cellsalign: 'center' },
+                    {
+                        text: 'Type',
+                        datafield: 'FRR_Type_Name',
+                        width: '12%',
+                        align: 'center',
+                        cellsalign: 'center',
+                        cellsrenderer: function (row, column, value) {
+                            if (value === "Rework") {
+                                return '<div style="margin-top: 5px; text-align: center;"><span class="badge" style="background-color: #f39c12; font-weight: 600;">' + value + '</span></div>';
+                            } else if (value === "Rejection") {
+                                return '<div style="margin-top: 5px; text-align: center;"><span class="badge" style="background-color: #dd4b39; font-weight: 600;">' + value + '</span></div>';
+                            }
+                            return '<div style="margin-top: 5px; text-align: center;">' + value + '</div>';
+                        }
+                    },
+                    { text: 'Reason', datafield: 'FRR_Reason', width: '28%' },
+                    { text: 'Employee', datafield: 'FRR_Employee_Name', width: '18%' },
+                    { text: 'Date / Time', datafield: 'FRR_Created_Date', width: '14%', align: 'center', cellsalign: 'center' },
+                    { text: 'Created By', datafield: 'FRR_Created_By', width: '10%' }
+                ]
+            });
+        }
+    });
+</script>

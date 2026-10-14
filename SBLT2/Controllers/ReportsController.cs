@@ -1,4 +1,4 @@
-﻿using SriPravanTech;
+using SriPravanTech;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -55,6 +55,22 @@ namespace SBLT2.Controllers
         public ActionResult FIFO_Display()
         {
             return View();
+        }
+
+        public ActionResult Rework_Rejection()
+        {
+            return View();
+        }
+
+        public string pr_fetch_Rework_Rejection_Report(string Type = "All", string from = null, string to = null)
+        {
+            string cleanType = (Type ?? "All").Replace("'", "''");
+            string cleanFrom = (from ?? "").Replace("'", "''");
+            string cleanTo = (to ?? "").Replace("'", "''");
+            string query = string.Format("pr_fetch_Rework_Rejection_Report '{0}', '{1}', '{2}'", cleanType, cleanFrom, cleanTo);
+            DataTable dt = dbFunctions.getTable(query);
+            string s = dbFunctions.GetJSONString(dt);
+            return s;
         }
 
         public string pr_FetchFIFODisplay()

@@ -71,6 +71,22 @@ namespace SBLT2.Controllers
             return s;
         }
 
+        public string pr_fetch_Rework_Rejection_Reasons(string Type_ID = null, string ID = null)
+        {
+            string selectedType = !string.IsNullOrEmpty(Type_ID) ? Type_ID : ID;
+            if (string.IsNullOrEmpty(selectedType))
+            {
+                return "[]";
+            }
+            DataTable dt = dbFunctions.getTable("pr_fetch_Rework_Rejection_Reasons '" + selectedType.Replace("'", "''") + "'");
+            if (dt.Rows.Count == 0)
+            {
+                return "[]";
+            }
+            string s = dbFunctions.GetJSONString(dt);
+            return s;
+        }
+
         public string pr_insert_Formation_Rework_Rejection(
             string FRR_Type_ID,
             string FRR_Type_Name,

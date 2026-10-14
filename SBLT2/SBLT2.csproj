@@ -1616,6 +1616,7 @@
     <Content Include="Views\Transaction\Rework_Rejection.cshtml" />
     <Content Include="Views\Reports\Summary_Report.cshtml" />
     <Content Include="Views\Reports\Filling_Report.cshtml" />
+    <Content Include="Views\Reports\Rework_Rejection.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

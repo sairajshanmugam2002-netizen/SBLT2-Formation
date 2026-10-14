@@ -50,10 +50,10 @@
 
                                 <!-- Field 2: Reason -->
                                 <div class="col-md-4 col-sm-6 form-group" style="padding-right: 15px;">
-                                    <label for="txtReason">
+                                    <label for="ddlReason">
                                         <span class="required-star">*</span>2. Reason
                                     </label>
-                                    <input id="txtReason" type="text" placeholder="Enter Reason (e.g. Battery terminal issue)" class="form-control" style="height:34px; border-radius: 3px;" />
+                                    <div id="ddlReason"></div>
                                 </div>
 
                                 <!-- Field 3: Employee -->
@@ -130,7 +130,70 @@
         });
 
         // =========================================================================
-        // 2. Initialize Employee Dropdown (from Employee_Master where EM_Status = 'A')
+        // 2. Initialize Reason Dropdown (Dependent on Rework / Rejection Type)
+        // Flow: Selected Type -> Fetch Reference Master filtered by Type -> Display in Reason
+        // Initial state: No Type selected -> display "[ Select Type First ]"
+        // =========================================================================
+        function loadReasons(typeId) {
+            if (!typeId) {
+                $("#ddlReason").jqxDropDownList({
+                    selectedIndex: -1,
+                    source: [],
+                    promptText: "Select Type First",
+                    width: '100%',
+                    height: '34px'
+                });
+                return;
+            }
+
+            var reasonUrl = "../../Transaction/pr_fetch_Rework_Rejection_Reasons?Type_ID=" + encodeURIComponent(typeId);
+            var reasonSource = {
+                datatype: "json",
+                datafields: [
+                    { name: 'RGV_iID', type: 'string' },
+                    { name: 'RGV_vDesciption', type: 'string' },
+                    { name: 'RGV_iRG_ID', type: 'string' },
+                    { name: 'Reference_Type', type: 'string' }
+                ],
+                id: 'RGV_iID',
+                url: reasonUrl,
+                async: false
+            };
+            var reasonAdapter = new $.jqx.dataAdapter(reasonSource);
+            $("#ddlReason").jqxDropDownList({
+                selectedIndex: -1,
+                source: reasonAdapter,
+                displayMember: "RGV_vDesciption",
+                valueMember: "RGV_vDesciption",
+                promptText: "Select Reason",
+                width: '100%',
+                height: '34px',
+                filterable: true,
+                filterPlaceHolder: "Search Reason..."
+            });
+            $('#ddlReason').jqxDropDownList('clearSelection');
+        }
+
+        // Initial State: No type selected, display "Select Type First"
+        loadReasons(null);
+
+        // When Rework / Rejection Type changes:
+        // Clear previous reason, fetch descriptions for selected type, bind to Reason dropdown
+        $('#ddlType').on('select', function (event) {
+            if (event.args) {
+                var item = event.args.item;
+                if (item && item.value) {
+                    loadReasons(item.value);
+                } else {
+                    loadReasons(null);
+                }
+            } else {
+                loadReasons(null);
+            }
+        });
+
+        // =========================================================================
+        // 3. Initialize Employee Dropdown (from Employee_Master where EM_Status = 'A')
         // Flow: Employee_Master -> Filter Active only -> Display in Dropdown
         // =========================================================================
         var empUrl = "../../Transaction/pr_fetch_Active_Employees";
@@ -173,14 +236,6 @@
             Clear();
         });
 
-        // Allow pressing Enter in reason field to trigger Save
-        $('#txtReason').keypress(function (e) {
-            if (e.keyCode == 13) {
-                e.preventDefault();
-                saveRecord();
-            }
-        });
-
         // =========================================================================
         // SAVE BUTTON CLICK & VALIDATION
         // =========================================================================
@@ -198,10 +253,10 @@
             }
 
             // Validation 2: Reason
-            var reason = $('#txtReason').val().trim();
-            if (reason === "") {
-                $('#txtReason').focus();
-                $.toaster({ priority: 'danger', title: 'Notice', message: "Please Enter Reason" });
+            var selectedReasonIndex = $('#ddlReason').jqxDropDownList('selectedIndex');
+            if (selectedReasonIndex < 0) {
+                $('#ddlReason').jqxDropDownList('focus');
+                $.toaster({ priority: 'danger', title: 'Notice', message: "Please Select Reason" });
                 return;
             }
 
@@ -214,7 +269,9 @@
             }
 
             var selectedTypeItem = $('#ddlType').jqxDropDownList('getSelectedItem');
+            var selectedReasonItem = $('#ddlReason').jqxDropDownList('getSelectedItem');
             var selectedEmpItem = $('#ddlEmployee').jqxDropDownList('getSelectedItem');
+            var reason = selectedReasonItem.label;
 
             // Send via AJAX to TransactionController
             $.ajax({
@@ -245,7 +302,7 @@
 
         function Clear() {
             $('#ddlType').jqxDropDownList('clearSelection');
-            $('#txtReason').val('');
+            loadReasons(null);
             $('#ddlEmployee').jqxDropDownList('clearSelection');
             $('#btn_save_label').text('Save');
         }
