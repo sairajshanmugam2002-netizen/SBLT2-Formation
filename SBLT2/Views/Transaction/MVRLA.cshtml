@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewBag.Title = "MVRLA";
 }
 
@@ -350,19 +350,27 @@
                 //        return '<div style="width: 100%"><img src="../../../img/del.png" style="margin-left: 25%" /></div>';
                 //    }
                 //},
-                    { text: 'id', datafield: 'mv_ID', width: '100px', hidden: true },{ text: 'QRCode', datafield: 'mv_QRCode', width: '8%' },
-                    { text: 'Battery type', datafield: 'mv_BatteryType', width: '10%' },{ text: 'Filling Line', datafield: 'mv_FillingLine', width: '10%' },
-                    { text: 'Bank No', datafield: 'mv_BankNo', width: '10%' }, { text: 'Date', datafield: 'mv_Date',width: '10%'},
-                    { text: 'No Of Cells', datafield: 'mv_NoOfCells', width: '12%' }, { text: 'Start Time', datafield: 'mv_FillingStartTime',width: '10%'},
-                    { text: 'End Time', datafield: 'mv_FillingEndTime', width: '15%' }, //{ text: 'Passed Qty', datafield: 'mv_CDPassedQty', width: '8%' },
-                    //{ text: 'Fail Qty', datafield: 'mv_CDFailQty', width: '8%' },
-                    { text: 'Acid SPG', datafield: 'mv_AcidSPG', width: '8%' },
-                    { text: 'Acid Volume', datafield: 'mv_AcidVolume', width: '8%' }, { text: 'Tub No', datafield: 'mv_TubNo', width: '8%' },
-                    { text: 'CKT No', datafield: 'mv_CKTNo', width: '8%' }, { text: 'Cell Short Qty', datafield: 'mv_CellShortQty', width: '8%' },
-                    { text: 'Temperature', datafield: 'mv_Temperature', width: '8%' }, { text: 'PRD Supervisor', datafield: 'mv_PRDSupervisior', width: '8%' },
-                    { text: 'Operator', datafield: 'mv_FillingOperator', width: '8%' }, { text: 'QAInspector', datafield: 'mv_QAInspector', width: '8%' },
-                    { text: 'Shift Engg', datafield: 'mv_ShiftEngineer', width: '8%' }, { text: 'Shift', datafield: 'mv_Shift', width: '8%' }, 
-                    { text: 'Reading Operator', datafield: 'mv_ReadingOperator', width: '8%' }, 
+                    { text: 'id', datafield: 'mv_ID', width: '100px', hidden: true },
+                    { text: 'QRCode', datafield: 'mv_QRCode', width: '9%', minwidth: 120 },
+                    { text: 'Battery type', datafield: 'mv_BatteryType', width: '9%', minwidth: 110 },
+                    { text: 'Filling Line', datafield: 'mv_FillingLine', width: '8%', minwidth: 90 },
+                    { text: 'Bank No', datafield: 'mv_BankNo', width: '7%', minwidth: 80 },
+                    { text: 'Date', datafield: 'mv_Date', width: '9%', minwidth: 100 },
+                    { text: 'No Of Cells', datafield: 'mv_NoOfCells', width: '7%', minwidth: 90 },
+                    { text: 'Start Time', datafield: 'mv_FillingStartTime', width: '9%', minwidth: 110 },
+                    { text: 'End Time', datafield: 'mv_FillingEndTime', width: '9%', minwidth: 110 },
+                    { text: 'Acid SPG', datafield: 'mv_AcidSPG', width: '7%', minwidth: 80 },
+                    { text: 'Acid Volume', datafield: 'mv_AcidVolume', width: '7%', minwidth: 90 },
+                    { text: 'Tub No', datafield: 'mv_TubNo', width: '6%', minwidth: 80 },
+                    { text: 'CKT No', datafield: 'mv_CKTNo', width: '6%', minwidth: 80 },
+                    { text: 'Cell Short Qty', datafield: 'mv_CellShortQty', width: '8%', minwidth: 100 },
+                    { text: 'Temperature', datafield: 'mv_Temperature', width: '7%', minwidth: 90 },
+                    { text: 'PRD Supervisor', datafield: 'mv_PRDSupervisior', width: '9%', minwidth: 120 },
+                    { text: 'Operator', datafield: 'mv_FillingOperator', width: '8%', minwidth: 110 },
+                    { text: 'QAInspector', datafield: 'mv_QAInspector', width: '8%', minwidth: 110 },
+                    { text: 'Shift Engg', datafield: 'mv_ShiftEngineer', width: '8%', minwidth: 110 },
+                    { text: 'Shift', datafield: 'mv_Shift', width: '6%', minwidth: 70 }, 
+                    { text: 'Reading Operator', datafield: 'mv_ReadingOperator', width: '9%', minwidth: 120 }, 
                 ]
             });
         }
@@ -678,175 +686,214 @@
 </script>
 
 <div class="content-wrapper">
-    <section class="content">
+    <section class="content" style="padding: 16px 20px;">
         <div class="row">
-            <div class="col-xs-12" style="padding:5px;  padding-top:0px">
-                <div class="box box-primary">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">MVRLA</h3>
+            <div class="col-xs-12">
+                <div class="box box-primary" style="border-top: 3px solid var(--ar-primary) !important;">
+                    <div class="box-header with-border" style="padding: 14px 20px;">
+                        <h3 class="box-title" style="font-size: 16px; font-weight: 700; color: var(--text-primary);">
+                            <i class="fa fa-battery-three-quarters" style="color: #007A3D; margin-right: 6px;"></i> MVRLA Formation Entry
+                        </h3>
                         <div class="box-tools pull-right">
-                            @*<button type="button" id="btn_AddNew" title="Add New" data-rel="tooltip" class="btn btn-box-tool" data-toggle="modal" data-target="#myModal" style="padding:5px"><span class='fa fa fa-plus-square bigger-130 green'></span></button>*@
-                            <button type="button" id="btn_Refresh" title="Refresh" data-rel="tooltip" class="btn btn-box-tool" style="padding:5px"><span class='fa fa-refresh bigger-130 vilote'></span></button>
-                            <button type="button" id="btn_Excel" title="Export to Excel" data-rel="tooltip" class="btn btn-box-tool" style="padding:5px"><span class='fa fa-file-excel-o bigger-130 green'></span></button>
-                            @*<button type="button" id="btn_Pdf" title="Export to Pdf" data-rel="tooltip" class="btn btn-box-tool" style="padding:5px"><span class='fa fa-file-pdf-o bigger-130 red'></span></button>*@
+                            <button type="button" id="btn_Refresh" title="Refresh Grid Data" class="btn btn-box-tool">
+                                <span class='fa fa-refresh text-primary'></span>
+                            </button>
+                            <button type="button" id="btn_Excel" title="Export to Excel" class="btn btn-box-tool" style="margin-left: 4px;">
+                                <span class='fa fa-file-excel-o text-green'></span>
+                            </button>
                         </div>
                     </div>
 
-
-                    <div class="panel-body">
+                    <div class="panel-body" style="padding: 20px;">
                         <form class="form-horizontal" role="form" id="form1">
-                            <div class="col-md-12">
-                                <div class="col-md-12">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star">*</span>Battery Type</label>
-                                            <div id="mv_BatteryType"></div>
+
+                            <!-- 1. HIGH-VISIBILITY INDUSTRIAL SCANNER HERO BAR -->
+                            <div class="scanner-hero">
+                                <div class="row">
+                                    <div class="col-md-7 col-sm-12">
+                                        <label for="mv_QRCode" class="scanner-hero-title">
+                                            <span class="pulse-dot"></span>
+                                            <i class="fa fa-qrcode" style="color: #007A3D;"></i>
+                                            Battery Serial / QR Code Scanner <span class="required-star">*</span>
+                                        </label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon" style="background-color: #F0FDF4; border-color: #007A3D; color: #007A3D; font-size: 16px;">
+                                                <i class="fa fa-barcode"></i>
+                                            </span>
+                                            <input id="mv_QRCode" 
+                                                   type="text" 
+                                                   placeholder="Scan 10-digit battery barcode or hit Enter to save..." 
+                                                   class="form-control scanner-hero-input" 
+                                                   maxlength="30" 
+                                                   autocomplete="off" 
+                                                   autofocus />
                                         </div>
-                                        <div class="col-md-3">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star">*</span>Filling Line</label>
-                                            <div id="mv_FillingLine"></div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star">*</span>Bank No</label>
-                                            <div id="mv_BankNo"></div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Date</label>
-                                            <input id="mv_Date" type="datetime-local" class="form-control" />
+                                        <small class="text-muted" style="display: block; margin-top: 5px; font-size: 11.5px;">
+                                            <i class="fa fa-info-circle text-info"></i> Scanner auto-saves immediately upon reading a valid 10-digit serial.
+                                        </small>
+                                    </div>
+                                    <div class="col-md-5 col-sm-12" style="display: flex; align-items: center; justify-content: flex-end; padding-top: 15px;">
+                                        <div style="background: var(--bg-secondary); border: 1px dashed var(--border-color); border-radius: 8px; padding: 10px 16px; text-align: right; width: 100%;">
+                                            <span style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-secondary); display: block;">Terminal Mode</span>
+                                            <span style="font-size: 13px; font-weight: 700; color: var(--ar-primary);">
+                                                <i class="fa fa-bolt"></i> Auto-Commit On Scanner Carriage Return
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-12">
+                            </div>
+
+                            <!-- 2. PARAMETERS - GROUP 1: CELL & LINE CONFIGURATION -->
+                            <div class="box box-solid" style="border: 1px solid var(--card-border); border-radius: 8px; margin-bottom: 16px; box-shadow: none;">
+                                <div class="box-header" style="background: var(--card-header-bg); border-bottom: 1px solid var(--card-border); padding: 10px 16px;">
+                                    <h4 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 0;">
+                                        <i class="fa fa-cogs" style="color: var(--text-secondary); margin-right: 6px;"></i> 1. Cell & Line Configuration
+                                    </h4>
+                                </div>
+                                <div class="box-body" style="padding: 16px;">
                                     <div class="row">
-                                        <div class="col-md-3">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>No Of Cells</label>
-                                            <input id="mv_NoOfCells" type="text" placeholder="No Of Cells" class="form-control" />
+                                        <div class="col-md-3 col-sm-6 form-group">
+                                            <label for="mv_BatteryType"><span class="star">*</span> Battery Type</label>
+                                            <div id="mv_BatteryType"></div>
                                         </div>
-                                        <div class="col-md-3">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Filling Start Time</label>
-                                            <input id="mv_FillingStartTime" type="datetime-local" class="form-control" />
+                                        <div class="col-md-3 col-sm-6 form-group">
+                                            <label for="mv_FillingLine"><span class="star">*</span> Filling Line</label>
+                                            <div id="mv_FillingLine"></div>
                                         </div>
-                                        @*<div class="col-md-3">
-            <label control-label no-padding-right" for="form-field-1"> <span class="star"></span>CD Passed Qty</label>
-            <input id="mv_CDPassedQty" type="text" placeholder="CD Passed Qty" class="form-control" />
-        </div>*@
-                                        <div class="col-md-3">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Acid.SPG</label>
-                                            <input id="mv_AcidSPG" type="text" placeholder="Acid.SPG" class="form-control" />
+                                        <div class="col-md-3 col-sm-6 form-group">
+                                            <label for="mv_BankNo"><span class="star">*</span> Bank No</label>
+                                            <div id="mv_BankNo"></div>
                                         </div>
-                                        <div class="col-md-3">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>TUB No</label>
+                                        <div class="col-md-3 col-sm-6 form-group">
+                                            <label for="mv_TubNo"><span class="star">*</span> Tub No</label>
                                             <div id="mv_TubNo"></div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-md-12">
                                     <div class="row">
-
-                                        <div class="col-md-3">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Filling End Time</label>
-                                            <input id="mv_FillingEndTime" type="datetime-local" class="form-control" />
-                                        </div>
-                                        @*<div class="col-md-3">
-            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>CD Fail Qty</label>
-            <input id="mv_CDFailQty" type="text" placeholder="CD Fail Qty" class="form-control" />
-        </div>*@
-                                        <div class="col-md-3">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Acid Volume</label>
-                                            <input id="mv_AcidVolume" type="text" placeholder="Acid Volume" class="form-control" />
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>CKT No</label>
+                                        <div class="col-md-3 col-sm-6 form-group">
+                                            <label for="mv_CKTNo">CKT No</label>
                                             <div id="mv_CKTNo"></div>
                                         </div>
-                                        <div class="col-md-3">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Cell Short Qty</label>
-                                            <input id="mv_CellShortQty" type="text" placeholder="Cell Short Qty" class="form-control" />
+                                        <div class="col-md-3 col-sm-6 form-group">
+                                            <label for="mv_NoOfCells">No Of Cells</label>
+                                            <input id="mv_NoOfCells" type="text" placeholder="No Of Cells" class="form-control" />
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="row">
-
-                                        <div class="col-md-3">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Temperature</label>
-                                            <input id="mv_Temperature" type="text" placeholder="Temperature" class="form-control" />
+                                        <div class="col-md-3 col-sm-6 form-group">
+                                            <label for="mv_Date">Formation Date</label>
+                                            <input id="mv_Date" type="datetime-local" class="form-control" />
                                         </div>
-                                        <div class="col-md-3">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>PRD Supervisor</label>
-                                            <div id="mv_PRDSupervisior"></div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>QA Inspector</label>
-                                            <div id="mv_QAInspector"></div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Filling Operator</label>
-                                            <div id="mv_FillingOperator"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="row">
-
-                                        <div class="col-md-3">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Shift Engineer</label>
-                                            <div id="mv_ShiftEngineer"></div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Shift</label>
+                                        <div class="col-md-3 col-sm-6 form-group">
+                                            <label for="mv_Shift">Shift</label>
                                             <div id="mv_Shift"></div>
                                         </div>
-                                        <div class="col-md-3">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Reading Operator</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 3. PARAMETERS - GROUP 2: ACID & PROCESS MEASUREMENTS -->
+                            <div class="box box-solid" style="border: 1px solid var(--card-border); border-radius: 8px; margin-bottom: 16px; box-shadow: none;">
+                                <div class="box-header" style="background: var(--card-header-bg); border-bottom: 1px solid var(--card-border); padding: 10px 16px;">
+                                    <h4 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 0;">
+                                        <i class="fa fa-flask" style="color: var(--text-secondary); margin-right: 6px;"></i> 2. Acid & Process Parameters
+                                    </h4>
+                                </div>
+                                <div class="box-body" style="padding: 16px;">
+                                    <div class="row">
+                                        <div class="col-md-3 col-sm-6 form-group">
+                                            <label for="mv_AcidSPG">Acid Specific Gravity (SPG)</label>
+                                            <input id="mv_AcidSPG" type="text" placeholder="e.g. 1.280" class="form-control" />
+                                        </div>
+                                        <div class="col-md-3 col-sm-6 form-group">
+                                            <label for="mv_AcidVolume">Acid Volume (L/Cell)</label>
+                                            <input id="mv_AcidVolume" type="text" placeholder="e.g. 2.45" class="form-control" />
+                                        </div>
+                                        <div class="col-md-3 col-sm-6 form-group">
+                                            <label for="mv_Temperature">Temperature (°C)</label>
+                                            <input id="mv_Temperature" type="text" placeholder="e.g. 42" class="form-control" />
+                                        </div>
+                                        <div class="col-md-3 col-sm-6 form-group">
+                                            <label for="mv_CellShortQty">Cell Short Qty</label>
+                                            <input id="mv_CellShortQty" type="text" placeholder="0" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-3 col-sm-6 form-group">
+                                            <label for="mv_FillingStartTime">Filling Start Time</label>
+                                            <input id="mv_FillingStartTime" type="datetime-local" class="form-control" />
+                                        </div>
+                                        <div class="col-md-3 col-sm-6 form-group">
+                                            <label for="mv_FillingEndTime">Filling End Time</label>
+                                            <input id="mv_FillingEndTime" type="datetime-local" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 4. PARAMETERS - GROUP 3: PERSONNEL & OPERATOR SIGN-OFF -->
+                            <div class="box box-solid" style="border: 1px solid var(--card-border); border-radius: 8px; margin-bottom: 16px; box-shadow: none;">
+                                <div class="box-header" style="background: var(--card-header-bg); border-bottom: 1px solid var(--card-border); padding: 10px 16px;">
+                                    <h4 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 0;">
+                                        <i class="fa fa-users" style="color: var(--text-secondary); margin-right: 6px;"></i> 3. Quality & Personnel Sign-off
+                                    </h4>
+                                </div>
+                                <div class="box-body" style="padding: 16px;">
+                                    <div class="row">
+                                        <div class="col-md-3 col-sm-6 form-group">
+                                            <label for="mv_PRDSupervisior">PRD Supervisor</label>
+                                            <div id="mv_PRDSupervisior"></div>
+                                        </div>
+                                        <div class="col-md-3 col-sm-6 form-group">
+                                            <label for="mv_QAInspector">QA Inspector</label>
+                                            <div id="mv_QAInspector"></div>
+                                        </div>
+                                        <div class="col-md-3 col-sm-6 form-group">
+                                            <label for="mv_FillingOperator">Filling Operator</label>
+                                            <div id="mv_FillingOperator"></div>
+                                        </div>
+                                        <div class="col-md-3 col-sm-6 form-group">
+                                            <label for="mv_ShiftEngineer">Shift Engineer</label>
+                                            <div id="mv_ShiftEngineer"></div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-3 col-sm-6 form-group">
+                                            <label for="mv_ReadingOperator">Reading Operator</label>
                                             <div id="mv_ReadingOperator"></div>
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="col-md-12">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>QR Code</label>
-                                            <input id="mv_QRCode" type="text" placeholder="QR Code" class="form-control" />
-                                        </div>                                      
-                                    </div>
-                                </div>
-
                             </div>
+
                         </form>
-                        @*<div class="col-sm-5"></div>*@
-                        <p>
-                            <div class="col-md-12">
-                                <div class="col-md-6">
-                                    @*<button id="btn_Save" class="btn btn-white btn-info btn-bold">
-                                            <i class="ace-icon fa fa-floppy-o bigger-120 blue"></i>
-                                            <span id="btn_save_label">Save</span>
-                                        </button>*@
-                                    <button id="btn_Clear" class="btn btn-white btn-warning btn-bold">
-                                        <i class="ace-icon fa fa-trash-o bigger-120 orange"></i>
-                                        Clear
-                                    </button>
-                                    <button class="btn btn-white btn-default btn-round" data-dismiss="modal">
-                                        <i class="ace-icon fa fa-times red2"></i>
-                                        Close
-                                    </button>
-                                </div>
+
+                        <!-- ACTION BUTTONS -->
+                        <div class="row" style="margin-top: 10px; margin-bottom: 15px;">
+                            <div class="col-md-12 text-left">
+                                <button id="btn_Clear" type="button" class="btn btn-white btn-warning btn-bold" style="min-width: 100px;">
+                                    <i class="ace-icon fa fa-trash-o bigger-120 orange"></i> Clear Form
+                                </button>
+                                <button type="button" class="btn btn-white btn-default btn-round" data-dismiss="modal" style="margin-left: 8px;">
+                                    <i class="ace-icon fa fa-times red2"></i> Close
+                                </button>
                             </div>
-                        </p>
+                        </div>
+
                     </div>
 
-                    <div class="box-body">
-                        <div class="col-sm-4" style="max-width: 70px; padding-left: 0px; padding-right: 0px">
-                            <button type="button" id="Delete" style="width: 100px;background-color: red">Delete</button>
+                    <!-- RECORDS GRID -->
+                    <div class="box-body" style="padding: 15px 20px 20px 20px; border-top: 1px solid var(--border-color);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <h4 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0;">
+                                <i class="fa fa-list text-primary"></i> Processed Formation Records
+                            </h4>
+                            <button type="button" id="Delete" class="btn btn-danger btn-sm" style="min-height: 32px; height: 32px; padding: 4px 14px;">
+                                <i class="fa fa-trash"></i> Delete Selected
+                            </button>
                         </div>
-                        <div class="col-md-12" style="padding-left:0px; padding-right:0px">
-                            <div id="Grid"></div>
-                        </div>
+                        <div id="Grid"></div>
                     </div>
 
                 </div>
-
             </div>
         </div>
     </section>

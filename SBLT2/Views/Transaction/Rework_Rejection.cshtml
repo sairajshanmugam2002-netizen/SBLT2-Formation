@@ -23,27 +23,130 @@
 <div class="content-wrapper">
     <section class="content">
         <div class="row">
-            <div class="col-xs-12" style="padding:5px; padding-top:0px">
-                <div class="box box-primary">
-                    <div class="box-header with-border" style="background-color: #f7f9fa; border-bottom: 1px solid #e1e8ed;">
-                        <h3 class="box-title">
-                            <i class="fa fa-wrench text-primary" style="margin-right: 5px;"></i>
-                            Rework / Rejection
+            <div class="col-xs-12" style="padding: 10px 15px 0 15px;">
+                <!-- TOP BARCODE / BATTERY DETAILS PANEL -->
+                <div class="scanner-hero" style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E2E8F0; padding-bottom: 10px; margin-bottom: 14px;">
+                        <h4 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 8px;">
+                            <span class="pulse-dot"></span>
+                            <i class="fa fa-qrcode" style="color: #007A3D;"></i> Battery Serial Identification
+                        </h4>
+                        <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #007A3D; background: #E6F4EC; border: 1px solid #A7F3D0; padding: 2px 8px; border-radius: 12px;">
+                            <i class="fa fa-barcode"></i> Ready For Scan
+                        </span>
+                    </div>
+                    <div class="row">
+                        <!-- 1. QR Code / Serial Scanner -->
+                        <div class="col-md-4 col-sm-12">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="txt_Scan_QRCode" style="font-weight: 600; font-size: 12.5px; color: var(--text-primary);">
+                                    Battery Serial / QR Code <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-addon" style="background-color: var(--input-addon-bg); color: var(--input-addon-text); border-color: var(--input-border);">
+                                        <i class="fa fa-barcode text-primary"></i>
+                                    </span>
+                                    <input type="text" 
+                                           id="txt_Scan_QRCode" 
+                                           name="txt_Scan_QRCode" 
+                                           class="form-control" 
+                                           placeholder="Scan 10-digit serial..." 
+                                           maxlength="30" 
+                                           autocomplete="off" 
+                                           autofocus 
+                                           style="font-weight: 700; letter-spacing: 0.8px; font-variant-numeric: tabular-nums;" />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" id="btn_Clear_Scan" title="Clear Scanner Input">
+                                            <i class="fa fa-times text-muted"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                                <small id="scan_feedback" class="text-muted" style="display: block; margin-top: 4px; font-size: 11px;">
+                                    Scan QR code with scanner or hit Enter.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- 2. Battery Type Read-Only Box -->
+                        <div class="col-md-4 col-sm-6">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="txt_Battery_Type" style="font-weight: 600; font-size: 12.5px; color: var(--text-primary);">
+                                    Battery Type
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-addon" style="background-color: var(--input-addon-bg); color: var(--input-addon-text); border-color: var(--input-border);">
+                                        <i class="fa fa-battery-three-quarters text-green"></i>
+                                    </span>
+                                    <input type="text" 
+                                           id="txt_Battery_Type" 
+                                           name="txt_Battery_Type" 
+                                           class="form-control" 
+                                           placeholder="-- Auto-filled from Serial --" 
+                                           readonly 
+                                           style="background-color: var(--input-disabled-bg); font-weight: 600; color: var(--text-primary); border-color: var(--input-border);" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. Battery Model Read-Only Box -->
+                        <div class="col-md-4 col-sm-6">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="txt_Battery_Model" style="font-weight: 600; font-size: 12.5px; color: var(--text-primary);">
+                                    Battery Model
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-addon" style="background-color: var(--input-addon-bg); color: var(--input-addon-text); border-color: var(--input-border);">
+                                        <i class="fa fa-tag text-info"></i>
+                                    </span>
+                                    <input type="text" 
+                                           id="txt_Battery_Model" 
+                                           name="txt_Battery_Model" 
+                                           class="form-control" 
+                                           placeholder="-- Auto-filled from Serial --" 
+                                           readonly 
+                                           style="background-color: var(--input-disabled-bg); font-weight: 600; color: var(--text-primary); border-color: var(--input-border);" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box box-primary" style="border-top: 3px solid var(--ar-primary) !important;">
+                    <div class="box-header with-border" style="background-color: var(--card-header-bg); padding: 14px 20px;">
+                        <h3 class="box-title" style="font-size: 15px; font-weight: 700; color: var(--text-primary);">
+                            <i class="fa fa-wrench" style="color: var(--ar-primary); margin-right: 6px;"></i>
+                            Rework / Rejection Entry
                         </h3>
                         <div class="box-tools pull-right">
-                            <button type="button" id="btn_Refresh" title="Refresh" class="btn btn-box-tool" style="padding:5px">
-                                <span class='fa fa-refresh bigger-130' style="color:#5c6bc0;"></span>
+                            <button type="button" id="btn_Refresh" title="Refresh Grid Data" class="btn btn-box-tool">
+                                <span class='fa fa-refresh text-primary'></span>
                             </button>
                         </div>
                     </div>
 
-                    <div class="panel-body" style="padding: 20px 25px 10px 25px;">
+                    <div class="panel-body" style="padding: 20px 24px;">
+
+                        <!-- VISUAL DEFECT TYPE TOGGLE PILLS -->
+                        <div style="margin-bottom: 16px;">
+                            <label style="font-size: 12px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 6px;">
+                                Quick Select Defect Mode:
+                            </label>
+                            <div class="defect-toggle-group" id="toggle_DefectType">
+                                <button type="button" class="defect-toggle-btn toggle-rework" id="toggle_Rework">
+                                    <i class="fa fa-wrench"></i> Rework Defect
+                                </button>
+                                <button type="button" class="defect-toggle-btn toggle-rejection" id="toggle_Rejection">
+                                    <i class="fa fa-ban"></i> Rejection Defect
+                                </button>
+                            </div>
+                        </div>
+
                         <form class="form-horizontal" role="form" id="formReworkRejection" onsubmit="return false;">
                             <div class="row">
                                 <!-- Field 1: Rework / Rejection Type -->
                                 <div class="col-md-4 col-sm-6 form-group" style="padding-right: 15px;">
                                     <label for="ddlType">
-                                        <span class="required-star">*</span>1. Rework / Rejection Type
+                                        <span class="required-star">*</span> 1. Rework / Rejection Type
                                     </label>
                                     <div id="ddlType"></div>
                                 </div>
@@ -51,7 +154,7 @@
                                 <!-- Field 2: Reason -->
                                 <div class="col-md-4 col-sm-6 form-group" style="padding-right: 15px;">
                                     <label for="ddlReason">
-                                        <span class="required-star">*</span>2. Reason
+                                        <span class="required-star">*</span> 2. Reason
                                     </label>
                                     <div id="ddlReason"></div>
                                 </div>
@@ -59,7 +162,7 @@
                                 <!-- Field 3: Employee -->
                                 <div class="col-md-4 col-sm-6 form-group">
                                     <label for="ddlEmployee">
-                                        <span class="required-star">*</span>3. Employee
+                                        <span class="required-star">*</span> 3. Employee
                                     </label>
                                     <div id="ddlEmployee"></div>
                                 </div>
@@ -67,9 +170,9 @@
 
                             <div class="row" style="margin-top: 15px; margin-bottom: 10px;">
                                 <div class="col-md-12 text-left" style="padding-left: 0px;">
-                                    <button id="btn_Save" type="button" class="btn btn-white btn-info btn-bold" style="min-width: 100px;">
-                                        <i class="ace-icon fa fa-floppy-o bigger-120 blue"></i>
-                                        <span id="btn_save_label">Save</span>
+                                    <button id="btn_Save" type="button" class="btn btn-primary" style="min-width: 110px; background-color: var(--ar-primary) !important; border-color: var(--ar-primary) !important; color: #FFF !important;">
+                                        <i class="ace-icon fa fa-floppy-o bigger-120"></i>
+                                        <span id="btn_save_label">Save Record</span>
                                     </button>
                                     <button id="btn_Clear" type="button" class="btn btn-white btn-warning btn-bold" style="min-width: 90px; margin-left: 8px;">
                                         <i class="ace-icon fa fa-trash-o bigger-120 orange"></i>
@@ -81,8 +184,8 @@
                     </div>
 
                     <!-- Records Grid Section -->
-                    <div class="box-body" style="padding: 10px 25px 20px 25px; border-top: 1px solid #eee;">
-                        <h4 style="font-size: 14px; font-weight: bold; color: #555; margin-bottom: 10px;">
+                    <div class="box-body" style="padding: 10px 25px 20px 25px; border-top: 1px solid var(--border-color);">
+                        <h4 style="font-size: 14px; font-weight: bold; color: var(--text-primary); margin-bottom: 10px;">
                             <i class="fa fa-list"></i> Logged Rework / Rejection Records
                         </h4>
                         <div id="Grid"></div>
@@ -177,17 +280,56 @@
         // Initial State: No type selected, display "Select Type First"
         loadReasons(null);
 
+        // Synchronize Defect Mode Toggle Buttons with Dropdown Selection
+        function syncToggleWithDdl(typeText) {
+            $('.defect-toggle-btn').removeClass('active');
+            if (!typeText) return;
+            typeText = typeText.toLowerCase();
+            if (typeText.indexOf('rework') !== -1) {
+                $('#toggle_Rework').addClass('active');
+            } else if (typeText.indexOf('rejection') !== -1) {
+                $('#toggle_Rejection').addClass('active');
+            }
+        }
+
+        $('#toggle_Rework').on('click', function () {
+            var items = $("#ddlType").jqxDropDownList('getItems');
+            if (items) {
+                for (var i = 0; i < items.length; i++) {
+                    if (items[i].label.toLowerCase().indexOf('rework') !== -1) {
+                        $("#ddlType").jqxDropDownList('selectIndex', i);
+                        break;
+                    }
+                }
+            }
+        });
+
+        $('#toggle_Rejection').on('click', function () {
+            var items = $("#ddlType").jqxDropDownList('getItems');
+            if (items) {
+                for (var i = 0; i < items.length; i++) {
+                    if (items[i].label.toLowerCase().indexOf('rejection') !== -1) {
+                        $("#ddlType").jqxDropDownList('selectIndex', i);
+                        break;
+                    }
+                }
+            }
+        });
+
         // When Rework / Rejection Type changes:
         // Clear previous reason, fetch descriptions for selected type, bind to Reason dropdown
         $('#ddlType').on('select', function (event) {
             if (event.args) {
                 var item = event.args.item;
                 if (item && item.value) {
+                    syncToggleWithDdl(item.label);
                     loadReasons(item.value);
                 } else {
+                    syncToggleWithDdl(null);
                     loadReasons(null);
                 }
             } else {
+                syncToggleWithDdl(null);
                 loadReasons(null);
             }
         });
@@ -220,6 +362,41 @@
             height: '34px',
             filterable: true,
             filterPlaceHolder: "Search Employee..."
+        });
+
+        // =========================================================================
+        // QR Code / Serial Scanner Hook Scripts
+        // =========================================================================
+        function handleScanQRCode(serial) {
+            serial = $.trim(serial);
+            if (!serial) {
+                $('#scan_feedback').html('<span class="text-danger"><i class="fa fa-exclamation-circle"></i> Please scan or enter a serial number.</span>');
+                return;
+            }
+
+            $('#scan_feedback').html('<span class="text-info"><i class="fa fa-spinner fa-spin"></i> Processing serial: ' + serial + '...</span>');
+
+            // Placeholder Hook: In future integration, invoke backend serial lookup API
+            setTimeout(function () {
+                $('#scan_feedback').html('<span class="text-success"><i class="fa fa-check-circle"></i> Scanned: <strong>' + serial + '</strong></span>');
+                // Placeholder: Auto-populate Battery Type & Model once backend API is linked
+                // $('#txt_Battery_Type').val("...");
+                // $('#txt_Battery_Model').val("...");
+            }, 300);
+        }
+
+        $('#txt_Scan_QRCode').on('keypress', function (e) {
+            if (e.which === 13 || e.keyCode === 13) {
+                e.preventDefault();
+                handleScanQRCode($(this).val());
+            }
+        });
+
+        $('#btn_Clear_Scan').on('click', function () {
+            $('#txt_Scan_QRCode').val('').focus();
+            $('#txt_Battery_Type').val('');
+            $('#txt_Battery_Model').val('');
+            $('#scan_feedback').html('Scan QR code with scanner or hit Enter.');
         });
 
         // Load Grid of saved records
@@ -332,7 +509,9 @@
             $('#ddlType').jqxDropDownList('clearSelection');
             loadReasons(null);
             $('#ddlEmployee').jqxDropDownList('clearSelection');
-            $('#btn_save_label').text('Save');
+            $('#btn_save_label').text('Save Record');
+            $('#btn_Clear_Scan').trigger('click');
+            syncToggleWithDdl(null);
         }
 
         // =========================================================================
@@ -366,13 +545,17 @@
                 sortable: true,
                 filterable: true,
                 columnsresize: true,
+                enabletooltips: true,
+                columnsheight: 34,
+                rowsheight: 30,
+                altrows: true,
                 columns: [
-                    { text: 'S.No', datafield: 'SNo', width: '8%', align: 'center', cellsalign: 'center' },
-                    { text: 'Type', datafield: 'FRR_Type_Name', width: '15%' },
-                    { text: 'Reason', datafield: 'FRR_Reason', width: '37%' },
-                    { text: 'Employee', datafield: 'FRR_Employee_Name', width: '20%' },
-                    { text: 'Created By', datafield: 'FRR_Created_By', width: '10%' },
-                    { text: 'Date & Time', datafield: 'FRR_Created_Date', width: '10%' }
+                    { text: 'S.No', datafield: 'SNo', width: '8%', minwidth: 60, align: 'center', cellsalign: 'center' },
+                    { text: 'Type', datafield: 'FRR_Type_Name', width: '14%', minwidth: 100 },
+                    { text: 'Reason', datafield: 'FRR_Reason', width: '34%', minwidth: 220 },
+                    { text: 'Employee', datafield: 'FRR_Employee_Name', width: '18%', minwidth: 140 },
+                    { text: 'Created By', datafield: 'FRR_Created_By', width: '12%', minwidth: 110 },
+                    { text: 'Date & Time', datafield: 'FRR_Created_Date', width: '14%', minwidth: 140 }
                 ]
             });
         }

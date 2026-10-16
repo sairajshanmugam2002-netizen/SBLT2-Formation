@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewBag.Title = "Summary_APR";
 }
 
@@ -94,46 +94,53 @@
                 columns: [{
                     text: 'ID',
                     datafield: 'inv_Id',
-                    width: '10%',
+                    width: 80,
                     hidden: true
                 },
                     {
                         text: 'QRCode',
                         datafield: 'inv_QRCode',
-                        width: '10%'
+                        width: 150,
+                        minwidth: 130
                     },
                     {
                         text: 'Product Name',
                         datafield: 'inv_ProdName',
-                        width: '10%'
+                        width: 160,
+                        minwidth: 140
                     },
                     {
                         text: 'Product Code',
                         datafield: 'inv_ProdCode',
-                        width: '10%'
+                        width: 130,
+                        minwidth: 110
                     },
                     {
                         text: 'Model',
                         datafield: 'inv_Model',
-                        width: '10%'
+                        width: 120,
+                        minwidth: 100
                     },
                     {
                         text: 'Customer',
                         datafield: 'inv_Customer',
-                        width: '10%'
+                        width: 130,
+                        minwidth: 110
                     },
                     {
                         text: 'Location',
                         datafield: 'inv_Location',
-                        width: '10%'
+                        width: 120,
+                        minwidth: 100
                     },
                     {
                         text: 'Qty',
                         datafield: 'inv_Qty',
-                        width: '8%'
+                        width: 90,
+                        minwidth: 80
                     },
-                    { text: 'Inward User', datafield: 'inv_APRInwardUser', width: '10%' },
-                    { text: 'Inward Date', datafield: 'inv_APRInwardDate', width: '10%' },
+                    { text: 'Inward User', datafield: 'inv_APRInwardUser', width: 130, minwidth: 110 },
+                    { text: 'Inward Date', datafield: 'inv_APRInwardDate', width: 130, minwidth: 110 },
                 ]
             });
         }
@@ -224,7 +231,9 @@
                         </form>
                     </div>
                     <div class="col-md-12" style="padding-left: 0px; padding-right: 0px; padding-top: 10px">
-                        <div id="Grid"></div>
+                        <div class="table-wrapper">
+                            <div id="Grid"></div>
+                        </div>
                     </div>
                 </div>
 
