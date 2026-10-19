@@ -2293,6 +2293,65 @@ body.dark-theme #toaster .alert .close:hover {
 /* ==========================================================================
    Modern Donut Charts (Passed & Failed Battery Analytics)
    ========================================================================== */
+.modern-chart-card {
+    background: #ffffff;
+    border: 1px solid #E2E8F0;
+    border-radius: 14px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    padding: 20px 22px;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+    height: 100%;
+}
+
+.dark-theme .modern-chart-card {
+    background: var(--bg-secondary, #1E293B);
+    border-color: var(--border-color, #334155);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.modern-chart-card-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.modern-chart-title {
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #1E293B;
+    margin: 0;
+    letter-spacing: -0.2px;
+}
+
+.dark-theme .modern-chart-title {
+    color: #F8FAFC;
+}
+
+.donut-badge-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    margin-right: 10px;
+    flex-shrink: 0;
+    font-size: 11px;
+}
+
+.badge-passed {
+    background: #10B981;
+    color: #ffffff;
+}
+
+.badge-failed {
+    background: #EF4444;
+    color: #ffffff;
+    font-weight: bold;
+}
+
 .modern-donut-card {
     position: relative;
     display: flex;
@@ -2300,8 +2359,8 @@ body.dark-theme #toaster .alert .close:hover {
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    height: 320px;
-    padding: 8px 12px;
+    min-height: 250px;
+    padding: 0;
     box-sizing: border-box;
     gap: 16px;
 }

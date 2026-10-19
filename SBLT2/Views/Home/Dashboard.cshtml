@@ -188,12 +188,15 @@
                             var midFraction = (accumulatedOffset + (segLength / 2)) / C;
                             var midAngle = (midFraction * 2 * Math.PI) - (Math.PI / 2);
 
-                            if (pctVal >= 0.04) {
-                                var labelX = cx + r * Math.cos(midAngle);
-                                var labelY = cy + r * Math.sin(midAngle) + 3.5;
+                            var labelX = cx + r * Math.cos(midAngle);
+                            var labelY = cy + r * Math.sin(midAngle) + 3.5;
+
+                            if (pctVal >= 0.02) {
                                 percentLabelsSvg += '<text x="' + labelX.toFixed(1) + '" y="' + labelY.toFixed(1) + '" ' +
                                     'class="donut-segment-pct" text-anchor="middle" data-index="' + k + '">' + pctStr + '</text>';
-                            } else if (pctVal >= 0.015) {
+                            }
+
+                            if (pctVal < 0.04 && pctVal >= 0.015) {
                                 var outR = r + 18;
                                 var outX = cx + outR * Math.cos(midAngle);
                                 var outY = cy + outR * Math.sin(midAngle) + 3.5;
@@ -561,28 +564,26 @@
                 <div class="row">
                     <!-- Chart 1: Passed -->
                     <div class="col-md-6 col-sm-12" style="margin-bottom: 20px;">
-                        <div class="box box-success" style="border-top: 3px solid var(--ar-primary) !important;">
-                            <div class="box-header with-border">
-                                <h4 class="box-title" style="color: var(--text-primary); font-weight: 700; font-size: 14px;">
-                                    <i class="fa fa-check-circle" style="color: var(--ar-primary); margin-right: 6px;"></i> Battery Type Wise Passed Qty
-                                </h4>
+                        <div class="modern-chart-card">
+                            <div class="modern-chart-card-header">
+                                <span class="donut-badge-icon badge-passed"><i class="fa fa-check"></i></span>
+                                <h4 class="modern-chart-title">Battery Type Wise Passed Qty</h4>
                             </div>
-                            <div class="box-body" style="padding: 12px 16px;">
-                                <div id='chartContainer2' style="width:100%; height:320px;"></div>
+                            <div class="modern-chart-card-body">
+                                <div id='chartContainer2' style="width:100%;"></div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Chart 2: Failed -->
                     <div class="col-md-6 col-sm-12" style="margin-bottom: 20px;">
-                        <div class="box box-danger" style="border-top: 3px solid var(--ar-danger) !important;">
-                            <div class="box-header with-border">
-                                <h4 class="box-title" style="color: var(--text-primary); font-weight: 700; font-size: 14px;">
-                                    <i class="fa fa-exclamation-circle" style="color: var(--ar-danger); margin-right: 6px;"></i> Battery Type Wise Failed Qty
-                                </h4>
+                        <div class="modern-chart-card">
+                            <div class="modern-chart-card-header">
+                                <span class="donut-badge-icon badge-failed"><i class="fa fa-exclamation"></i></span>
+                                <h4 class="modern-chart-title">Battery Type Wise Failed Qty</h4>
                             </div>
-                            <div class="box-body" style="padding: 12px 16px;">
-                                <div id='chartContainer' style="width:100%; height:320px;"></div>
+                            <div class="modern-chart-card-body">
+                                <div id='chartContainer' style="width:100%;"></div>
                             </div>
                         </div>
                     </div>
