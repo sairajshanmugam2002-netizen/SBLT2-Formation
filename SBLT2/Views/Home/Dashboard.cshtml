@@ -77,12 +77,28 @@
             if (!$container.length) return;
 
             var passedPalette = [
-                '#007A3D', '#10B981', '#059669', '#34D399', '#047857',
-                '#16A34A', '#6EE7B7', '#065F46', '#22C55E', '#86EFAC'
+                '#10B981', // 1. Green
+                '#06B6D4', // 2. Teal / Cyan
+                '#F59E0B', // 3. Yellow
+                '#3B82F6', // 4. Blue
+                '#8B5CF6', // 5. Purple
+                '#EC4899', // 6. Pink
+                '#6366F1', // 7. Indigo
+                '#059669', // 8. Emerald
+                '#F97316', // 9. Orange
+                '#14B8A6'  // 10. Teal
             ];
             var failedPalette = [
-                '#DC2626', '#EF4444', '#B91C1C', '#F87171', '#E11D48',
-                '#991B1B', '#FB7185', '#7F1D1D', '#F43F5E', '#FECDD3'
+                '#EF4444', // 1. Red
+                '#F97316', // 2. Orange
+                '#F59E0B', // 3. Yellow
+                '#3B82F6', // 4. Blue
+                '#8B5CF6', // 5. Purple
+                '#EC4899', // 6. Pink
+                '#DC2626', // 7. Crimson
+                '#D97706', // 8. Amber
+                '#7C3AED', // 9. Violet
+                '#FB7185'  // 10. Rose
             ];
             var palette = (chartType === 'passed') ? passedPalette : failedPalette;
             var isFailed = (chartType === 'failed');
@@ -132,12 +148,13 @@
                         return;
                     }
 
-                    // SVG Donut Ring Geometry: Medium/Thick circular ring with subtle background track
+                    // SVG Donut Ring Geometry: Circular donut with clean inner center and background track
                     var cx = 120, cy = 120, r = 78, strokeW = 30;
                     var C = 2 * Math.PI * r;
                     var svgPaths = '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" ' +
                         'stroke="var(--border-color, #e2e8f0)" stroke-width="' + strokeW + '" opacity="0.22" class="donut-track" />';
-                    var legendHtml = '';
+                    var percentLabelsSvg = '';
+                    var tableRowsHtml = '';
                     var accumulatedOffset = 0;
                     var gap = items.length > 1 ? 4 : 0;
 
@@ -146,44 +163,60 @@
                         var pctVal = (itm.qty / total);
                         var pctStr = (pctVal * 100).toFixed(1) + '%';
                         var segColor = palette[k % palette.length];
+                        var safeType = $('<div>').text(itm.type).html();
 
                         if (items.length === 1) {
                             svgPaths += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" ' +
                                 'stroke="' + segColor + '" stroke-width="' + strokeW + '" ' +
                                 'class="donut-segment" data-index="' + k + '" />';
+                            percentLabelsSvg += '<text x="' + (cx + r) + '" y="' + (cy + 3.5) + '" ' +
+                                'class="donut-segment-pct" text-anchor="middle" data-index="0">100.0%</text>';
                         } else {
                             var segLength = pctVal * C;
                             var visibleLen = Math.max(1, segLength - gap);
                             var remainingLen = C - visibleLen;
                             var dashArr = visibleLen.toFixed(2) + ' ' + remainingLen.toFixed(2);
                             var dashOff = (-accumulatedOffset).toFixed(2);
-                            accumulatedOffset += segLength;
 
                             svgPaths += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" ' +
                                 'stroke="' + segColor + '" stroke-width="' + strokeW + '" ' +
                                 'stroke-dasharray="' + dashArr + '" stroke-dashoffset="' + dashOff + '" ' +
                                 'transform="rotate(-90 ' + cx + ' ' + cy + ')" ' +
                                 'class="donut-segment" data-index="' + k + '" />';
+
+                            // Calculate midpoint of segment arc for percentage label on ring
+                            var midFraction = (accumulatedOffset + (segLength / 2)) / C;
+                            var midAngle = (midFraction * 2 * Math.PI) - (Math.PI / 2);
+                            var labelX = cx + r * Math.cos(midAngle);
+                            var labelY = cy + r * Math.sin(midAngle) + 3.5;
+
+                            if (pctVal >= 0.05) {
+                                percentLabelsSvg += '<text x="' + labelX.toFixed(1) + '" y="' + labelY.toFixed(1) + '" ' +
+                                    'class="donut-segment-pct" text-anchor="middle" data-index="' + k + '">' + pctStr + '</text>';
+                            }
+
+                            accumulatedOffset += segLength;
                         }
 
-                        legendHtml +=
-                            '<div class="donut-legend-row" data-index="' + k + '">' +
-                                '<div class="donut-legend-left">' +
-                                    '<span class="donut-legend-dot" style="background-color:' + segColor + ';"></span>' +
-                                    '<span class="donut-legend-label" title="' + $('<div>').text(itm.type).html() + '">' + $('<div>').text(itm.type).html() + '</span>' +
-                                '</div>' +
-                                '<div class="donut-legend-right">' +
-                                    '<span class="donut-legend-qty">' + itm.qty.toLocaleString() + '</span>' +
-                                    '<span class="donut-legend-pct">' + pctStr + '</span>' +
-                                '</div>' +
-                            '</div>';
+                        tableRowsHtml +=
+                            '<tr class="donut-table-row" data-index="' + k + '">' +
+                                '<td class="td-type">' +
+                                    '<span class="donut-table-dot" style="background-color:' + segColor + ';"></span>' +
+                                    '<span class="donut-table-name" title="' + safeType + '">' + safeType + '</span>' +
+                                '</td>' +
+                                '<td class="td-qty">' + itm.qty.toLocaleString() + '</td>' +
+                                '<td class="td-pct">' + pctStr + '</td>' +
+                            '</tr>';
                     }
 
-                    var totalNumFontSize = total >= 100000 ? '20px' : '24px';
+                    var subLabel = isFailed ? 'Failed Qty' : 'Passed Qty';
+                    var totalNumFontSize = total >= 100000 ? '19px' : '22px';
                     var centerSvg =
+                        '<circle cx="' + cx + '" cy="' + cy + '" r="' + (r - strokeW / 2) + '" class="donut-center-bg" />' +
                         '<g class="donut-center-group">' +
-                            '<text x="' + cx + '" y="' + (cy - 7) + '" class="donut-center-label">TOTAL</text>' +
-                            '<text x="' + cx + '" y="' + (cy + 19) + '" class="donut-center-num" style="font-size:' + totalNumFontSize + ';">' + total.toLocaleString() + '</text>' +
+                            '<text x="' + cx + '" y="' + (cy - 16) + '" class="donut-center-label">TOTAL</text>' +
+                            '<text x="' + cx + '" y="' + (cy + 7) + '" class="donut-center-num" style="font-size:' + totalNumFontSize + ';">' + total.toLocaleString() + '</text>' +
+                            '<text x="' + cx + '" y="' + (cy + 24) + '" class="donut-center-sub">' + subLabel + '</text>' +
                         '</g>';
 
                     var cardClass = 'modern-donut-card' + (isFailed ? ' donut-failed-card' : '');
@@ -193,11 +226,23 @@
                                 '<svg class="donut-svg" viewBox="0 0 240 240">' +
                                     svgPaths +
                                     centerSvg +
+                                    percentLabelsSvg +
                                 '</svg>' +
                             '</div>' +
-                            '<div class="donut-legend-col">' +
-                                '<div class="donut-legend-list">' +
-                                    legendHtml +
+                            '<div class="donut-table-col">' +
+                                '<div class="donut-table-wrapper">' +
+                                    '<table class="donut-details-table">' +
+                                        '<thead>' +
+                                            '<tr>' +
+                                                '<th class="th-type">Battery Type</th>' +
+                                                '<th class="th-qty">Qty</th>' +
+                                                '<th class="th-pct">%</th>' +
+                                            '</tr>' +
+                                        '</thead>' +
+                                        '<tbody>' +
+                                            tableRowsHtml +
+                                        '</tbody>' +
+                                    '</table>' +
                                 '</div>' +
                             '</div>' +
                             '<div class="donut-tooltip" style="display:none;"></div>' +
@@ -230,13 +275,14 @@
                         $tooltip.css({ left: x + 'px', top: y + 'px' });
                     }
 
-                    $container.find('.donut-segment, .donut-legend-row').on('mouseenter', function (e) {
+                    $container.find('.donut-segment, .donut-table-row, .donut-segment-pct').on('mouseenter', function (e) {
                         var idx = parseInt($(this).attr('data-index'), 10);
                         if (isNaN(idx) || !items[idx]) return;
 
                         var itm = items[idx];
                         var col = palette[idx % palette.length];
                         var pct = ((itm.qty / total) * 100).toFixed(1) + '%';
+                        var safeType = $('<div>').text(itm.type).html();
 
                         $container.find('.donut-segment').each(function () {
                             if ($(this).attr('data-index') == idx) {
@@ -246,16 +292,17 @@
                             }
                         });
 
-                        $container.find('.donut-legend-row').removeClass('active');
-                        $container.find('.donut-legend-row[data-index="' + idx + '"]').addClass('active');
+                        $container.find('.donut-table-row').removeClass('active');
+                        $container.find('.donut-table-row[data-index="' + idx + '"]').addClass('active');
 
                         var ttContent =
                             '<div class="donut-tt-header">' +
                                 '<span class="donut-tt-dot" style="background-color:' + col + ';"></span>' +
-                                $('<div>').text(itm.type).html() +
+                                safeType +
                             '</div>' +
                             '<div class="donut-tt-body">' +
-                                '<div><span class="donut-tt-lbl">Quantity:</span><span class="donut-tt-val">' + itm.qty.toLocaleString() + '</span></div>' +
+                                '<div><span class="donut-tt-lbl">Battery Type:</span><span class="donut-tt-val">' + safeType + '</span></div>' +
+                                '<div><span class="donut-tt-lbl">Qty:</span><span class="donut-tt-val">' + itm.qty.toLocaleString() + '</span></div>' +
                                 '<div><span class="donut-tt-lbl">Percentage:</span><span class="donut-tt-val">' + pct + '</span></div>' +
                             '</div>';
 
@@ -263,13 +310,13 @@
                         positionTooltip(e);
                     });
 
-                    $container.find('.donut-segment, .donut-legend-row').on('mousemove', function (e) {
+                    $container.find('.donut-segment, .donut-table-row, .donut-segment-pct').on('mousemove', function (e) {
                         positionTooltip(e);
                     });
 
-                    $container.find('.donut-segment, .donut-legend-row').on('mouseleave', function () {
+                    $container.find('.donut-segment, .donut-table-row, .donut-segment-pct').on('mouseleave', function () {
                         $container.find('.donut-segment').css({ 'stroke-width': '30px', 'opacity': '1' });
-                        $container.find('.donut-legend-row').removeClass('active');
+                        $container.find('.donut-table-row').removeClass('active');
                         $tooltip.stop(true, true).fadeOut(100);
                     });
                 },
