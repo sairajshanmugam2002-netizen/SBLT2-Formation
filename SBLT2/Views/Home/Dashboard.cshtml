@@ -85,17 +85,7 @@
                 id: 'id',
                 url: url
             };
-            var dataAdapter = new $.jqx.dataAdapter(source, {
-                loadComplete: function (records) {
-                    var total = 0;
-                    if (records && records.length) {
-                        for (var i = 0; i < records.length; i++) {
-                            total += (parseInt(records[i].Qty, 10) || 0);
-                        }
-                    }
-                    $('#kpi_passed_qty').text(total.toLocaleString());
-                }
-            });
+            var dataAdapter = new $.jqx.dataAdapter(source);
             var settings = {
                 title: "Battery Type wise Passed Qty",
                 description: "",
@@ -154,17 +144,7 @@
                 id: 'id',
                 url: url
             };
-            var dataAdapter = new $.jqx.dataAdapter(source, {
-                loadComplete: function (records) {
-                    var total = 0;
-                    if (records && records.length) {
-                        for (var i = 0; i < records.length; i++) {
-                            total += (parseInt(records[i].Qty, 10) || 0);
-                        }
-                    }
-                    $('#kpi_failed_qty').text(total.toLocaleString());
-                }
-            });
+            var dataAdapter = new $.jqx.dataAdapter(source);
             var settings = {
                 title: "Battery Type wise failed Qty",
                 description: "",
@@ -220,17 +200,7 @@
                 id: 'id',
                 url: url
             };
-            var dataAdapter = new $.jqx.dataAdapter(source, {
-                loadComplete: function (records) {
-                    var total = 0;
-                    if (records && records.length) {
-                        for (var i = 0; i < records.length; i++) {
-                            total += (parseInt(records[i].Qty, 10) || 0);
-                        }
-                    }
-                    $('#kpi_rework_qty').text(total.toLocaleString());
-                }
-            });
+            var dataAdapter = new $.jqx.dataAdapter(source);
             var settings = {
                 title: "Rework",
                 description: "",
@@ -284,17 +254,7 @@
                 id: 'id',
                 url: url
             };
-            var dataAdapter = new $.jqx.dataAdapter(source, {
-                loadComplete: function (records) {
-                    var total = 0;
-                    if (records && records.length) {
-                        for (var i = 0; i < records.length; i++) {
-                            total += (parseInt(records[i].Qty, 10) || 0);
-                        }
-                    }
-                    $('#kpi_rejection_qty').text(total.toLocaleString());
-                }
-            });
+            var dataAdapter = new $.jqx.dataAdapter(source);
             var settings = {
                 title: "Rejection",
                 description: "",
@@ -435,65 +395,6 @@
                         <button type="button" class="btn btn-default" onclick="window.refreshDashboard()" title="Refresh Dashboard Data" style="min-height: 34px; height: 34px; font-size: 12px;">
                             <i class="fa fa-refresh text-primary"></i> Refresh
                         </button>
-                    </div>
-                </div>
-
-                <!-- KPI METRIC CARDS ROW -->
-                <div class="row kpi-row" style="margin-bottom: 20px;">
-                    <!-- KPI 1: Total Passed -->
-                    <div class="col-md-3 col-sm-6" style="margin-bottom: 12px;">
-                        <div class="kpi-card kpi-success">
-                            <div class="kpi-info">
-                                <span class="kpi-title">Total Passed Qty</span>
-                                <span class="kpi-value" id="kpi_passed_qty">0</span>
-                                <span class="kpi-badge badge-success"><i class="fa fa-check-circle"></i> Formation Passed</span>
-                            </div>
-                            <div class="kpi-icon-wrap">
-                                <i class="fa fa-battery-full"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- KPI 2: Total Failed -->
-                    <div class="col-md-3 col-sm-6" style="margin-bottom: 12px;">
-                        <div class="kpi-card kpi-danger">
-                            <div class="kpi-info">
-                                <span class="kpi-title">Total Failed Qty</span>
-                                <span class="kpi-value" id="kpi_failed_qty">0</span>
-                                <span class="kpi-badge badge-danger"><i class="fa fa-exclamation-triangle"></i> Failed Tests</span>
-                            </div>
-                            <div class="kpi-icon-wrap">
-                                <i class="fa fa-battery-empty"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- KPI 3: Total Rework -->
-                    <div class="col-md-3 col-sm-6" style="margin-bottom: 12px;">
-                        <div class="kpi-card kpi-warning">
-                            <div class="kpi-info">
-                                <span class="kpi-title">Total Rework</span>
-                                <span class="kpi-value" id="kpi_rework_qty">0</span>
-                                <span class="kpi-badge badge-warning"><i class="fa fa-wrench"></i> Under Correction</span>
-                            </div>
-                            <div class="kpi-icon-wrap">
-                                <i class="fa fa-wrench"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- KPI 4: Total Rejection -->
-                    <div class="col-md-3 col-sm-6" style="margin-bottom: 12px;">
-                        <div class="kpi-card kpi-danger">
-                            <div class="kpi-info">
-                                <span class="kpi-title">Total Rejection</span>
-                                <span class="kpi-value" id="kpi_rejection_qty">0</span>
-                                <span class="kpi-badge badge-danger"><i class="fa fa-ban"></i> Scrap / Reject</span>
-                            </div>
-                            <div class="kpi-icon-wrap">
-                                <i class="fa fa-trash-o"></i>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
