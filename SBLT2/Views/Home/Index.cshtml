@@ -208,6 +208,131 @@
         display: block;
         text-align: right;
     }
+
+    /* ==========================================================================
+       Login Success Toast Notification (Top-Right Fixed Enterprise UI)
+       ========================================================================== */
+    #toaster {
+        position: fixed !important;
+        top: 20px !important;
+        right: 20px !important;
+        left: auto !important;
+        bottom: auto !important;
+        width: auto !important;
+        max-width: 420px !important;
+        min-width: 280px;
+        margin: 0 !important;
+        padding: 0 !important;
+        z-index: 999999 !important;
+        pointer-events: none;
+        box-sizing: border-box;
+    }
+
+    #toaster .alert {
+        position: relative;
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px;
+        padding: 12px 18px !important;
+        margin: 0 0 10px 0 !important;
+        border-radius: 8px !important;
+        font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important;
+        font-size: 14px !important;
+        font-weight: 500 !important;
+        line-height: 1.4 !important;
+        letter-spacing: 0.01em;
+        pointer-events: auto !important;
+        box-sizing: border-box !important;
+        word-break: break-word;
+        animation: toastSlideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        will-change: transform, opacity;
+    }
+
+    #toaster .alert-success {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        border: 1px solid #e2e8f0 !important;
+        border-left: 4px solid #10b981 !important;
+        box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.12),
+                    0 4px 6px -2px rgba(15, 23, 42, 0.05),
+                    0 0 0 1px rgba(16, 185, 129, 0.08) !important;
+    }
+
+    #toaster .alert .toast-icon {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 24px !important;
+        height: 24px !important;
+        border-radius: 50% !important;
+        background: #d1fae5 !important;
+        color: #059669 !important;
+        flex-shrink: 0 !important;
+    }
+
+    #toaster .alert .toast-icon svg {
+        width: 14px;
+        height: 14px;
+        display: block;
+    }
+
+    #toaster .alert .message {
+        color: #1e293b !important;
+        font-weight: 500 !important;
+        font-size: 14px !important;
+        flex-grow: 1;
+    }
+
+    #toaster .alert .title {
+        display: none !important;
+    }
+
+    #toaster .alert .close {
+        background: transparent !important;
+        border: 0 !important;
+        color: #94a3b8 !important;
+        font-size: 18px !important;
+        font-weight: 600 !important;
+        line-height: 1 !important;
+        padding: 0 0 0 8px !important;
+        margin: 0 !important;
+        cursor: pointer !important;
+        opacity: 0.7 !important;
+        transition: color 0.15s ease, opacity 0.15s ease !important;
+        outline: none !important;
+        box-shadow: none !important;
+    }
+
+    #toaster .alert .close:hover {
+        color: #334155 !important;
+        opacity: 1 !important;
+    }
+
+    @@keyframes toastSlideInRight {
+        0% {
+            opacity: 0;
+            transform: translateY(-8px) translateX(24px) scale(0.96);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0) translateX(0) scale(1);
+        }
+    }
+
+    /* Responsive Support: Desktop, Laptop, Tablet, Mobile */
+    @@media (max-width: 600px) {
+        #toaster {
+            top: 16px !important;
+            right: 16px !important;
+            left: 16px !important;
+            max-width: calc(100vw - 32px) !important;
+            min-width: 0 !important;
+        }
+        #toaster .alert {
+            padding: 10px 14px !important;
+            font-size: 13.5px !important;
+        }
+    }
 </style>
 
 <script type="text/javascript">
@@ -222,6 +347,7 @@
     $(document).ready(function () {
 
         var flag = false;
+        var isLoggingIn = false;
 
         $('#Password').keypress(function (e) {
             if (e.keyCode == 13) {  //detect the enter key
@@ -235,46 +361,57 @@
 
         var Right = '';
         function login() {
-            $("#spinner").show();
-            flag = true;
-            if ($('#UserName').val() == "" || $('#Password').val() == "") {
-                alert("Enter Valid User Name");
-                $("#spinner").hide();
-                //$.toaster({ priority: 'danger', title: 'Notice', message: 'User Name and Password Should Not Empty' });
-                flag = false;
+            if (isLoggingIn) return;
+            var userName = $.trim($('#UserName').val());
+            var password = $('#Password').val();
+
+            if (userName === "" || password === "") {
+                $.toaster({ priority: 'warning', title: '', message: 'Please enter User Name and Password' });
+                return;
             }
-            if (flag == true) {
-                var f = "false";
-                $.ajax({
-                    type: "POST",
-                    url: "../../Home/pr_getlogin1?user=" + $('#UserName').val() + "&pwd=" + $('#Password').val(),
-                    dataType: "text",
-                    async: false,
-                    success: function (response) {
-                        f = response;
-                    }
-                });
-                if (f == "false") {
-                    alert("Enter Valid User Name & Password");
-                    $('#UserName').val("");
-                    $('#Password').val("");
-                    $("#spinner").hide();
+
+            $("#spinner").show();
+            $('#btnlogin').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> SIGNING IN...');
+
+            var f = "false";
+            $.ajax({
+                type: "POST",
+                url: "../../Home/pr_getlogin1?user=" + encodeURIComponent(userName) + "&pwd=" + encodeURIComponent(password),
+                dataType: "text",
+                async: false,
+                success: function (response) {
+                    f = response;
+                },
+                error: function () {
+                    f = "false";
                 }
-                else {
-                    var res = f.split("~");
-                    sessionStorage.setItem('Name', res[0]);
-                    sessionStorage.setItem('rights', res[1]);
-                    sessionStorage.setItem('user', res[0]);
-                    sessionStorage.setItem('Area', res[2]);
-                    sessionStorage.setItem('User_ID', res[4]);
+            });
 
-                    //sessionStorage.setItem('Points', res[5]);
+            if (f === "false" || !f) {
+                $("#spinner").hide();
+                $('#btnlogin').prop('disabled', false).html('<i class="fa fa-sign-in"></i> SIGN IN TO FORMATION CONSOLE');
+                $('#Password').val("");
+                $.toaster({ priority: 'danger', title: '', message: 'Invalid User Name or Password' });
+            }
+            else {
+                isLoggingIn = true;
+                var res = f.split("~");
+                sessionStorage.setItem('Name', res[0]);
+                sessionStorage.setItem('rights', res[1]);
+                sessionStorage.setItem('user', res[0]);
+                sessionStorage.setItem('Area', res[2]);
+                sessionStorage.setItem('User_ID', res[4]);
 
-                    Right = res[1];
+                Right = res[1];
 
-                    Loaddetails(1);
+                Loaddetails(1);
+                $("#spinner").hide();
+
+                $.toaster({ priority: 'success', title: '', message: 'Login successful! Redirecting...' });
+
+                setTimeout(function () {
                     window.location = '@Url.Action("Dashboard", "Home")';
-                }
+                }, 1000);
             }
         }
         var MID = 0;
@@ -568,8 +705,6 @@
     </div>
 
     <!-- /.login-box -->
-    <!-- jQuery 3 -->
-    <script src="../../bower_components/jquery/dist/jquery.min.js"></script>
     <!-- Bootstrap 3.3.7 -->
     <script src="../../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <!-- iCheck -->
