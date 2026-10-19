@@ -2290,3 +2290,287 @@ body.dark-theme #toaster .alert .close:hover {
     }
 }
 
+/* ==========================================================================
+   Modern Donut Charts (Passed & Failed Battery Analytics)
+   ========================================================================== */
+.modern-donut-card {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 320px;
+    padding: 8px 12px;
+    box-sizing: border-box;
+    gap: 16px;
+}
+
+.donut-visual-col {
+    position: relative;
+    flex: 0 0 210px;
+    width: 210px;
+    height: 210px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.donut-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.04));
+}
+
+.donut-segment {
+    cursor: pointer;
+    transition: stroke-width 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
+    transform-origin: 120px 120px;
+}
+
+.donut-center-group {
+    pointer-events: none;
+    user-select: none;
+}
+
+.donut-center-label {
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    fill: var(--text-secondary);
+    text-anchor: middle;
+}
+
+.donut-center-num {
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+    fill: var(--text-primary);
+    letter-spacing: -0.5px;
+    text-anchor: middle;
+}
+
+/* Legend Area */
+.donut-legend-col {
+    flex: 1 1 auto;
+    min-width: 160px;
+    max-height: 290px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 4px;
+}
+
+/* Custom Scrollbar for Legend */
+.donut-legend-col::-webkit-scrollbar {
+    width: 5px;
+}
+.donut-legend-col::-webkit-scrollbar-track {
+    background: transparent;
+}
+.donut-legend-col::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+.donut-legend-col::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}
+
+.donut-legend-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.donut-legend-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    gap: 8px;
+}
+
+.donut-legend-row:hover,
+.donut-legend-row.active {
+    background: var(--bg-hover, rgba(0, 122, 61, 0.08));
+    border-color: var(--ar-primary);
+    transform: translateX(2px);
+}
+
+.donut-failed-card .donut-legend-row:hover,
+.donut-failed-card .donut-legend-row.active {
+    background: rgba(239, 68, 68, 0.08);
+    border-color: #EF4444;
+}
+
+.donut-legend-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.donut-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.donut-legend-label {
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
+}
+
+.donut-legend-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.donut-legend-qty {
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.donut-legend-pct {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 10px;
+    background: var(--bg-primary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    min-width: 42px;
+    text-align: right;
+}
+
+/* Tooltip */
+.donut-tooltip {
+    position: absolute;
+    pointer-events: none;
+    z-index: 1050;
+    padding: 10px 14px;
+    background: #ffffff;
+    color: #0f172a;
+    border-radius: 8px;
+    font-size: 12px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    white-space: nowrap;
+    min-width: 150px;
+    transition: opacity 0.15s ease;
+}
+
+.dark-theme .donut-tooltip {
+    background: #1e293b;
+    color: #f8fafc;
+    border-color: #334155;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6);
+}
+
+.donut-tt-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+    font-size: 13px;
+    font-weight: 700;
+    color: inherit;
+}
+
+.donut-tt-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.donut-tt-body {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.donut-tt-lbl {
+    color: var(--text-secondary);
+    margin-right: 6px;
+}
+
+.donut-tt-val {
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* Empty / Zero State */
+.donut-empty-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    padding: 30px 20px;
+    box-sizing: border-box;
+}
+
+.donut-empty-icon {
+    font-size: 42px;
+    color: var(--border-color);
+    margin-bottom: 12px;
+    opacity: 0.7;
+}
+
+.donut-empty-text {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.donut-empty-sub {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+/* Responsive Support */
+@media (max-width: 767px) {
+    .modern-donut-card {
+        flex-direction: column;
+        height: auto;
+        min-height: 360px;
+        padding: 12px 6px;
+    }
+    .donut-visual-col {
+        flex: 0 0 190px;
+        width: 190px;
+        height: 190px;
+    }
+    .donut-legend-col {
+        width: 100%;
+        max-height: 160px;
+    }
+    #chartContainer2, #chartContainer {
+        height: auto !important;
+        min-height: 360px;
+    }
+}
+
+

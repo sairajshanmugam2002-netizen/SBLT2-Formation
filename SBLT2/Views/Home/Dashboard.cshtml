@@ -69,122 +69,226 @@
             dataAdapter.dataBind();
         }
 
-        function chart1() {
-            // ----------------------------Page 1  start---------------------------------
-            //Absent list line chart......................................................
-            //$("#DateTime").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
-            var url = "pr_fetch_passedqty_chart";//?ID=" + $('#DateTime').val();
-            //$("#DateTime").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
-            var source =
-            {
-                datatype: "json",
-                datafields: [
-                    { name: 'mv_BatteryType', type: 'string' },
-                    { name: 'Qty', type: 'string' },
-                ],
-                id: 'id',
-                url: url
-            };
-            var dataAdapter = new $.jqx.dataAdapter(source);
-            var settings = {
-                title: "Battery Type wise Passed Qty",
-                description: "",
-                showLegend: true,
-                enableAnimations: true,
-                padding: { left: 5, top: 5, right: 5, bottom: 5 },
-                titlePadding: { left: 90, top: 0, right: 0, bottom: 10 },
-                source: dataAdapter,
-                xAxis:
-                {
-                    dataField: 'mv_BatteryType',
-                    description: 'mv_BatteryType',
-                    showGridLines: false,
-                    valuesOnTicks: false
-                },
-                colorScheme: 'scheme02',
-                columnSeriesOverlap: false,
-                seriesGroups:
-                    [
-                        {
-                            type: 'column',
-                            valueAxis:
-                            {
-                                description: 'Qty(Nos)',
-                                visible: true,
-                                unitInterval: 500,
-                                showGridLines: false,
-                                title: { text: 'Plant Avg Cycletime<br>' }
-                            },
-                            series: [
-                                { dataField: 'Qty', displayText: 'Qty', showLabels: true, labelAngle: -90, color: '#007A3D' },
-                            ]
+        // ==========================================================================
+        // Modern Enterprise Donut Chart Renderer (Passed & Failed Analytics)
+        // ==========================================================================
+        function renderModernDonutChart(containerSelector, apiUrl, chartType) {
+            var $container = $(containerSelector);
+            if (!$container.length) return;
+
+            var passedPalette = [
+                '#007A3D', '#10B981', '#059669', '#34D399', '#047857',
+                '#16A34A', '#6EE7B7', '#065F46', '#22C55E', '#86EFAC'
+            ];
+            var failedPalette = [
+                '#DC2626', '#EF4444', '#B91C1C', '#F87171', '#E11D48',
+                '#991B1B', '#FB7185', '#7F1D1D', '#F43F5E', '#FECDD3'
+            ];
+            var palette = (chartType === 'passed') ? passedPalette : failedPalette;
+            var isFailed = (chartType === 'failed');
+
+            $.ajax({
+                type: "GET",
+                url: apiUrl,
+                dataType: "text",
+                cache: false,
+                success: function (response) {
+                    var rawData = [];
+                    try {
+                        rawData = JSON.parse(response);
+                        if (rawData && rawData.record && Array.isArray(rawData.record)) {
+                            rawData = rawData.record;
                         }
-                    ]
-            };
-            // setup the chart
-            $('#chartContainer2').jqxChart(settings);
-            var groups1 = $('#chartContainer2').jqxChart('seriesGroups');
-            $('#chartContainer2').jqxChart({ seriesGroups: groups1 });
+                    } catch (e) {
+                        rawData = [];
+                    }
+
+                    // Process and sanitize records
+                    var items = [];
+                    var total = 0;
+                    if (Array.isArray(rawData)) {
+                        for (var i = 0; i < rawData.length; i++) {
+                            var r = rawData[i];
+                            if (!r) continue;
+                            var type = (r.mv_BatteryType || r.BatteryType || r.type || ('Type ' + (i + 1))).toString().trim();
+                            var qty = parseInt(r.Qty || r.qty || 0, 10);
+                            if (isNaN(qty) || qty < 0) qty = 0;
+                            if (qty > 0) {
+                                items.push({ type: type, qty: qty });
+                                total += qty;
+                            }
+                        }
+                    }
+
+                    // Graceful Zero / No Data State
+                    if (items.length === 0 || total === 0) {
+                        $container.html(
+                            '<div class="donut-empty-container">' +
+                                '<div class="donut-empty-icon"><i class="fa fa-pie-chart"></i></div>' +
+                                '<div class="donut-empty-text">No data available</div>' +
+                                '<div class="donut-empty-sub">No ' + (isFailed ? 'failed' : 'passed') + ' batteries recorded for current shift</div>' +
+                            '</div>'
+                        );
+                        return;
+                    }
+
+                    // SVG Donut Ring Geometry
+                    var cx = 120, cy = 120, r = 82, strokeW = 26;
+                    var C = 2 * Math.PI * r;
+                    var svgPaths = '';
+                    var legendHtml = '';
+                    var accumulatedOffset = 0;
+                    var gap = items.length > 1 ? 3 : 0;
+
+                    for (var k = 0; k < items.length; k++) {
+                        var itm = items[k];
+                        var pctVal = (itm.qty / total);
+                        var pctStr = (pctVal * 100).toFixed(1) + '%';
+                        var segColor = palette[k % palette.length];
+
+                        if (items.length === 1) {
+                            svgPaths += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" ' +
+                                'stroke="' + segColor + '" stroke-width="' + strokeW + '" ' +
+                                'class="donut-segment" data-index="' + k + '" />';
+                        } else {
+                            var segLength = pctVal * C;
+                            var visibleLen = Math.max(1, segLength - gap);
+                            var remainingLen = C - visibleLen;
+                            var dashArr = visibleLen.toFixed(2) + ' ' + remainingLen.toFixed(2);
+                            var dashOff = (-accumulatedOffset).toFixed(2);
+                            accumulatedOffset += segLength;
+
+                            svgPaths += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" ' +
+                                'stroke="' + segColor + '" stroke-width="' + strokeW + '" ' +
+                                'stroke-dasharray="' + dashArr + '" stroke-dashoffset="' + dashOff + '" ' +
+                                'transform="rotate(-90 ' + cx + ' ' + cy + ')" ' +
+                                'class="donut-segment" data-index="' + k + '" />';
+                        }
+
+                        legendHtml +=
+                            '<div class="donut-legend-row" data-index="' + k + '">' +
+                                '<div class="donut-legend-left">' +
+                                    '<span class="donut-legend-dot" style="background-color:' + segColor + ';"></span>' +
+                                    '<span class="donut-legend-label" title="' + $('<div>').text(itm.type).html() + '">' + $('<div>').text(itm.type).html() + '</span>' +
+                                '</div>' +
+                                '<div class="donut-legend-right">' +
+                                    '<span class="donut-legend-qty">' + itm.qty.toLocaleString() + '</span>' +
+                                    '<span class="donut-legend-pct">' + pctStr + '</span>' +
+                                '</div>' +
+                            '</div>';
+                    }
+
+                    var centerSvg =
+                        '<g class="donut-center-group">' +
+                            '<text x="' + cx + '" y="' + (cy - 7) + '" class="donut-center-label">TOTAL</text>' +
+                            '<text x="' + cx + '" y="' + (cy + 19) + '" class="donut-center-num">' + total.toLocaleString() + '</text>' +
+                        '</g>';
+
+                    var cardClass = 'modern-donut-card' + (isFailed ? ' donut-failed-card' : '');
+                    var html =
+                        '<div class="' + cardClass + '">' +
+                            '<div class="donut-visual-col">' +
+                                '<svg class="donut-svg" viewBox="0 0 240 240">' +
+                                    svgPaths +
+                                    centerSvg +
+                                '</svg>' +
+                            '</div>' +
+                            '<div class="donut-legend-col">' +
+                                '<div class="donut-legend-list">' +
+                                    legendHtml +
+                                '</div>' +
+                            '</div>' +
+                            '<div class="donut-tooltip" style="display:none;"></div>' +
+                        '</div>';
+
+                    $container.html(html);
+
+                    // Setup Tooltip & Interactivity
+                    var $tooltip = $container.find('.donut-tooltip');
+
+                    function positionTooltip(e) {
+                        var cOffset = $container.offset();
+                        var x = e.pageX - cOffset.left + 14;
+                        var y = e.pageY - cOffset.top - 24;
+
+                        var ttW = $tooltip.outerWidth();
+                        var ttH = $tooltip.outerHeight();
+                        var cW = $container.width();
+                        var cH = $container.height();
+
+                        if (x + ttW > cW - 8) {
+                            x = e.pageX - cOffset.left - ttW - 14;
+                        }
+                        if (x < 8) x = 8;
+                        if (y + ttH > cH - 8) {
+                            y = cH - ttH - 8;
+                        }
+                        if (y < 8) y = 8;
+
+                        $tooltip.css({ left: x + 'px', top: y + 'px' });
+                    }
+
+                    $container.find('.donut-segment, .donut-legend-row').on('mouseenter', function (e) {
+                        var idx = parseInt($(this).attr('data-index'), 10);
+                        if (isNaN(idx) || !items[idx]) return;
+
+                        var itm = items[idx];
+                        var col = palette[idx % palette.length];
+                        var pct = ((itm.qty / total) * 100).toFixed(1) + '%';
+
+                        $container.find('.donut-segment').each(function () {
+                            if ($(this).attr('data-index') == idx) {
+                                $(this).css({ 'stroke-width': '34px', 'opacity': '1' });
+                            } else {
+                                $(this).css({ 'stroke-width': '26px', 'opacity': '0.35' });
+                            }
+                        });
+
+                        $container.find('.donut-legend-row').removeClass('active');
+                        $container.find('.donut-legend-row[data-index="' + idx + '"]').addClass('active');
+
+                        var ttContent =
+                            '<div class="donut-tt-header">' +
+                                '<span class="donut-tt-dot" style="background-color:' + col + ';"></span>' +
+                                $('<div>').text(itm.type).html() +
+                            '</div>' +
+                            '<div class="donut-tt-body">' +
+                                '<div><span class="donut-tt-lbl">Quantity:</span><span class="donut-tt-val">' + itm.qty.toLocaleString() + '</span></div>' +
+                                '<div><span class="donut-tt-lbl">Percentage:</span><span class="donut-tt-val">' + pct + '</span></div>' +
+                            '</div>';
+
+                        $tooltip.html(ttContent).stop(true, true).fadeIn(120);
+                        positionTooltip(e);
+                    });
+
+                    $container.find('.donut-segment, .donut-legend-row').on('mousemove', function (e) {
+                        positionTooltip(e);
+                    });
+
+                    $container.find('.donut-segment, .donut-legend-row').on('mouseleave', function () {
+                        $container.find('.donut-segment').css({ 'stroke-width': '26px', 'opacity': '1' });
+                        $container.find('.donut-legend-row').removeClass('active');
+                        $tooltip.stop(true, true).fadeOut(100);
+                    });
+                },
+                error: function () {
+                    $container.html(
+                        '<div class="donut-empty-container">' +
+                            '<div class="donut-empty-icon"><i class="fa fa-pie-chart"></i></div>' +
+                            '<div class="donut-empty-text">No data available</div>' +
+                            '<div class="donut-empty-sub">Unable to load ' + (isFailed ? 'failed' : 'passed') + ' battery chart</div>' +
+                        '</div>'
+                    );
+                }
+            });
+        }
+
+        function chart1() {
+            renderModernDonutChart('#chartContainer2', "pr_fetch_passedqty_chart", 'passed');
         }
 
         function chartcolumn2() {
-            // ----------------------------Page 1  start---------------------------------
-            //Absent list line chart......................................................
-            var User = sessionStorage.getItem("Plant");
-            //$("#DateTime").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'yyyyMMdd' });
-            var url = "pr_fetch_failedqty_chart";//?ID=" + $('#DateTime').val();
-            //$("#DateTime").jqxDateTimeInput({ width: '180px', height: '25px', formatString: 'dd-MMM-yyyy' });
-            var source =
-            {
-                datatype: "json",
-                datafields: [
-                    { name: 'mv_BatteryType', type: 'string' },
-                    { name: 'Qty', type: 'string' }
-                ],
-                id: 'id',
-                url: url
-            };
-            var dataAdapter = new $.jqx.dataAdapter(source);
-            var settings = {
-                title: "Battery Type wise failed Qty",
-                description: "",
-                showLegend: true,
-                enableAnimations: true,
-                padding: { left: 5, top: 5, right: 5, bottom: 5 },
-                titlePadding: { left: 90, top: 0, right: 0, bottom: 10 },
-                source: dataAdapter,
-                xAxis:
-                {
-                    dataField: 'mv_BatteryType',
-                    description: 'mv_BatteryType',
-                    showGridLines: false,
-                    valuesOnTicks: false,
-                    //textRotationAngle: -75,
-                },
-                colorScheme: 'scheme07',
-                columnSeriesOverlap: false,
-                seriesGroups:
-                    [
-                        {
-                            type: 'column',
-                            valueAxis:
-                            {
-                                visible: true,
-                                description: 'Qty(Nos)',
-                                unitInterval: 500,
-                                showGridLines: false,
-                                title: { text: 'MSG Stock Modelwise<br> ' }
-                            },
-                            series: [
-                                { dataField: 'Qty', displayText: 'Qty', showLabels: true, labelAngle: -90, color: '#EF4444' }
-                            ]
-                        }
-                    ]
-            };
-            // setup the chart
-            $('#chartContainer').jqxChart(settings);
-            var groups1 = $('#chartContainer').jqxChart('seriesGroups');
-            $('#chartContainer').jqxChart({ seriesGroups: groups1 });
+            renderModernDonutChart('#chartContainer', "pr_fetch_failedqty_chart", 'failed');
         }
 
 
@@ -353,7 +457,7 @@
         $(document).on('themeChanged', function (e, theme) {
             try {
                 if (typeof chart1 === 'function') chart1();
-                if (typeof chart2 === 'function') chart2();
+                if (typeof chartcolumn2 === 'function') chartcolumn2();
                 if (typeof chartRework === 'function') chartRework();
                 if (typeof chartRejection === 'function') chartRejection();
             } catch (err) { }
