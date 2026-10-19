@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewBag.Title = "Location_Master";
 }
 
@@ -80,7 +80,7 @@
                 text: 'Edit',
                 datafield: 'Edit',
                 filterable: false,
-                width: 40,
+                width: 50,
                 cellsrenderer: function () {
                     return '<div style="width: 100%"><img src="../../../img/Edit1.png" style="margin-left: 25%" /></div>';
                 }
@@ -88,18 +88,20 @@
                {
                 text: 'id',
                 datafield: 'lm_Id',
-                width: '100px',
+                width: 80,
                 hidden: true
             },
                 {
                     text: 'Location',
                     datafield: 'lm_LocationCode',
-                    width: '20%'
+                    width: '35%',
+                    minwidth: 150
                 },
                 {
                     text: 'Location Name',
                     datafield: 'lm_LocationName',
-                    width: '20%'
+                    width: '55%',
+                    minwidth: 250
                 },
            
             ]
@@ -374,7 +376,9 @@
                         </div>
                         <p></p>
                         <div class="col-md-12" style="padding-left:0px; padding-right:0px">
-                            <div id="Grid"></div>
+                            <div class="table-wrapper">
+                                <div id="Grid"></div>
+                            </div>
                         </div>
                     </div>
                 </div>

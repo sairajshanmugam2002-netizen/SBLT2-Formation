@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewBag.Title = "Reference_Master";
 }
 
@@ -48,14 +48,14 @@
                 columnsresize: true,pageable: true,enabletooltips: false,pagermode: 'simple',
                 enabletooltips: true,showfilterrow: true, selectionmode: 'checkbox',filterable: true,
                 pagesize: 14,
-                columns: [{text: 'Edit',datafield: 'Edit',filterable: false,width: 40,
+                columns: [{text: 'Edit',datafield: 'Edit',filterable: false,width: 50,
                     cellsrenderer: function () {
                         return '<div style="width: 100%"><img src="../../../img/Edit1.png" style="margin-left: 25%" /></div>';
                     }
                 },
-                {text: 'id',datafield: 'ID',width: '100px',hidden: true},
-                {text: 'Code',datafield: 'Code',width: '20%'},
-                {text: 'Desciption',datafield: 'Desciption',width: '20%'},
+                {text: 'id',datafield: 'ID',width: 80,hidden: true},
+                {text: 'Code',datafield: 'Code',width: '35%',minwidth: 150},
+                {text: 'Desciption',datafield: 'Desciption',width: '55%',minwidth: 250},
                 ]
             });
         }
@@ -338,7 +338,9 @@
                         </div>
                         <p></p>
                         <div class="col-md-12" style="padding-left:0px; padding-right:0px">
-                            <div id="Grid"></div>
+                            <div class="table-wrapper">
+                                <div id="Grid"></div>
+                            </div>
                         </div>
                     </div>
 

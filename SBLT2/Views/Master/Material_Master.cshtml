@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewBag.Title = "Material_Master";
 }
 
@@ -51,31 +51,24 @@
         $("#Grid").jqxGrid({theme: 'ui-sunny', width: '100%',height: '480px',source: dataAdapter,columnsresize: true,
             pageable: true,enabletooltips: false,pagermode: 'simple',enabletooltips: true,selectionmode: 'checkbox',
             showfilterrow: true,filterable: true,pagesize: 14,
-            columns: [{text: 'Edit',datafield: 'Edit',filterable: false,width: 40,
+            columns: [{text: 'Edit',datafield: 'Edit',filterable: false,width: 50,
                 cellsrenderer: function () {
                     return '<div style="width: 100%"><img src="../../../img/Edit1.png" style="margin-left: 25%" /></div>';
                 }
             },
-                //{
-                //    text: 'Del',
-                //    datafield: 'delete',
-                //    filterable: false,
-                //    width: 40,
-                //    cellsrenderer: function () {
-                //        return '<div style="width: 100%"><img src="../../../img/del.png" style="margin-left: 25%" /></div>';
-                //    }
-                //},
                 {
                 text: 'ID',
                 datafield: 'mm_ID',
-                width: '10%',
+                width: 80,
                 hidden: true
             },
-            {text: 'Material Code',datafield: 'mm_MaterialCode',width: '25%'},
-            {text: 'Material Description',datafield: 'mm_MaterialDesc',width: '15%'},
-                { text: 'Model', datafield: 'mm_Model', width: '10%' }, { text: 'Location', datafield: 'mm_Location', width: '10%' },
-                { text: 'Customer', datafield: 'mm_CustomerName', width: '10%' }, { text: 'Max Stock', datafield: 'mm_MaxStock', width: '10%' },
-                { text: 'Min Stock', datafield: 'mm_MinStock', width: '10%' },
+            {text: 'Material Code',datafield: 'mm_MaterialCode',width: 150, minwidth: 130},
+            {text: 'Material Description',datafield: 'mm_MaterialDesc',width: 200, minwidth: 170},
+                { text: 'Model', datafield: 'mm_Model', width: 120, minwidth: 100 },
+                { text: 'Location', datafield: 'mm_Location', width: 120, minwidth: 100 },
+                { text: 'Customer', datafield: 'mm_CustomerName', width: 140, minwidth: 120 },
+                { text: 'Max Stock', datafield: 'mm_MaxStock', width: 100, minwidth: 80 },
+                { text: 'Min Stock', datafield: 'mm_MinStock', width: 100, minwidth: 80 },
             ]
         });
         $("#Grid").on("cellclick", function (event) {
@@ -343,7 +336,9 @@
                         </div>
                         <p></p>
                         <div class="col-md-12" style="padding-left:0px; padding-right:0px">
-                            <div id="Grid"></div>
+                            <div class="table-wrapper">
+                                <div id="Grid"></div>
+                            </div>
                         </div>
                     </div>
                 </div>

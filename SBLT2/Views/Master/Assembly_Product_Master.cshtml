@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewBag.Title = "Assembly_Product_Master";
 }
 
@@ -221,75 +221,59 @@
                     text: 'Edit',
                     datafield: 'Edit',
                     filterable: false,
-                    width: 40,
+                    width: 50,
                     cellsrenderer: function () {
                         return '<div style="width: 100%"><img src="../../../img/Edit1.png" style="margin-left: 25%"/></div>';
                     }
                     },
-                    //{
-                    //    text: 'Print',
-                    //    datafield: 'Print',
-                    //    filterable: false,
-                    //    width: 40,
-                    //    cellsrenderer: function () {
-                    //        return '<div style="width: 100%"><img src="../../../img/download.png" style="margin-left: 25%"/></div>';
-                    //    }
-                    //},
-                //{
-                //    text: 'Del',
-                //    datafield: 'delete',
-                //    filterable: false,
-                //    width: 40,
-                //    cellsrenderer: function () {
-                //        return '<div style="width: 100%"><img src="../../../img/del.png" style="margin-left: 25%" /></div>';
-                //    }
-                //},
                 {
                     text: 'ID',
                     datafield: 'PM_iID',
-                    width: '10%',
+                    width: 80,
                     hidden: true
                     },
                     {
                         text: 'Product Code',
                         datafield: 'PM_Item_Code',
-                        width: '10%'
+                        width: 140,
+                        minwidth: 120
                     },
                 {
                     text: 'Product Name',
                     datafield: 'PM_Description',
-                    width: '10%'
+                    width: 180,
+                    minwidth: 150
                 },
                 {
                     text: 'Variant Code',
                     datafield: 'PM_Variant_Code',
-                    width: '10%'
+                    width: 130,
+                    minwidth: 110
                 },
                 {
                     text: 'Compare Code',
                     datafield: 'compare_code',
-                    width: '12%'
+                    width: 140,
+                    minwidth: 120
                 },
                 {
                     text: 'Skid Qty',
                     datafield: 'PM_Skid_Qty',
-                    width: '10%'
+                    width: 100,
+                    minwidth: 80
                 },
                 {
-                    text: 'Qty',
+                    text: 'MOQ Qty',
                     datafield: 'PM_MOQ_Qty',
-                    width: '15%'
+                    width: 100,
+                    minwidth: 80
                 },
                 {
-                    text: 'Qty',
+                    text: 'Inv Qty',
                     datafield: 'inv_Qty',
-                    width: '8%'
+                    width: 100,
+                    minwidth: 80
                 },
-                //{
-                //    text: 'Label Count',
-                //    datafield: 'inv_LabelCount',
-                //    width: '10%'
-                //},
                 ]
             });
         }
@@ -862,7 +846,9 @@
                             <button type="button" id="Delete" style="width: 100px;background-color: red">Delete</button>
                         </div>
                         <div class="col-md-12" style="padding-left:0px; padding-right:0px">
-                            <div id="Grid"></div>
+                            <div class="table-wrapper">
+                                <div id="Grid"></div>
+                            </div>
                         </div>
                     </div>
 

@@ -7,149 +7,258 @@
     <title>Admin | Dashboard</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1.1, user-scalable=no" name="viewport">
-    <!-- Bootstrap 3.3.5 -->
+    
+    <!-- ANTI-FOUT Immediate Theme Script (Zero-Flicker Execution) -->
+    <script type="text/javascript">
+        (function () {
+            try {
+                var savedTheme = localStorage.getItem('app_theme');
+                if (savedTheme === 'dark') {
+                    document.documentElement.classList.add('dark-theme');
+                } else {
+                    document.documentElement.classList.remove('dark-theme');
+                }
+            } catch (e) { }
+        })();
+    </script>
+
     @*<link href='https://fonts.googleapis.com/css?family=Aldrich' rel='stylesheet'>
         <link href='https://fonts.googleapis.com/css?family=Amiko' rel='stylesheet'>
         <link href='https://fonts.googleapis.com/css?family=Cutive' rel='stylesheet'>
     *@
     @System.Web.Optimization.Styles.Render("~/bundle/css")
     <link href="~/Content/Style.css" rel="stylesheet" />
+    <link href="~/Content/modern-theme-overrides.css" rel="stylesheet" />
     @System.Web.Optimization.Scripts.Render("~/bundle/js")
 
+    <style>
+        .tooltip.bottom .tooltip-inner {
+            max-width: 310px;
+            padding: 4px 10px;
+            color: var(--bg-primary);
+            text-align: center;
+            background-color: var(--text-primary);
+            border-radius: 6px;
+        }
+    </style>
 </head>
 
-<style>
-
-    .box-title {
-        font-family: 'Amiko';
-        font-size: 15px !important;
-        font-weight: bold !important;
-        color: #160202
-    }
-
-    .tooltip.bottom .tooltip-inner {
-        max-width: 310px;
-        padding: 3px 8px;
-        color: #fff;
-        text-align: center;
-        background-color: #245973;
-        border-radius: 5px
-    }
-</style>
-
 <script type="text/javascript">
+    // Global Theme Management System
+    window.getAppTheme = function () {
+        try {
+            return localStorage.getItem('app_theme') === 'dark' ? 'dark' : 'light';
+        } catch (e) {
+            return 'light';
+        }
+    };
+
+    window.updateThemeUI = function (theme) {
+        var isDark = (theme === 'dark');
+        var $icon = $('#theme-toggle-icon');
+        var $text = $('#theme-toggle-text');
+        var $btn = $('#btn-global-theme-toggle');
+
+        if (isDark) {
+            $('html').addClass('dark-theme');
+            $('body').addClass('dark-theme');
+            $('.wrapper').addClass('dark-theme');
+            if ($icon.length) {
+                $icon.removeClass('fa-moon-o').addClass('fa-sun-o');
+            }
+            if ($text.length) {
+                $text.text('Light Mode');
+            }
+            if ($btn.length) {
+                $btn.attr('title', 'Switch to Light Mode');
+            }
+        } else {
+            $('html').removeClass('dark-theme');
+            $('body').removeClass('dark-theme');
+            $('.wrapper').removeClass('dark-theme');
+            if ($icon.length) {
+                $icon.removeClass('fa-sun-o').addClass('fa-moon-o');
+            }
+            if ($text.length) {
+                $text.text('Dark Mode');
+            }
+            if ($btn.length) {
+                $btn.attr('title', 'Switch to Dark Mode');
+            }
+        }
+    };
+
+    window.setAppTheme = function (theme) {
+        try {
+            localStorage.setItem('app_theme', theme);
+        } catch (e) { }
+        window.updateThemeUI(theme);
+
+        // Notify all components, charts, and grids immediately without requiring reload
+        $(document).trigger('themeChanged', [theme]);
+        try {
+            window.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: theme } }));
+        } catch (e) { }
+
+        setTimeout(function () {
+            $(window).trigger('resize');
+            if ($("#Grid").length && typeof $("#Grid").jqxGrid === 'function') {
+                try {
+                    $("#Grid").jqxGrid('refresh');
+                } catch (e) { }
+            }
+        }, 50);
+    };
+
+    window.toggleAppTheme = function () {
+        var current = window.getAppTheme();
+        var next = (current === 'dark') ? 'light' : 'dark';
+        window.setAppTheme(next);
+    };
 
     $(document).ready(function () {
+        var current = window.getAppTheme();
+        window.updateThemeUI(current);
 
-        var User = sessionStorage.getItem("user");
-        //(User);
+        var User = sessionStorage.getItem("user") || "Operator";
         var html = sessionStorage.getItem('Menu');
-        //var user = sessionStorage.getItem('user');
-        // $("#User_Name").val(User);
         $("#User_Name").text(User);
-        $("#vin_Menu").html(html);
+        if (html) {
+            $("#vin_Menu").html(html);
+        }
 
-        if ($(window).width() < 600) {
-            $("#Limg").removeClass("hidden");
-            $("#Ltxt").addClass("hidden");
+        // Global HTML Table Layout Handler:
+        // Automatically ensures every standard HTML table is safely wrapped inside .table-wrapper.
+        // NEVER wraps JQWidgets Grids (jqxGrid has its own scrolling engine).
+        function ensureTableWrappers() {
+            $('table.table:not([class*="jqx"])').each(function () {
+                var $t = $(this);
+                if (!$t.parent().hasClass('table-wrapper') && !$t.parent().hasClass('grid-wrapper') && !$t.parent().hasClass('table-responsive')) {
+                    $t.wrap('<div class="table-wrapper"></div>');
+                }
+            });
         }
-        else {
-            $("#Limg").addClass("hidden");
-            $("#Ltxt").removeClass("hidden");
-        }
+
+        ensureTableWrappers();
+
+        // Re-check after dynamic content or AJAX completes
+        $(document).ajaxComplete(function () {
+            ensureTableWrappers();
+        });
+
+        // Window resize handler to maintain grid responsiveness across desktop/laptop/tablet/mobile
+        var resizeTimer;
+        $(window).on('resize orientationchange', function () {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function () {
+                if ($("#Grid").length && typeof $("#Grid").jqxGrid === 'function') {
+                    try {
+                        $("#Grid").jqxGrid('refresh');
+                    } catch (e) { }
+                }
+            }, 150);
+        });
+
+        // Sidebar pushMenu toggle animation listener: refresh grids & charts after sidebar expands/collapses
+        $(document).on('expanded.pushMenu', function () {
+            $('#sidebar-collapse12').attr('title', 'Collapse Sidebar (<)');
+            setTimeout(function () {
+                $(window).trigger('resize');
+                if ($("#Grid").length && typeof $("#Grid").jqxGrid === 'function') {
+                    try {
+                        $("#Grid").jqxGrid('refresh');
+                    } catch (e) { }
+                }
+            }, 320);
+        });
+
+        $(document).on('collapsed.pushMenu', function () {
+            $('#sidebar-collapse12').attr('title', 'Expand Sidebar (>)');
+            setTimeout(function () {
+                $(window).trigger('resize');
+                if ($("#Grid").length && typeof $("#Grid").jqxGrid === 'function') {
+                    try {
+                        $("#Grid").jqxGrid('refresh');
+                    } catch (e) { }
+                }
+            }, 320);
+        });
     });
-
-
 </script>
 
-<style>
-
-    .content {
-        min-height: 250px;
-        padding-top: 5px;
-        margin-right: auto;
-        margin-left: auto;
-        padding-left: 15px;
-        padding-right: 15px;
-        padding-bottom: 0px;
-    }
-
-    .box {
-        position: relative;
-        border-radius: 3px;
-        background: #ffffff;
-        border-top: 3px solid #d2d6de;
-        margin-bottom: 8px;
-        width: 100%;
-        box-shadow: 0 1px 1px rgba(0,0,0,0.1);
-    }
-</style>
-<body class="hold-transition skin-blue sidebar-mini" style="font-family:Verdana">
+<body class="hold-transition skin-blue sidebar-mini">
 
     <div class="wrapper">
         <header class="main-header">
-            <!-- Logo -->
-            <!-- Header Navbar: style can be found in header.less -->
-            <nav class="navbar navbar-static-top" role="navigation" style="height:40px">
+            <!-- Header Navbar -->
+            <nav class="navbar navbar-static-top" role="navigation">
                 <!-- Sidebar toggle button-->
-                <a href="#" class="sidebar-toggle" id="sidebar-collapse12" data-toggle="offcanvas" role="button">
+                <a href="#" class="sidebar-toggle" id="sidebar-collapse12" data-toggle="offcanvas" role="button" title="Collapse Sidebar (<)">
                     <span class="sr-only">Toggle navigation</span>
                 </a>
-                <img src="../../img/Logo11.png" class="hidden" id="Limg" style="height:50px;width:180px" alt="User Image">
-                <span id="Ltxt" class="hidden" style=" line-height:55px;  flex-align:center; font-family:Aldrich; font-size:15px; color:white"> Barcode Traceability System</span>
+
+                <!-- Brand Title -->
+                <div class="brand-title">
+                    <img src="@Url.Content("~/img/Logo11.png")" id="Limg" style="height:32px; width:auto; vertical-align:middle;" alt="Amara Raja" onerror="this.src='../../img/Logo11.png'">
+                    <span id="Ltxt">MVRLA Formation</span>
+                    <span class="brand-badge">Traceability</span>
+                </div>
+
                 <div class="navbar-custom-menu">
                     <ul class="nav navbar-nav">
+                        <!-- Global Theme Toggle (Light / Dark) -->
+                        <li class="theme-toggle-item" style="display: flex; align-items: center; margin-right: 12px;">
+                            <button type="button" 
+                                    id="btn-global-theme-toggle" 
+                                    class="btn-global-theme-toggle" 
+                                    onclick="window.toggleAppTheme()" 
+                                    title="Toggle Dark / Light Theme" 
+                                    aria-label="Toggle Theme">
+                                <i class="fa fa-moon-o theme-toggle-icon" id="theme-toggle-icon"></i>
+                                <span class="theme-toggle-text hidden-xs" id="theme-toggle-text">Dark Mode</span>
+                            </button>
+                        </li>
 
-
-                        <!-- User Account: style can be found in dropdown.less -->
+                        <!-- User Account -->
                         <li class="dropdown user user-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                @* <span id="Letter" style="background-color :#0073b7; border-bottom-style:solid;border-bottom-color:black; padding:5px;border-radius:30px;font-family: 'Cutive';font-size: 22px;" >&nbsp;&nbsp;<span id="Letter1"></span>&nbsp;&nbsp; </span>*@
-                                <img id="UserImage" src="../../img/Admin.jpg" class="user-image" alt="">
+                                <img id="UserImage" src="@Url.Content("~/img/Admin.jpg")" class="user-image" alt="User">
                                 <span class="hidden-xs"><span id="User_Name">User</span></span>
+                                <i class="fa fa-angle-down" style="font-size: 11px; margin-left: 4px; color: #64748B;"></i>
                             </a>
                             <ul class="dropdown-menu">
                                 <!-- User image -->
-                                <li class="user-header">
-                                    <img id="blah" src="../../img/user2-160x160.jpg" class="img-circle" alt="User Image">
-                                    @* <p>
-                                            Vinoth Kumar - Web Developer
-                                            <small>Member since Nov. 2017</small>
-                                        </p>*@
-                                </li>
-                                <!-- Menu Body -->
-                                <li class="user-body">
-
+                                <li class="user-header" style="background-color: #007A3D;">
+                                    <img id="blah" src="@Url.Content("~/img/user2-160x160.jpg")" class="img-circle" alt="User Image">
+                                    <p style="color: #FFFFFF; font-weight: 600; margin-top: 8px;">
+                                        MVRLA Formation Plant
+                                        <small style="color: #E6F4EC; display:block;">Industrial Operator Console</small>
+                                    </p>
                                 </li>
                                 <!-- Menu Footer-->
-                                <li class="user-footer">
+                                <li class="user-footer" style="padding: 10px;">
                                     <div class="pull-left">
-                                        <a href="#" id="btn_logo" class="btn btn-default btn-flat">Profile</a>
+                                        <a href="#" id="btn_logo" class="btn btn-default btn-sm">Profile</a>
                                     </div>
                                     <div class="pull-right">
-                                        <a href="../../Home/Index" class="btn btn-default btn-flat">Sign out</a>
+                                        <a href="../../Home/Index" class="btn btn-danger btn-sm" style="color: #fff !important;">Sign out</a>
                                     </div>
                                 </li>
                             </ul>
                         </li>
-                        <!-- Control Sidebar Toggle Button -->
-
                     </ul>
                 </div>
             </nav>
         </header>
         <!-- Left side column. contains the logo and sidebar -->
-        <aside class="main-sidebar" Style="padding-top:0px; margin-top:0px">
+        <aside class="main-sidebar">
             <!-- sidebar: style can be found in sidebar.less -->
             <section class="sidebar">
-                <!-- Sidebar user panel -->
-                <div class="user-panel" style="background-color:#3c8dbc">
-                    <div class="pull-left image">
-                        <img src="../../img/Logo11.png" style="height:30px;width:160px" alt="User Image">
-                    </div>
-                    <div class="pull-left info">
-                        <p style="font-family:Verdana; font-size:11px;  "> <br /> <font style="line-height:20px;"></font></p>
-
+                <!-- Sidebar Status Header -->
+                <div class="user-panel sidebar-status-panel">
+                    <div class="sidebar-status-pill">
+                        <i class="fa fa-circle text-success status-dot"></i>
+                        <span class="status-label">System Online</span>
                     </div>
                 </div>
                 <!-- search form -->

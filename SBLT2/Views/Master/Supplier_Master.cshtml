@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewBag.Title = "Supplier_Master";
 }
 
@@ -88,54 +88,51 @@
                 text: 'Edit',
                 datafield: 'Edit',
                 filterable: false,
-                width: 40,
+                width: 50,
                 cellsrenderer: function () {
                     return '<div style="width: 100%"><img src="../../../img/Edit1.png" style="margin-left: 25%" /></div>';
                 }
             },
-                //{
-                //    text: 'Del',
-                //    datafield: 'delete',
-                //    filterable: false,
-                //    width: 40,
-                //    cellsrenderer: function () {
-                //        return '<div style="width: 100%"><img src="../../../img/del.png" style="margin-left: 25%" /></div>';
-                //    }
-                //},
                 {
                 text: 'ID',
                 datafield: 'cm_iTransId',
-                width: '10%',
+                width: 80,
                 hidden: true
             },
             {
                 text: 'Customer Code',
                 datafield: 'cm_vCustomerID',
-                width: '25%'
+                width: 150,
+                minwidth: 130
                 }, {
                     text: 'Customer Name',
                     datafield: 'cm_vCustomerName',
-                    width: '10%'
+                    width: 200,
+                    minwidth: 160
                 }, {
                     text: 'Address',
                     datafield: 'cm_vAddress',
-                    width: '10%'
+                    width: 220,
+                    minwidth: 180
                 },
             {
                 text: 'GST No',
                 datafield: 'cm_GSTNo',
-                width: '15%'
+                width: 140,
+                minwidth: 120
             },          
             {
                 text: 'EMail',
                 datafield: 'cm_EMail',
                 cellsrenderer: cellsrenderer,
-                width: '15%'
+                width: 160,
+                minwidth: 140
                 },
                 {
                     text: 'Contact No',
                     datafield: 'cm_vMobileNo1',
-                    width: '15%'
+                    width: 140,
+                    minwidth: 120
                 },
             ]
         });
@@ -420,7 +417,9 @@
                         </div>
                         <p></p>
                         <div class="col-md-12" style="padding-left:0px; padding-right:0px">
-                            <div id="Grid"></div>
+                            <div class="table-wrapper">
+                                <div id="Grid"></div>
+                            </div>
                         </div>
                     </div>
                 </div>

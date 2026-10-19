@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewBag.Title = "Summary_CHN";
 }
 
@@ -48,18 +48,18 @@
             };
             var dataAdapter = new $.jqx.dataAdapter(source);
             $("#Grid").jqxGrid({theme: 'ui-sunny',width: '100%',autoheight: true,source: dataAdapter,columnsresize: true,
-                pageable: true,enabletooltips: false,pagermode: 'simple',enabletooltips: true,showfilterrow: true,
+                pageable: true,pagermode: 'simple',enabletooltips: true,showfilterrow: true,
                 filterable: true,pagesize: 14,
-                columns: [{text: 'ID',datafield: 'inv_Id',width: '10%',hidden: true},
-                    {text: 'QRCode',datafield: 'inv_QRCode',width: '10%'},
-                    {text: 'Product Name',datafield: 'inv_ProdName',width: '10%'},
-                    {text: 'Product Code',datafield: 'inv_ProdCode',width: '10%'},
-                    {text: 'Model',datafield: 'inv_Model',width: '10%'},
-                    {text: 'Customer',datafield: 'inv_Customer',width: '10%'},
-                    {text: 'Location',datafield: 'inv_Location',width: '10%'},
-                    {text: 'Qty',datafield: 'inv_Qty',width: '8%'},
-                    { text: 'Inward User', datafield: 'inv_CHEInwardUser', width: '10%' },
-                    { text: 'Inward Date', datafield: 'inv_CHEInwardDate', width: '10%' },
+                columns: [{text: 'ID',datafield: 'inv_Id',width: 80,hidden: true},
+                    {text: 'QRCode',datafield: 'inv_QRCode',width: 150, minwidth: 130},
+                    {text: 'Product Name',datafield: 'inv_ProdName',width: 160, minwidth: 140},
+                    {text: 'Product Code',datafield: 'inv_ProdCode',width: 130, minwidth: 110},
+                    {text: 'Model',datafield: 'inv_Model',width: 120, minwidth: 100},
+                    {text: 'Customer',datafield: 'inv_Customer',width: 130, minwidth: 110},
+                    {text: 'Location',datafield: 'inv_Location',width: 120, minwidth: 100},
+                    {text: 'Qty',datafield: 'inv_Qty',width: 90, minwidth: 80},
+                    { text: 'Inward User', datafield: 'inv_CHEInwardUser', width: 130, minwidth: 110 },
+                    { text: 'Inward Date', datafield: 'inv_CHEInwardDate', width: 130, minwidth: 110 }
                 ]
             });
         }
@@ -153,7 +153,9 @@
                         </form>
                     </div>
                     <div class="col-md-12" style="padding-left: 0px; padding-right: 0px; padding-top: 10px">
-                        <div id="Grid"></div>
+                        <div class="table-wrapper">
+                            <div id="Grid"></div>
+                        </div>
                     </div>
                 </div>
               
