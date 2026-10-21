@@ -333,6 +333,102 @@
             font-size: 13.5px !important;
         }
     }
+
+    /* ==========================================================================
+       Login Page: Form Label & Input-Field Strict Alignment
+       ========================================================================== */
+    .login-card .form-group {
+        display: block !important;
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        margin-bottom: 20px !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    .login-card label.login-label {
+        display: block !important;
+        width: 100% !important;
+        text-align: left !important;
+        font-family: var(--ar-font) !important;
+        font-size: 12.5px !important;
+        font-weight: 600 !important;
+        color: var(--text-primary) !important;
+        margin: 0 0 6px 0 !important;
+        padding: 0 !important;
+        line-height: 1.4 !important;
+        box-sizing: border-box !important;
+    }
+
+    .login-card .login-input-group {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: stretch !important;
+        width: 100% !important;
+        height: 44px !important;
+        min-height: 44px !important;
+        max-height: 44px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    .login-card .login-input-addon {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 44px !important;
+        min-width: 44px !important;
+        max-width: 44px !important;
+        height: 44px !important;
+        min-height: 44px !important;
+        max-height: 44px !important;
+        flex-shrink: 0 !important;
+        background: var(--input-addon-bg) !important;
+        border: 1px solid var(--input-border) !important;
+        border-right: none !important;
+        border-radius: 6px 0 0 6px !important;
+        color: var(--input-addon-text) !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+        float: none !important;
+    }
+
+    .login-card .login-input {
+        display: block !important;
+        flex: 1 1 auto !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        height: 44px !important;
+        min-height: 44px !important;
+        max-height: 44px !important;
+        border-radius: 0 6px 6px 0 !important;
+        border: 1px solid var(--input-border) !important;
+        border-left: none !important;
+        background-color: var(--input-bg) !important;
+        color: var(--input-text) !important;
+        font-family: var(--ar-font) !important;
+        font-size: 14px !important;
+        font-weight: 500 !important;
+        padding: 10px 14px !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+        float: none !important;
+        outline: none !important;
+        box-shadow: none !important;
+        transition: border-color 0.15s ease, background-color 0.2s ease !important;
+    }
+
+    .login-card .login-input:focus {
+        border-color: var(--ar-primary) !important;
+        box-shadow: 0 0 0 2px rgba(0, 122, 61, 0.15) !important;
+    }
+
+    .login-card .login-input-group:focus-within .login-input-addon {
+        border-color: var(--ar-primary) !important;
+    }
 </style>
 
 <script type="text/javascript">
@@ -624,55 +720,57 @@
                 <span style="font-size: 12px; color: var(--text-secondary);">Enter your plant credentials to access the terminal</span>
             </div>
 
-            <form id="form1" onsubmit="return false;">
+            <form id="form1" onsubmit="return false;" style="margin: 0; padding: 0;">
                 <!-- User Name Field -->
                 <div class="form-group" style="margin-bottom: 20px;">
-                    <label for="UserName" style="font-size: 12.5px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; display: block;">
-                        User Name / Operator ID <span class="text-danger" style="color: #EF4444;">*</span>
+                    <label for="UserName" class="login-label" style="display: block; width: 100%; text-align: left; font-size: 12.5px; font-weight: 600; color: var(--text-primary); margin: 0 0 6px 0; padding: 0;">
+                        Username <span class="text-danger" style="color: #EF4444;">*</span>
                     </label>
-                    <div class="input-group" style="display: flex; width: 100%;">
-                        <span class="input-group-addon" style="display: flex; align-items: center; justify-content: center; width: 44px; background: var(--input-addon-bg); border: 1px solid var(--input-border); border-right: none; border-radius: 6px 0 0 6px; color: var(--input-addon-text);">
-                            <i class="fa fa-user"></i>
+                    <div class="input-group login-input-group" style="display: flex; width: 100%; height: 44px; margin: 0; padding: 0;">
+                        <span class="input-group-addon login-input-addon" style="display: inline-flex; align-items: center; justify-content: center; width: 44px; min-width: 44px; max-width: 44px; height: 44px; flex-shrink: 0; background: var(--input-addon-bg); border: 1px solid var(--input-border); border-right: none; border-radius: 6px 0 0 6px !important; color: var(--input-addon-text); margin: 0; padding: 0; box-sizing: border-box;">
+                            <i class="fa fa-user" style="font-size: 15px;"></i>
                         </span>
                         <input id="UserName" 
                                name="email" 
                                type="text" 
-                               class="form-control" 
+                               class="form-control login-input" 
                                placeholder="e.g. operator1 or admin" 
                                required 
                                autocomplete="username" 
                                autofocus 
-                               style="height: 44px; border-radius: 0 6px 6px 0 !important; border: 1px solid var(--input-border); background-color: var(--input-bg); color: var(--input-text); font-size: 14px; font-weight: 500; padding: 10px 14px; width: 100%;" />
+                               style="display: block; flex: 1 1 auto; width: 100%; min-width: 0; height: 44px !important; min-height: 44px !important; max-height: 44px !important; border-radius: 0 6px 6px 0 !important; border: 1px solid var(--input-border) !important; border-left: none !important; background-color: var(--input-bg) !important; color: var(--input-text) !important; font-size: 14px; font-weight: 500; padding: 10px 14px !important; margin: 0 !important; box-sizing: border-box !important;" />
                     </div>
                 </div>
 
                 <!-- Password Field -->
-                <div class="form-group" style="margin-bottom: 24px;">
-                    <label for="Password" style="font-size: 12.5px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; display: block;">
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="Password" class="login-label" style="display: block; width: 100%; text-align: left; font-size: 12.5px; font-weight: 600; color: var(--text-primary); margin: 0 0 6px 0; padding: 0;">
                         Password <span class="text-danger" style="color: #EF4444;">*</span>
                     </label>
-                    <div class="input-group" style="display: flex; width: 100%;">
-                        <span class="input-group-addon" style="display: flex; align-items: center; justify-content: center; width: 44px; background: var(--input-addon-bg); border: 1px solid var(--input-border); border-right: none; border-radius: 6px 0 0 6px; color: var(--input-addon-text);">
-                            <i class="fa fa-lock"></i>
+                    <div class="input-group login-input-group" style="display: flex; width: 100%; height: 44px; margin: 0; padding: 0;">
+                        <span class="input-group-addon login-input-addon" style="display: inline-flex; align-items: center; justify-content: center; width: 44px; min-width: 44px; max-width: 44px; height: 44px; flex-shrink: 0; background: var(--input-addon-bg); border: 1px solid var(--input-border); border-right: none; border-radius: 6px 0 0 6px !important; color: var(--input-addon-text); margin: 0; padding: 0; box-sizing: border-box;">
+                            <i class="fa fa-lock" style="font-size: 15px;"></i>
                         </span>
                         <input id="Password" 
                                name="password" 
                                type="password" 
-                               class="form-control" 
+                               class="form-control login-input" 
                                placeholder="••••••••" 
                                required 
                                autocomplete="current-password" 
-                               style="height: 44px; border-radius: 0 6px 6px 0 !important; border: 1px solid var(--input-border); background-color: var(--input-bg); color: var(--input-text); font-size: 14px; font-weight: 500; padding: 10px 14px; width: 100%;" />
+                               style="display: block; flex: 1 1 auto; width: 100%; min-width: 0; height: 44px !important; min-height: 44px !important; max-height: 44px !important; border-radius: 0 6px 6px 0 !important; border: 1px solid var(--input-border) !important; border-left: none !important; background-color: var(--input-bg) !important; color: var(--input-text) !important; font-size: 14px; font-weight: 500; padding: 10px 14px !important; margin: 0 !important; box-sizing: border-box !important;" />
                     </div>
                 </div>
 
                 <!-- Sign In Action Button -->
-                <button type="button" 
-                        id="btnlogin" 
-                        class="btn btn-primary" 
-                        style="width: 100%; height: 46px; background-color: var(--ar-primary) !important; border-color: var(--ar-primary) !important; color: #FFFFFF !important; font-size: 14px; font-weight: 700; border-radius: 6px; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 6px -1px rgba(0, 122, 61, 0.4); cursor: pointer;">
-                    <i class="fa fa-sign-in"></i> SIGN IN TO FORMATION CONSOLE
-                </button>
+                <div style="margin-top: 24px;">
+                    <button type="button" 
+                            id="btnlogin" 
+                            class="btn btn-primary" 
+                            style="width: 100%; height: 46px; background-color: var(--ar-primary) !important; border-color: var(--ar-primary) !important; color: #FFFFFF !important; font-size: 14px; font-weight: 700; border-radius: 6px; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 6px -1px rgba(0, 122, 61, 0.4); cursor: pointer; margin: 0;">
+                        <i class="fa fa-sign-in"></i> SIGN IN TO FORMATION CONSOLE
+                    </button>
+                </div>
             </form>
 
             <div style="margin-top: 20px; text-align: center; border-top: 1px solid var(--border-color); padding-top: 14px;">

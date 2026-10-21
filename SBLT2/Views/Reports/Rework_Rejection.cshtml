@@ -6,12 +6,87 @@
     .filter-label {
         font-weight: 600;
         color: #333;
-        margin-top: 5px;
+        margin-bottom: 6px;
+        display: inline-block;
     }
     .box-title {
         font-size: 16px;
         font-weight: bold;
         color: #1e395b;
+    }
+
+    /* ==========================================================================
+       Rework / Rejection Report: Field Block Spacing Standards (Consistent 10px Gap)
+       Applied strictly to Rework / Rejection Report page
+       ========================================================================== */
+    #formReport > .row {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 14px 10px !important; /* 14px vertical gap, 10px horizontal gap between field blocks */
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        margin-bottom: 0 !important;
+        align-items: flex-end !important;
+    }
+
+    #formReport > .row:before,
+    #formReport > .row:after {
+        display: none !important;
+        content: none !important;
+    }
+
+    #formReport > .row > [class*="col-"] {
+        float: none !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    @@media (min-width: 992px) {
+        #formReport > .row > .col-md-3 {
+            flex: 0 0 calc((100% - 30px) / 4) !important;
+            max-width: calc((100% - 30px) / 4) !important;
+            width: calc((100% - 30px) / 4) !important;
+        }
+    }
+
+    @@media (min-width: 768px) and (max-width: 991px) {
+        #formReport > .row > [class*="col-"] {
+            flex: 0 0 calc((100% - 10px) / 2) !important;
+            max-width: calc((100% - 10px) / 2) !important;
+            width: calc((100% - 10px) / 2) !important;
+        }
+    }
+
+    @@media (max-width: 767px) {
+        #formReport > .row > [class*="col-"] {
+            flex: 0 0 100% !important;
+            max-width: 100% !important;
+            width: 100% !important;
+        }
+    }
+
+    #formReport label.filter-label {
+        display: inline-block !important;
+        margin-bottom: 6px !important;
+        font-size: 12.5px !important;
+        font-weight: 600 !important;
+        color: var(--text-primary) !important;
+    }
+
+    #formReport .form-control {
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    #formReport .jqx-widget {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
     }
 </style>
 
@@ -19,93 +94,6 @@
     <section class="content">
         <div class="row">
             <div class="col-xs-12" style="padding: 10px 15px 0 15px;">
-                <!-- TOP BARCODE / BATTERY DETAILS PANEL -->
-                <div class="scanner-hero" style="margin-bottom: 20px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E2E8F0; padding-bottom: 10px; margin-bottom: 14px;">
-                        <h4 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 8px;">
-                            <span class="pulse-dot"></span>
-                            <i class="fa fa-qrcode" style="color: #007A3D;"></i> Battery Serial Identification
-                        </h4>
-                        <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #007A3D; background: #E6F4EC; border: 1px solid #A7F3D0; padding: 2px 8px; border-radius: 12px;">
-                            <i class="fa fa-barcode"></i> Ready For Scan
-                        </span>
-                    </div>
-                    <div class="row">
-                        <!-- 1. QR Code / Serial Scanner -->
-                        <div class="col-md-4 col-sm-12">
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label for="txt_Scan_QRCode" style="font-weight: 600; font-size: 12.5px; color: var(--text-primary);">
-                                    Battery Serial / QR Code <span class="text-danger">*</span>
-                                </label>
-                                <div class="input-group">
-                                    <span class="input-group-addon" style="background-color: var(--input-addon-bg); color: var(--input-addon-text); border-color: var(--input-border);">
-                                        <i class="fa fa-barcode text-primary"></i>
-                                    </span>
-                                    <input type="text" 
-                                           id="txt_Scan_QRCode" 
-                                           name="txt_Scan_QRCode" 
-                                           class="form-control" 
-                                           placeholder="Scan 10-digit serial..." 
-                                           maxlength="30" 
-                                           autocomplete="off" 
-                                           autofocus 
-                                           style="font-weight: 700; letter-spacing: 0.8px; font-variant-numeric: tabular-nums;" />
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-default" type="button" id="btn_Clear_Scan" title="Clear Scanner Input">
-                                            <i class="fa fa-times text-muted"></i>
-                                        </button>
-                                    </span>
-                                </div>
-                                <small id="scan_feedback" class="text-muted" style="display: block; margin-top: 4px; font-size: 11px;">
-                                    Scan QR code with scanner or hit Enter.
-                                </small>
-                            </div>
-                        </div>
-
-                        <!-- 2. Battery Type Read-Only Box -->
-                        <div class="col-md-4 col-sm-6">
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label for="txt_Battery_Type" style="font-weight: 600; font-size: 12.5px; color: var(--text-primary);">
-                                    Battery Type
-                                </label>
-                                <div class="input-group">
-                                    <span class="input-group-addon" style="background-color: var(--input-addon-bg); color: var(--input-addon-text); border-color: var(--input-border);">
-                                        <i class="fa fa-battery-three-quarters text-green"></i>
-                                    </span>
-                                    <input type="text" 
-                                           id="txt_Battery_Type" 
-                                           name="txt_Battery_Type" 
-                                           class="form-control" 
-                                           placeholder="-- Auto-filled from Serial --" 
-                                           readonly 
-                                           style="background-color: var(--input-disabled-bg); font-weight: 600; color: var(--text-primary); border-color: var(--input-border);" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 3. Battery Model Read-Only Box -->
-                        <div class="col-md-4 col-sm-6">
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label for="txt_Battery_Model" style="font-weight: 600; font-size: 12.5px; color: var(--text-primary);">
-                                    Battery Model
-                                </label>
-                                <div class="input-group">
-                                    <span class="input-group-addon" style="background-color: var(--input-addon-bg); color: var(--input-addon-text); border-color: var(--input-border);">
-                                        <i class="fa fa-tag text-info"></i>
-                                    </span>
-                                    <input type="text" 
-                                           id="txt_Battery_Model" 
-                                           name="txt_Battery_Model" 
-                                           class="form-control" 
-                                           placeholder="-- Auto-filled from Serial --" 
-                                           readonly 
-                                           style="background-color: var(--input-disabled-bg); font-weight: 600; color: var(--text-primary); border-color: var(--input-border);" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="box box-primary" style="border-top: 3px solid var(--ar-primary) !important;">
                     <div class="box-header with-border" style="background-color: var(--card-header-bg); padding: 14px 20px;">
                         <h3 class="box-title" style="font-size: 15px; font-weight: 700; color: var(--text-primary);">
@@ -208,41 +196,6 @@
             getGrid();
         });
 
-        // =========================================================================
-        // QR Code / Serial Scanner Hook Scripts
-        // =========================================================================
-        function handleScanQRCode(serial) {
-            serial = $.trim(serial);
-            if (!serial) {
-                $('#scan_feedback').html('<span class="text-danger"><i class="fa fa-exclamation-circle"></i> Please scan or enter a serial number.</span>');
-                return;
-            }
-
-            $('#scan_feedback').html('<span class="text-info"><i class="fa fa-spinner fa-spin"></i> Processing serial: ' + serial + '...</span>');
-
-            // Placeholder Hook: In future integration, invoke backend serial lookup or filter report
-            setTimeout(function () {
-                $('#scan_feedback').html('<span class="text-success"><i class="fa fa-check-circle"></i> Scanned: <strong>' + serial + '</strong></span>');
-                // Placeholder: Auto-populate Battery Type & Model once backend API is linked
-                // $('#txt_Battery_Type').val("...");
-                // $('#txt_Battery_Model').val("...");
-            }, 300);
-        }
-
-        $('#txt_Scan_QRCode').on('keypress', function (e) {
-            if (e.which === 13 || e.keyCode === 13) {
-                e.preventDefault();
-                handleScanQRCode($(this).val());
-            }
-        });
-
-        $('#btn_Clear_Scan').on('click', function () {
-            $('#txt_Scan_QRCode').val('').focus();
-            $('#txt_Battery_Type').val('');
-            $('#txt_Battery_Model').val('');
-            $('#scan_feedback').html('Scan QR code with scanner or hit Enter.');
-        });
-
         // Load Grid initially
         getGrid();
 
@@ -256,7 +209,6 @@
             $("#ddlType").jqxDropDownList('selectIndex', 0);
             $("#from_Date").jqxDateTimeInput('setDate', firstDayOfMonth);
             $("#to_Date").jqxDateTimeInput('setDate', now);
-            $('#btn_Clear_Scan').trigger('click');
             getGrid();
         });
 
@@ -309,6 +261,9 @@
                     { name: 'SNo', type: 'int' },
                     { name: 'FRR_ID', type: 'int' },
                     { name: 'Formation_ID', type: 'string' },
+                    { name: 'FRR_QRCode', type: 'string' },
+                    { name: 'FRR_BatteryType', type: 'string' },
+                    { name: 'FRR_CKTNo', type: 'string' },
                     { name: 'FRR_Formation_ID', type: 'string' },
                     { name: 'FRR_Type_Name', type: 'string' },
                     { name: 'FRR_Reason', type: 'string' },
@@ -336,13 +291,16 @@
                 sortable: true,
                 enabletooltips: true,
                 columns: [
-                    { text: 'S.No', datafield: 'SNo', width: '6%', minwidth: 60, align: 'center', cellsalign: 'center' },
-                    { text: 'Formation ID', datafield: 'Formation_ID', width: '14%', minwidth: 120, align: 'center', cellsalign: 'center' },
+                    { text: 'S.No', datafield: 'SNo', width: '5%', minwidth: 50, align: 'center', cellsalign: 'center' },
+                    { text: 'QR Code', datafield: 'FRR_QRCode', width: '12%', minwidth: 110 },
+                    { text: 'Battery Type', datafield: 'FRR_BatteryType', width: '10%', minwidth: 95 },
+                    { text: 'CKT No', datafield: 'FRR_CKTNo', width: '8%', minwidth: 80 },
+                    { text: 'Formation ID', datafield: 'Formation_ID', width: '9%', minwidth: 90, align: 'center', cellsalign: 'center' },
                     {
                         text: 'Type',
                         datafield: 'FRR_Type_Name',
-                        width: '12%',
-                        minwidth: 100,
+                        width: '9%',
+                        minwidth: 85,
                         align: 'center',
                         cellsalign: 'center',
                         cellsrenderer: function (row, column, value) {
@@ -354,10 +312,10 @@
                             return '<div style="margin-top: 5px; text-align: center;">' + value + '</div>';
                         }
                     },
-                    { text: 'Reason', datafield: 'FRR_Reason', width: '26%', minwidth: 200 },
-                    { text: 'Employee', datafield: 'FRR_Employee_Name', width: '16%', minwidth: 140 },
-                    { text: 'Date / Time', datafield: 'FRR_Created_Date', width: '14%', minwidth: 140, align: 'center', cellsalign: 'center' },
-                    { text: 'Created By', datafield: 'FRR_Created_By', width: '12%', minwidth: 110 }
+                    { text: 'Reason', datafield: 'FRR_Reason', width: '18%', minwidth: 160 },
+                    { text: 'Employee', datafield: 'FRR_Employee_Name', width: '12%', minwidth: 120 },
+                    { text: 'Date / Time', datafield: 'FRR_Created_Date', width: '10%', minwidth: 120, align: 'center', cellsalign: 'center' },
+                    { text: 'Created By', datafield: 'FRR_Created_By', width: '7%', minwidth: 75 }
                 ]
             });
         }

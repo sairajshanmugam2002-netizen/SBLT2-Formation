@@ -135,7 +135,10 @@ namespace SBLT2.Controllers
             string FRR_Reason,
             string FRR_Employee_ID,
             string FRR_Employee_Name,
-            string FRR_Created_By
+            string FRR_Created_By,
+            string FRR_QRCode = "",
+            string FRR_BatteryType = "",
+            string FRR_CKTNo = ""
         )
         {
             SqlConnection con = new SqlConnection(dbFunctions.connectionstring);
@@ -153,6 +156,9 @@ namespace SBLT2.Controllers
                 com.Parameters.Add("@FRR_Employee_ID", SqlDbType.Int).Value = Convert.ToInt32(FRR_Employee_ID);
                 com.Parameters.Add("@FRR_Employee_Name", SqlDbType.VarChar, 100).Value = FRR_Employee_Name ?? "";
                 com.Parameters.Add("@FRR_Created_By", SqlDbType.VarChar, 50).Value = FRR_Created_By ?? "System";
+                com.Parameters.Add("@FRR_QRCode", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_QRCode) ? (object)DBNull.Value : FRR_QRCode;
+                com.Parameters.Add("@FRR_BatteryType", SqlDbType.VarChar, 100).Value = string.IsNullOrEmpty(FRR_BatteryType) ? (object)DBNull.Value : FRR_BatteryType;
+                com.Parameters.Add("@FRR_CKTNo", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_CKTNo) ? (object)DBNull.Value : FRR_CKTNo;
                 com.ExecuteNonQuery();
                 con.Close();
                 return "True";
@@ -690,6 +696,34 @@ namespace SBLT2.Controllers
             return s;
         }
 
+        public JsonResult pr_fetch_QRCode_Details(string ID)
+        {
+            ID = (ID ?? "").Trim();
+            if (string.IsNullOrEmpty(ID))
+            {
+                return Json(new { success = false, message = "Please provide a serial number." }, JsonRequestBehavior.AllowGet);
+            }
+            DataTable dt = dbFunctions.getTable("pr_checkQRCode '" + ID.Replace("'", "''") + "'");
+            if (dt.Rows.Count > 0)
+            {
+                DataRow row = dt.Rows[dt.Rows.Count - 1];
+                string bType = dt.Columns.Contains("mv_BatteryType") ? row["mv_BatteryType"].ToString() : "";
+                string ckt = dt.Columns.Contains("mv_CKTNo") ? row["mv_CKTNo"].ToString() : "";
+                string qr = dt.Columns.Contains("mv_QRCode") ? row["mv_QRCode"].ToString() : ID;
+                return Json(new
+                {
+                    success = true,
+                    qrCode = qr,
+                    batteryType = bType,
+                    cktNo = ckt
+                }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(new { success = false, message = "Serial / QR Code '" + ID + "' not found in formation records." }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         public string pr_Fetch_QRCode_Available(string ID)
         {
             if (ID.Length != 10)
@@ -1098,7 +1132,7 @@ namespace SBLT2.Controllers
                 com.Parameters.Add("@tp_InvoiceDate", SqlDbType.VarChar).Value = tp_InvoiceDate;
                 com.Parameters.Add("@tp_InvoiceNumber", SqlDbType.VarChar).Value = tp_InvoiceNumber;
                 com.Parameters.Add("@tp_InvoiceAttachment", SqlDbType.VarChar).Value = tp_InvoiceAttachment;
-                com.Parameters.Add("@tp_InvoiceUser", SqlDbType.VarChar).Value = tp_InvoiceUser;
+                com.Parameters.Add("@tp_Inv oiceUser", SqlDbType.VarChar).Value = tp_InvoiceUser;
                 com.ExecuteNonQuery();
                 con.Close();
                 return "True";

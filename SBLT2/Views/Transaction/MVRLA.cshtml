@@ -2,6 +2,90 @@
     ViewBag.Title = "MVRLA";
 }
 
+<style>
+    /* ==========================================================================
+       MVRLA Formation: Field Block Spacing Standards (Consistent 10px Gap)
+       Applied strictly to MVRLA Formation (#form1)
+       ========================================================================== */
+    #form1 .box-body > .row {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 14px 10px !important; /* 14px vertical gap, 10px horizontal gap between field blocks */
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+    #form1 .box-body > .row:before,
+    #form1 .box-body > .row:after {
+        display: none !important;
+        content: none !important;
+    }
+
+    #form1 .box-body > .row + .row {
+        margin-top: 14px !important;
+    }
+
+    #form1 .box-body > .row > [class*="col-"] {
+        float: none !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    @@media (min-width: 992px) {
+        #form1 .box-body > .row > .col-md-3 {
+            flex: 0 0 calc((100% - 30px) / 4) !important;
+            max-width: calc((100% - 30px) / 4) !important;
+            width: calc((100% - 30px) / 4) !important;
+        }
+        #form1 .box-body > .row > .col-md-6 {
+            flex: 0 0 calc((100% - 10px) / 2) !important;
+            max-width: calc((100% - 10px) / 2) !important;
+            width: calc((100% - 10px) / 2) !important;
+        }
+    }
+
+    @@media (min-width: 768px) and (max-width: 991px) {
+        #form1 .box-body > .row > [class*="col-"] {
+            flex: 0 0 calc((100% - 10px) / 2) !important;
+            max-width: calc((100% - 10px) / 2) !important;
+            width: calc((100% - 10px) / 2) !important;
+        }
+    }
+
+    @@media (max-width: 767px) {
+        #form1 .box-body > .row > [class*="col-"] {
+            flex: 0 0 100% !important;
+            max-width: 100% !important;
+            width: 100% !important;
+        }
+    }
+
+    #form1 label {
+        display: inline-block !important;
+        margin-bottom: 6px !important;
+        font-size: 12.5px !important;
+        font-weight: 600 !important;
+        color: var(--text-primary) !important;
+    }
+
+    #form1 .form-control {
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    #form1 .jqx-widget {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+</style>
+
 <script type="text/javascript">
     $(document).ready(function () {
         var ID = 0;
@@ -707,43 +791,7 @@
                     <div class="panel-body" style="padding: 20px;">
                         <form class="form-horizontal" role="form" id="form1">
 
-                            <!-- 1. HIGH-VISIBILITY INDUSTRIAL SCANNER HERO BAR -->
-                            <div class="scanner-hero">
-                                <div class="row">
-                                    <div class="col-md-7 col-sm-12">
-                                        <label for="mv_QRCode" class="scanner-hero-title">
-                                            <span class="pulse-dot"></span>
-                                            <i class="fa fa-qrcode" style="color: #007A3D;"></i>
-                                            Battery Serial / QR Code Scanner <span class="required-star">*</span>
-                                        </label>
-                                        <div class="input-group">
-                                            <span class="input-group-addon" style="background-color: #F0FDF4; border-color: #007A3D; color: #007A3D; font-size: 16px;">
-                                                <i class="fa fa-barcode"></i>
-                                            </span>
-                                            <input id="mv_QRCode" 
-                                                   type="text" 
-                                                   placeholder="Scan 10-digit battery barcode or hit Enter to save..." 
-                                                   class="form-control scanner-hero-input" 
-                                                   maxlength="30" 
-                                                   autocomplete="off" 
-                                                   autofocus />
-                                        </div>
-                                        <small class="text-muted" style="display: block; margin-top: 5px; font-size: 11.5px;">
-                                            <i class="fa fa-info-circle text-info"></i> Scanner auto-saves immediately upon reading a valid 10-digit serial.
-                                        </small>
-                                    </div>
-                                    <div class="col-md-5 col-sm-12" style="display: flex; align-items: center; justify-content: flex-end; padding-top: 15px;">
-                                        <div style="background: var(--bg-secondary); border: 1px dashed var(--border-color); border-radius: 8px; padding: 10px 16px; text-align: right; width: 100%;">
-                                            <span style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-secondary); display: block;">Terminal Mode</span>
-                                            <span style="font-size: 13px; font-weight: 700; color: var(--ar-primary);">
-                                                <i class="fa fa-bolt"></i> Auto-Commit On Scanner Carriage Return
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- 2. PARAMETERS - GROUP 1: CELL & LINE CONFIGURATION -->
+                            <!-- 1. PARAMETERS - GROUP 1: CELL & LINE CONFIGURATION -->
                             <div class="box box-solid" style="border: 1px solid var(--card-border); border-radius: 8px; margin-bottom: 16px; box-shadow: none;">
                                 <div class="box-header" style="background: var(--card-header-bg); border-bottom: 1px solid var(--card-border); padding: 10px 16px;">
                                     <h4 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 0;">
@@ -790,7 +838,7 @@
                                 </div>
                             </div>
 
-                            <!-- 3. PARAMETERS - GROUP 2: ACID & PROCESS MEASUREMENTS -->
+                            <!-- 2. PARAMETERS - GROUP 2: ACID & PROCESS MEASUREMENTS -->
                             <div class="box box-solid" style="border: 1px solid var(--card-border); border-radius: 8px; margin-bottom: 16px; box-shadow: none;">
                                 <div class="box-header" style="background: var(--card-header-bg); border-bottom: 1px solid var(--card-border); padding: 10px 16px;">
                                     <h4 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 0;">
@@ -829,11 +877,11 @@
                                 </div>
                             </div>
 
-                            <!-- 4. PARAMETERS - GROUP 3: PERSONNEL & OPERATOR SIGN-OFF -->
+                            <!-- 3. PARAMETERS - GROUP 3: QUALITY CHECK -->
                             <div class="box box-solid" style="border: 1px solid var(--card-border); border-radius: 8px; margin-bottom: 16px; box-shadow: none;">
                                 <div class="box-header" style="background: var(--card-header-bg); border-bottom: 1px solid var(--card-border); padding: 10px 16px;">
                                     <h4 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 0;">
-                                        <i class="fa fa-users" style="color: var(--text-secondary); margin-right: 6px;"></i> 3. Quality & Personnel Sign-off
+                                        <i class="fa fa-check-circle" style="color: var(--text-secondary); margin-right: 6px;"></i> 3. Quality Check
                                     </h4>
                                 </div>
                                 <div class="box-body" style="padding: 16px;">
@@ -861,6 +909,26 @@
                                             <div id="mv_ReadingOperator"></div>
                                         </div>
                                     </div>
+                                    <div class="row">
+                                        <div class="col-md-6 col-sm-12 form-group">
+                                            <label for="mv_QRCode">
+                                                <span class="star">*</span> Battery Serial / QR Code Scanner
+                                            </label>
+                                            <div class="input-group">
+                                                <span class="input-group-addon" style="background-color: var(--ar-primary-subtle, #F0FDF4); border-color: var(--input-border, #CBD5E1); color: var(--ar-primary, #007A3D); font-size: 16px;">
+                                                    <i class="fa fa-barcode"></i>
+                                                </span>
+                                                <input id="mv_QRCode" 
+                                                       type="text" 
+                                                       placeholder="Scan QR / Barcode" 
+                                                       class="form-control" 
+                                                       style="font-weight: 600; letter-spacing: 0.5px;"
+                                                       maxlength="30" 
+                                                       autocomplete="off" 
+                                                       autofocus />
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -869,7 +937,10 @@
                         <!-- ACTION BUTTONS -->
                         <div class="row" style="margin-top: 10px; margin-bottom: 15px;">
                             <div class="col-md-12 text-left">
-                                <button id="btn_Clear" type="button" class="btn btn-white btn-warning btn-bold" style="min-width: 100px;">
+                                <button id="btn_Save" type="button" class="btn btn-primary" style="min-width: 100px; background-color: var(--ar-primary) !important; border-color: var(--ar-primary) !important; color: #FFF !important;">
+                                    <i class="ace-icon fa fa-floppy-o bigger-120"></i> <span id="btn_save_label">Save</span>
+                                </button>
+                                <button id="btn_Clear" type="button" class="btn btn-white btn-warning btn-bold" style="min-width: 100px; margin-left: 8px;">
                                     <i class="ace-icon fa fa-trash-o bigger-120 orange"></i> Clear Form
                                 </button>
                                 <button type="button" class="btn btn-white btn-default btn-round" data-dismiss="modal" style="margin-left: 8px;">
