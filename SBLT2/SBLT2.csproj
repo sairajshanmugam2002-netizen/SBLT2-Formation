@@ -1548,6 +1548,7 @@
     <Content Include="Scripts\JQWidgets\jqxvalidator.js" />
     <Content Include="Scripts\JQWidgets\jqxwindow.js" />
     <Content Include="Scripts\materialize.min.js" />
+    <Content Include="Scripts\modern-donut-chart.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\moment.min.js" />
     <Content Include="Scripts\npm.js" />

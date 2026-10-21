@@ -6,9 +6,59 @@
     $(document).ready(function () {
         var ID = 0;
         var User = sessionStorage.getItem("user");
+        var currentGridRecords = [];
 
         $("#from_Date").jqxDateTimeInput({ width: '100%', height: '32px', formatString: 'dd-MMM-yyyy' });
         $("#to_Date").jqxDateTimeInput({ width: '100%', height: '32px', formatString: 'dd-MMM-yyyy' });
+
+        function renderSummaryCharts(records) {
+            var passedMap = {};
+            var failedMap = {};
+
+            if (Array.isArray(records)) {
+                for (var i = 0; i < records.length; i++) {
+                    var r = records[i];
+                    if (!r) continue;
+
+                    var bType = (r.mv_BatteryType || r.BatteryType || r.label || '').toString().trim();
+                    if (!bType) continue;
+
+                    var pQty = parseInt(r.mv_CDPassedQty != null ? r.mv_CDPassedQty : (r.PassedQty != null ? r.PassedQty : (r.TotalPassed != null ? r.TotalPassed : 0)), 10);
+                    if (isNaN(pQty) || pQty < 0) pQty = 0;
+
+                    var fQty = parseInt(r.mv_CDFailQty != null ? r.mv_CDFailQty : (r.FailQty != null ? r.FailQty : (r.FailedQty != null ? r.FailedQty : (r.TotalFailed != null ? r.TotalFailed : 0))), 10);
+                    if (isNaN(fQty) || fQty < 0) fQty = 0;
+
+                    if (pQty > 0) {
+                        passedMap[bType] = (passedMap[bType] || 0) + pQty;
+                    }
+                    if (fQty > 0) {
+                        failedMap[bType] = (failedMap[bType] || 0) + fQty;
+                    }
+                }
+            }
+
+            var passedItems = [];
+            for (var pKey in passedMap) {
+                if (passedMap.hasOwnProperty(pKey)) {
+                    passedItems.push({ type: pKey, qty: passedMap[pKey] });
+                }
+            }
+            passedItems.sort(function (a, b) { return b.qty - a.qty; });
+
+            var failedItems = [];
+            for (var fKey in failedMap) {
+                if (failedMap.hasOwnProperty(fKey)) {
+                    failedItems.push({ type: fKey, qty: failedMap[fKey] });
+                }
+            }
+            failedItems.sort(function (a, b) { return b.qty - a.qty; });
+
+            if (typeof window.renderModernDonutChart === 'function') {
+                window.renderModernDonutChart('#summaryChartPassed', passedItems, 'passed');
+                window.renderModernDonutChart('#summaryChartFailed', failedItems, 'failed');
+            }
+        }
 
         getgrid();
         function getgrid(ID) {
@@ -49,7 +99,16 @@
                 id: 'id',
                 url: url
             };
-            var dataAdapter = new $.jqx.dataAdapter(source);
+            var dataAdapter = new $.jqx.dataAdapter(source, {
+                loadComplete: function (records) {
+                    currentGridRecords = dataAdapter.records || records || [];
+                    renderSummaryCharts(currentGridRecords);
+                },
+                loadError: function (xhr, status, error) {
+                    currentGridRecords = [];
+                    renderSummaryCharts([]);
+                }
+            });
             $("#Grid").jqxGrid({
                 theme: 'ui-sunny',
                 width: '100%',
@@ -89,10 +148,10 @@
 
         $("#btnshow").click(function () {
             getgrid(1);
-        })
+        });
         $("#btnINV").click(function () {
             getgrid(2);
-        })
+        });
 
         $("#Reports").addClass("active");
         $("#Summary_Report").addClass("active");
@@ -102,10 +161,10 @@
         });
         $("#btn_Clear").click(function () {
             Clear();
-        })
+        });
         $("#btn_Refresh").click(function () {
-            $("#Grid").jqxGrid('updatebounddata');
-        })
+            getgrid(1);
+        });
         $("#btn_Excel").click(function () {
             var from = $('#from_Date').val();
             var to = $('#to_Date').val();
@@ -114,17 +173,41 @@
             window.open("../../Master/Export_To_Excel?FileName=Material Receipt Expire Report&Heading=Over all Material Receipt Expire Report for the particular period from " + from + " to " + to + "&Data=pr_FetchExpiryAlertReport_Excel '" + $('#from_Date').val() + "','" + $('#to_Date').val() + "'");
             $("#from_Date").jqxDateTimeInput({ width: '100%', height: '32px', formatString: 'dd-MMM-yyyy' });
             $("#to_Date").jqxDateTimeInput({ width: '100%', height: '32px', formatString: 'dd-MMM-yyyy' });
-        })
+        });
 
-        $("#Reports").addClass("active");
-        $("#Summary_CHN").addClass("active");
+        function toggleCharts() {
+            var $sec = $('#summaryChartsSection');
+            if ($sec.is(':visible')) {
+                $sec.slideUp(200);
+                $('#btn_ToggleCharts').html('<i class="fa fa-pie-chart text-primary"></i> Show Charts');
+            } else {
+                $sec.slideDown(200, function () {
+                    if (currentGridRecords && currentGridRecords.length) {
+                        renderSummaryCharts(currentGridRecords);
+                    }
+                });
+                $('#btn_ToggleCharts').html('<i class="fa fa-pie-chart text-primary"></i> Hide Charts');
+            }
+        }
 
-        $("#btn_Pdf").click(function () { })
-        $("#btn_Chart").click(function () { })
-        $("#btn_Help").click(function () { })
+        $("#btn_ToggleCharts").click(toggleCharts);
+        $("#btn_Chart").click(toggleCharts);
+        $("#btn_Pdf").click(function () { });
+        $("#btn_Help").click(function () { });
+
+        $(document).on('themeChanged', function () {
+            if (currentGridRecords && $('#summaryChartsSection').is(':visible')) {
+                renderSummaryCharts(currentGridRecords);
+            }
+        });
+
+        $(window).on('resize', function () {
+            if (currentGridRecords && $('#summaryChartsSection').is(':visible')) {
+                renderSummaryCharts(currentGridRecords);
+            }
+        });
     });
 </script>
-
 
 <div class="content-wrapper">
     <section class="content">
@@ -137,6 +220,9 @@
                             MVRLA Formation Summary Report
                         </h3>
                         <div class="box-tools pull-right">
+                            <button type="button" id="btn_ToggleCharts" title="Toggle Charts Display" data-rel="tooltip" class="btn btn-default btn-sm" style="margin-right: 6px;">
+                                <i class="fa fa-pie-chart text-primary"></i> Charts
+                            </button>
                             <button type="button" id="btn_Refresh" title="Refresh Grid Data" data-rel="tooltip" class="btn btn-default btn-sm" style="margin-right: 6px;">
                                 <i class="fa fa-refresh text-primary"></i> Refresh
                             </button>
@@ -167,6 +253,37 @@
                         </form>
                     </div>
 
+                    <!-- Modern Battery Analytics Charts Section (Passed & Failed Donut Cards) -->
+                    <div class="box-body" id="summaryChartsSection" style="padding: 20px 20px 8px 20px; background-color: var(--bg-primary); border-bottom: 1px solid var(--border-color);">
+                        <div class="row">
+                            <!-- Chart 1: Passed -->
+                            <div class="col-md-6 col-sm-12" style="margin-bottom: 20px;">
+                                <div class="modern-chart-card">
+                                    <div class="modern-chart-card-header">
+                                        <span class="donut-badge-icon badge-passed"><i class="fa fa-check"></i></span>
+                                        <h4 class="modern-chart-title">Battery Type Wise Passed Qty</h4>
+                                    </div>
+                                    <div class="modern-chart-card-body">
+                                        <div id='summaryChartPassed' style="width:100%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Chart 2: Failed -->
+                            <div class="col-md-6 col-sm-12" style="margin-bottom: 20px;">
+                                <div class="modern-chart-card">
+                                    <div class="modern-chart-card-header">
+                                        <span class="donut-badge-icon badge-failed"><i class="fa fa-exclamation"></i></span>
+                                        <h4 class="modern-chart-title">Battery Type Wise Failed Qty</h4>
+                                    </div>
+                                    <div class="modern-chart-card-body">
+                                        <div id='summaryChartFailed' style="width:100%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Report Data Grid Section -->
                     <div class="box-body" style="padding: 16px 20px 20px 20px;">
                         <div style="margin-bottom: 10px;">
@@ -183,11 +300,3 @@
         </div>
     </section>
 </div>
-
-
-
-
-
-
-
-
