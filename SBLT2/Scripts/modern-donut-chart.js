@@ -1,54 +1,36 @@
 /**
  * Modern Enterprise Donut Chart Component
  * High-precision SVG donut renderer with interactive details table
- * Matching exact reference design and color palette
+ * Version: 3.0 - Fixed color rendering, thick ring, white slice separators
  */
 (function (window, $) {
     'use strict';
 
-    // Exact color palettes from reference design
+    // Color palettes - exact reference design
     var passedPalette = [
-        '#10B981', // 1. Emerald Green (~59.6%)
-        '#06B6D4', // 2. Cyan / Aqua Teal (~23.1%)
-        '#FBBF24', // 3. Golden Yellow (~10.7%)
-        '#3B82F6', // 4. Royal Blue (~4.1%)
-        '#8B5CF6', // 5. Purple / Violet (~2.5%)
-        '#EC4899', // 6. Pink
-        '#14B8A6', // 7. Dark Teal
-        '#6366F1'  // 8. Indigo
+        '#3B82F6', // Royal Blue (Reference design main slice)
+        '#10B981', // Emerald Green (Reference design 2nd slice)
+        '#F59E0B', // Golden Amber (Reference design 3rd slice)
+        '#8B5CF6', // Purple (Reference design 4th slice)
+        '#EC4899', // Pink
+        '#06B6D4', // Cyan Teal
+        '#14B8A6', // Dark Teal
+        '#6366F1'  // Indigo
     ];
 
     var failedPalette = [
-        '#EF4444', // 1. Coral Red (~56.5%)
-        '#F97316', // 2. Warm Orange (~22.6%)
-        '#FBBF24', // 3. Golden Yellow (~11.3%)
-        '#3B82F6', // 4. Royal Blue (~6.5%)
-        '#8B5CF6', // 5. Purple / Violet (~3.2%)
-        '#EC4899', // 6. Pink
-        '#DC2626', // 7. Crimson
-        '#D97706'  // 8. Dark Amber
-    ];
-
-    // Reference demo fallback datasets (matching exact screenshot values)
-    var defaultPassedDemo = [
-        { type: 'Type A', qty: 1003 },
-        { type: 'Type B', qty: 389 },
-        { type: 'Type C', qty: 180 },
-        { type: 'Type D', qty: 69 },
-        { type: 'Type E', qty: 43 }
-    ];
-
-    var defaultFailedDemo = [
-        { type: 'Type A', qty: 35 },
-        { type: 'Type B', qty: 14 },
-        { type: 'Type C', qty: 7 },
-        { type: 'Type D', qty: 4 },
-        { type: 'Type E', qty: 2 }
+        '#F43F5E', // Coral / Rose Red (Reference design main slice)
+        '#F59E0B', // Warm Amber (Reference design 2nd slice)
+        '#8B5CF6', // Purple (Reference design 3rd slice)
+        '#06B6D4', // Cyan Teal (Reference design 4th slice)
+        '#EC4899', // Pink
+        '#3B82F6', // Royal Blue
+        '#DC2626', // Crimson
+        '#D97706'  // Dark Amber
     ];
 
     /**
-     * Sanitizes and parses records into [{ type: string, qty: number }]
-     * Always sorts descending by Qty to preserve hierarchy and palette mapping
+     * Parse raw API records into sorted [{type, qty}] array
      */
     function sanitizeRecords(rawList) {
         var items = [];
@@ -58,299 +40,344 @@
         for (var i = 0; i < rawList.length; i++) {
             var r = rawList[i];
             if (!r) continue;
-
-            var type = (r.label || r.mv_BatteryType || r.BatteryType || r.type || ('Type ' + (i + 1))).toString().trim();
-            if (!type) continue;
-
+            var type = (r.label || r.mv_BatteryType || r.BatteryType || r.type || '').toString().trim();
+            if (!type) type = 'Type ' + (i + 1);
             var qty = parseInt(r.y != null ? r.y : (r.Qty != null ? r.Qty : (r.qty != null ? r.qty : (r.TotalPassed != null ? r.TotalPassed : (r.TotalFailed != null ? r.TotalFailed : 0)))), 10);
-            if (isNaN(qty) || qty < 0) qty = 0;
-
-            if (qty > 0) {
-                items.push({ type: type, qty: qty });
-                total += qty;
-            }
+            if (isNaN(qty) || qty <= 0) continue;
+            items.push({ type: type, qty: qty });
+            total += qty;
         }
 
-        // Sort descending by qty so highest volume is slice 1 (Green/Red), etc.
-        items.sort(function (a, b) {
-            return b.qty - a.qty;
-        });
-
+        // Sort descending: highest qty first = first color in palette
+        items.sort(function (a, b) { return b.qty - a.qty; });
         return { items: items, total: total };
     }
 
     /**
-     * Renders modern donut chart into DOM container
-     * @param {string|jQuery} containerSelector
-     * @param {string|Array} dataOrUrl - API endpoint URL string or pre-computed array of items
-     * @param {'passed'|'failed'} chartType
+     * Main chart renderer
+     * @param {string} containerSelector - CSS selector for chart container div
+     * @param {string|Array} dataOrUrl   - API URL string OR pre-built items array
+     * @param {string} chartType         - 'passed' or 'failed'
      */
     function renderModernDonutChart(containerSelector, dataOrUrl, chartType) {
         var $container = $(containerSelector);
         if (!$container.length) return;
 
         var isFailed = (chartType === 'failed');
-        var palette = isFailed ? failedPalette : passedPalette;
+        var palette   = isFailed ? failedPalette : passedPalette;
 
-        function drawWithData(items, total) {
-            // If URL endpoint called with 0 records, fallback to reference sample
-            if ((!items || items.length === 0 || total === 0) && typeof dataOrUrl === 'string') {
-                var fallback = isFailed ? defaultFailedDemo : defaultPassedDemo;
-                items = fallback.slice(0);
-                total = 0;
-                for (var f = 0; f < items.length; f++) {
-                    total += items[f].qty;
-                }
-            }
+        // ----------------------------------------------------------------
+        // Core draw function
+        // ----------------------------------------------------------------
+        function drawChart(items, total) {
 
-            // Empty / Zero state (for arrays e.g. filtered report with 0 results)
+            // No-data / empty state
             if (!items || items.length === 0 || total === 0) {
                 $container.html(
-                    '<div class="donut-empty-container">' +
-                        '<div class="donut-empty-icon"><i class="fa fa-pie-chart"></i></div>' +
-                        '<div class="donut-empty-text">No data available</div>' +
-                        '<div class="donut-empty-sub">No ' + (isFailed ? 'failed' : 'passed') + ' batteries recorded for selected period</div>' +
+                    '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;' +
+                        'min-height:220px;width:100%;text-align:center;padding:30px 20px;">' +
+                        '<i class="fa fa-pie-chart" style="font-size:42px;color:#CBD5E1;margin-bottom:12px;"></i>' +
+                        '<div style="font-size:14px;font-weight:700;color:#64748B;margin-bottom:4px;">No data available</div>' +
+                        '<div style="font-size:12px;color:#94A3B8;">No ' + (isFailed ? 'failed' : 'passed') +
+                            ' batteries recorded for the selected period</div>' +
                     '</div>'
                 );
                 return;
             }
 
-            // Geometry constants: thick chunky ring with ample clearance for outside callouts
-            var cx = 130, cy = 130, r = 82, strokeW = 40;
-            var C = 2 * Math.PI * r; // ~515.221
+            // ---- SVG geometry ----
+            // viewBox = 260x260, center = (130,130), ring radius = 82, ring thickness = 40
+            var VB  = 260;   // viewBox size
+            var cx  = 130;   // center x
+            var cy  = 130;   // center y
+            var r   = 82;    // ring radius (centerline)
+            var sw  = 40;    // stroke-width (ring thickness)
+            var C   = 2 * Math.PI * r;   // circumference ≈ 515.22
 
-            var svgPaths = '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" ' +
-                'stroke="var(--border-color, #e2e8f0)" stroke-width="' + strokeW + '" opacity="0.15" class="donut-track" />';
-            var dividerLinesSvg = '';
-            var leaderLinesSvg = '';
-            var percentLabelsSvg = '';
-            var tableRowsHtml = '';
-            var accumulatedOffset = 0;
+            // ---- Build SVG ----
+            var svgInner = '';
 
+            // 1. Track (background ring) - very light grey
+            svgInner += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" ' +
+                        'fill="none" stroke="#E2E8F0" stroke-width="' + sw + '" opacity="0.5"/>';
+
+            // 2. Colored segments
+            var accumulated = 0;
             for (var k = 0; k < items.length; k++) {
-                var itm = items[k];
-                var pctVal = (itm.qty / total);
-                var pctStr = (pctVal * 100).toFixed(1) + '%';
-                var segColor = palette[k % palette.length];
-                var safeType = $('<div>').text(itm.type).html();
+                var itm      = items[k];
+                var pctVal   = itm.qty / total;
+                var segLen   = pctVal * C;
+                var color    = palette[k % palette.length];
 
                 if (items.length === 1) {
-                    svgPaths += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" ' +
-                        'stroke="' + segColor + '" stroke-width="' + strokeW + '" ' +
-                        'class="donut-segment" data-index="' + k + '" />';
-                    percentLabelsSvg += '<text x="' + cx + '" y="' + (cy - r + 4) + '" ' +
-                        'class="donut-segment-pct" text-anchor="middle" data-index="0">100.0%</text>';
+                    // Single segment - full ring, no rotation needed
+                    svgInner += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" ' +
+                                'fill="none" stroke="' + color + '" stroke-width="' + sw + '" ' +
+                                'class="donut-seg" data-index="' + k + '"/>';
                 } else {
-                    var segLength = pctVal * C;
-                    var dashArr = segLength.toFixed(2) + ' ' + (C - segLength).toFixed(2);
-                    var dashOff = (-accumulatedOffset).toFixed(2);
+                    // dasharray: visible portion then gap to complete circumference
+                    var dash = segLen.toFixed(3) + ' ' + (C - segLen).toFixed(3);
+                    // dashoffset: negative = advance start point clockwise; rotate SVG -90° so 0° = top
+                    var offset = (-accumulated).toFixed(3);
 
-                    // SVG Circle Segment
-                    svgPaths += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" ' +
-                        'stroke="' + segColor + '" stroke-width="' + strokeW + '" ' +
-                        'stroke-dasharray="' + dashArr + '" stroke-dashoffset="' + dashOff + '" ' +
-                        'transform="rotate(-90 ' + cx + ' ' + cy + ')" ' +
-                        'class="donut-segment" data-index="' + k + '" />';
-
-                    // Radial divider line at start of slice (crisp white cut between slices)
-                    var startAngle = (-Math.PI / 2) + ((accumulatedOffset / C) * (2 * Math.PI));
-                    var rInner = r - (strokeW / 2) - 0.5;
-                    var rOuter = r + (strokeW / 2) + 0.5;
-                    var lx1 = cx + rInner * Math.cos(startAngle);
-                    var ly1 = cy + rInner * Math.sin(startAngle);
-                    var lx2 = cx + rOuter * Math.cos(startAngle);
-                    var ly2 = cy + rOuter * Math.sin(startAngle);
-
-                    dividerLinesSvg += '<line x1="' + lx1.toFixed(2) + '" y1="' + ly1.toFixed(2) + '" ' +
-                        'x2="' + lx2.toFixed(2) + '" y2="' + ly2.toFixed(2) + '" ' +
-                        'class="donut-divider-line" stroke-width="2.5" stroke-linecap="butt" />';
-
-                    // Midpoint angle for percentage label
-                    var midAngle = (-Math.PI / 2) + (((accumulatedOffset + (segLength / 2)) / C) * (2 * Math.PI));
-
-                    // Large slices (>= 4.5%): label centered inside thick ring
-                    if (pctVal >= 0.045) {
-                        var labelX = cx + r * Math.cos(midAngle);
-                        var labelY = cy + r * Math.sin(midAngle) + 4;
-                        percentLabelsSvg += '<text x="' + labelX.toFixed(1) + '" y="' + labelY.toFixed(1) + '" ' +
-                            'class="donut-segment-pct" text-anchor="middle" data-index="' + k + '">' + pctStr + '</text>';
-                    }
-                    // Smaller slices (1.0% - 4.4%): outside callout with leader line (like 2.5% in screenshot)
-                    else if (pctVal >= 0.01) {
-                        var t1X = cx + (r + (strokeW / 2) + 2) * Math.cos(midAngle);
-                        var t1Y = cy + (r + (strokeW / 2) + 2) * Math.sin(midAngle);
-                        var t2X = cx + (r + (strokeW / 2) + 11) * Math.cos(midAngle);
-                        var t2Y = cy + (r + (strokeW / 2) + 11) * Math.sin(midAngle);
-                        var outX = cx + (r + (strokeW / 2) + 21) * Math.cos(midAngle);
-                        var outY = cy + (r + (strokeW / 2) + 21) * Math.sin(midAngle) + 3.5;
-
-                        leaderLinesSvg += '<line x1="' + t1X.toFixed(1) + '" y1="' + t1Y.toFixed(1) + '" ' +
-                            'x2="' + t2X.toFixed(1) + '" y2="' + t2Y.toFixed(1) + '" ' +
-                            'class="donut-leader-line" stroke="#94A3B8" stroke-width="1.2" stroke-linecap="round" />';
-
-                        percentLabelsSvg += '<text x="' + outX.toFixed(1) + '" y="' + outY.toFixed(1) + '" ' +
-                            'class="donut-segment-pct-out" text-anchor="middle" data-index="' + k + '">' + pctStr + '</text>';
-                    }
-
-                    accumulatedOffset += segLength;
+                    svgInner += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" ' +
+                                'fill="none" stroke="' + color + '" stroke-width="' + sw + '" ' +
+                                'stroke-dasharray="' + dash + '" stroke-dashoffset="' + offset + '" ' +
+                                'transform="rotate(-90 ' + cx + ' ' + cy + ')" ' +
+                                'stroke-linecap="butt" ' +
+                                'class="donut-seg" data-index="' + k + '"/>';
+                    accumulated += segLen;
                 }
+            }
 
-                tableRowsHtml +=
-                    '<tr class="donut-table-row" data-index="' + k + '">' +
-                        '<td class="td-type">' +
-                            '<span class="donut-table-dot" style="background-color:' + segColor + ';"></span>' +
-                            '<span class="donut-table-name" title="' + safeType + '">' + safeType + '</span>' +
+            // 3. White divider lines between slices (drawn AFTER all segments)
+            var acc2 = 0;
+            if (items.length > 1) {
+                for (var d = 0; d < items.length; d++) {
+                    var pct2    = items[d].qty / total;
+                    var sLen2   = pct2 * C;
+                    // angle of slice boundary in SVG coords (starting at top = -90deg)
+                    var angle   = (-Math.PI / 2) + (acc2 / C) * 2 * Math.PI;
+                    var rInner  = r - sw / 2 - 1;
+                    var rOuter  = r + sw / 2 + 1;
+                    var x1      = cx + rInner * Math.cos(angle);
+                    var y1      = cy + rInner * Math.sin(angle);
+                    var x2      = cx + rOuter * Math.cos(angle);
+                    var y2      = cy + rOuter * Math.sin(angle);
+
+                    svgInner += '<line x1="' + x1.toFixed(2) + '" y1="' + y1.toFixed(2) + '" ' +
+                                'x2="' + x2.toFixed(2) + '" y2="' + y2.toFixed(2) + '" ' +
+                                'stroke="#ffffff" stroke-width="2.5" stroke-linecap="butt" ' +
+                                'pointer-events="none"/>';
+                    acc2 += sLen2;
+                }
+            }
+
+            // 4. Center hole — pure white fill with clean shadow ring (matches reference design 2)
+            var holeR    = r - sw / 2 - 1;
+            var subLabel = isFailed ? 'Total Failed' : 'Total Passed';
+            var numFS    = total >= 10000 ? '22' : '26';
+
+            // Chart accent color for subtitle (green for passed, red for failed)
+            var accentColor = isFailed ? '#EF4444' : '#10B981';
+
+            // Detect dark mode
+            var isDark = $('body').hasClass('dark-theme') || $('html').hasClass('dark-theme') ||
+                         $('[class*="dark-theme"]').length > 0;
+            var holeFill = isDark ? '#1E293B' : '#ffffff';
+            var numFill  = isDark ? '#F1F5F9'  : '#0F172A';
+
+            // Shadow ring around hole for depth
+            svgInner += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (holeR + 1) + '" fill="none" ' +
+                        'stroke="' + accentColor + '" stroke-width="2" stroke-opacity="0.18"/>';
+            // White hole
+            svgInner += '<circle cx="' + cx + '" cy="' + cy + '" r="' + holeR + '" fill="' + holeFill + '"/>';
+            // TOTAL label
+            svgInner += '<text x="' + cx + '" y="' + (cy - 14) + '" text-anchor="middle" ' +
+                        'font-family="Roboto,Arial,sans-serif" font-size="10" font-weight="700" ' +
+                        'fill="#94A3B8" letter-spacing="2">TOTAL</text>';
+            // Big bold number
+            svgInner += '<text x="' + cx + '" y="' + (cy + 12) + '" text-anchor="middle" ' +
+                        'font-family="Roboto,Arial,sans-serif" font-size="' + numFS + '" font-weight="900" ' +
+                        'fill="' + numFill + '">' + total.toLocaleString() + '</text>';
+            // Colored subtitle (Total Passed / Total Failed)
+            svgInner += '<text x="' + cx + '" y="' + (cy + 30) + '" text-anchor="middle" ' +
+                        'font-family="Roboto,Arial,sans-serif" font-size="11" font-weight="600" ' +
+                        'fill="' + accentColor + '">' + subLabel + '</text>';
+
+            // 5. Percentage labels directly on slice midpoints — larger & bold (matches reference design 2)
+            var acc3 = 0;
+            for (var p = 0; p < items.length; p++) {
+                var pct3   = items[p].qty / total;
+                var sLen3  = pct3 * C;
+                var midAng = (-Math.PI / 2) + ((acc3 + sLen3 / 2) / C) * 2 * Math.PI;
+                var pctStr = Math.round(pct3 * 100) + '%';
+
+                if (pct3 >= 0.05) {
+                    // Large label directly on the slice ring
+                    var lx = cx + r * Math.cos(midAng);
+                    var ly = cy + r * Math.sin(midAng) + 5;
+                    svgInner += '<text x="' + lx.toFixed(1) + '" y="' + ly.toFixed(1) + '" text-anchor="middle" ' +
+                                'font-family="Roboto,Arial,sans-serif" font-size="13" font-weight="800" ' +
+                                'fill="#ffffff" pointer-events="none" data-index="' + p + '">' + pctStr + '</text>';
+                } else if (pct3 >= 0.02) {
+                    // Small callout outside for tiny slices
+                    var outR = r + sw / 2 + 20;
+                    var ox   = cx + outR * Math.cos(midAng);
+                    var oy   = cy + outR * Math.sin(midAng) + 4;
+                    svgInner += '<text x="' + ox.toFixed(1) + '" y="' + oy.toFixed(1) + '" text-anchor="middle" ' +
+                                'font-family="Roboto,Arial,sans-serif" font-size="11" font-weight="700" ' +
+                                'fill="#475569" pointer-events="none" data-index="' + p + '">' + pctStr + '</text>';
+                }
+                acc3 += sLen3;
+            }
+
+            // ---- Build legend table rows ----
+            var tableRows = '';
+            for (var t = 0; t < items.length; t++) {
+                var color2   = palette[t % palette.length];
+                var pct4     = (items[t].qty / total * 100).toFixed(1) + '%';
+                var safeName = $('<div>').text(items[t].type).html();
+                tableRows +=
+                    '<tr class="donut-table-row" data-index="' + t + '" ' +
+                        'style="border-bottom:1px solid #F1F5F9;cursor:pointer;transition:background 0.15s;">' +
+                        '<td style="padding:9px 4px;vertical-align:middle;">' +
+                            '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;' +
+                                'background:' + color2 + ';margin-right:10px;vertical-align:middle;"></span>' +
+                            '<span title="' + safeName + '" style="font-weight:600;font-size:13px;color:#1E293B;' +
+                                'vertical-align:middle;max-width:120px;display:inline-block;' +
+                                'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + safeName + '</span>' +
                         '</td>' +
-                        '<td class="td-qty">' + itm.qty.toLocaleString() + '</td>' +
-                        '<td class="td-pct">' + pctStr + '</td>' +
+                        '<td style="padding:9px 4px;text-align:right;font-weight:800;font-size:13.5px;color:#0F172A;' +
+                            'font-variant-numeric:tabular-nums;">' + items[t].qty.toLocaleString() + '</td>' +
+                        '<td style="padding:9px 4px;text-align:right;font-weight:500;font-size:12px;color:#64748B;' +
+                            'font-variant-numeric:tabular-nums;">' + pct4 + '</td>' +
                     '</tr>';
             }
 
-            var subLabel = isFailed ? 'Failed Qty' : 'Passed Qty';
-            var totalNumFontSize = total >= 100000 ? '22px' : '26px';
-            var centerSvg =
-                '<circle cx="' + cx + '" cy="' + cy + '" r="' + (r - strokeW / 2) + '" class="donut-center-bg" />' +
-                '<g class="donut-center-group">' +
-                    '<text x="' + cx + '" y="' + (cy - 17) + '" class="donut-center-label">TOTAL</text>' +
-                    '<text x="' + cx + '" y="' + (cy + 9) + '" class="donut-center-num" style="font-size:' + totalNumFontSize + ';">' + total.toLocaleString() + '</text>' +
-                    '<text x="' + cx + '" y="' + (cy + 27) + '" class="donut-center-sub">' + subLabel + '</text>' +
-                '</g>';
+            // ---- Assemble final HTML ----
+            var cardClass = isFailed ? 'modern-donut-card donut-failed-card' : 'modern-donut-card';
 
-            var cardClass = 'modern-donut-card' + (isFailed ? ' donut-failed-card' : '');
             var html =
-                '<div class="' + cardClass + '">' +
-                    '<div class="donut-visual-col">' +
-                        '<svg class="donut-svg" viewBox="0 0 260 260">' +
-                            svgPaths +
-                            centerSvg +
-                            dividerLinesSvg +
-                            leaderLinesSvg +
-                            percentLabelsSvg +
+                '<div class="' + cardClass + '" style="position:relative;display:flex;flex-direction:row;' +
+                    'align-items:center;width:100%;min-height:240px;gap:16px;box-sizing:border-box;">' +
+
+                    // SVG column
+                    '<div style="flex:0 0 230px;width:230px;height:230px;display:flex;align-items:center;justify-content:center;">' +
+                        '<svg viewBox="0 0 ' + VB + ' ' + VB + '" ' +
+                            'style="width:100%;height:100%;overflow:visible;" ' +
+                            'xmlns="http://www.w3.org/2000/svg">' +
+                            svgInner +
                         '</svg>' +
                     '</div>' +
-                    '<div class="donut-table-col">' +
-                        '<div class="donut-table-wrapper">' +
-                            '<table class="donut-details-table">' +
+
+                    // Legend table column
+                    '<div style="flex:1 1 auto;min-width:200px;display:flex;flex-direction:column;justify-content:center;">' +
+                        '<div style="width:100%;max-height:280px;overflow-y:auto;overflow-x:hidden;' +
+                            'background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;' +
+                            'padding:12px 16px;box-sizing:border-box;">' +
+                            '<table style="width:100%;border-collapse:collapse;font-size:12.5px;text-align:left;">' +
                                 '<thead>' +
                                     '<tr>' +
-                                        '<th class="th-type">Battery Type</th>' +
-                                        '<th class="th-qty">Qty</th>' +
-                                        '<th class="th-pct">%</th>' +
+                                        '<th style="position:sticky;top:0;background:#F8FAFC;z-index:2;' +
+                                            'padding:6px 4px 10px;font-size:12px;font-weight:600;' +
+                                            'color:#64748B;border-bottom:1px solid #E2E8F0;text-align:left;width:48%;">Battery Type</th>' +
+                                        '<th style="position:sticky;top:0;background:#F8FAFC;z-index:2;' +
+                                            'padding:6px 4px 10px;font-size:12px;font-weight:600;' +
+                                            'color:#64748B;border-bottom:1px solid #E2E8F0;text-align:right;width:26%;">Qty</th>' +
+                                        '<th style="position:sticky;top:0;background:#F8FAFC;z-index:2;' +
+                                            'padding:6px 4px 10px;font-size:12px;font-weight:600;' +
+                                            'color:#64748B;border-bottom:1px solid #E2E8F0;text-align:right;width:26%;">%</th>' +
                                     '</tr>' +
                                 '</thead>' +
-                                '<tbody>' +
-                                    tableRowsHtml +
-                                '</tbody>' +
+                                '<tbody>' + tableRows + '</tbody>' +
                             '</table>' +
                         '</div>' +
                     '</div>' +
-                    '<div class="donut-tooltip" style="display:none;"></div>' +
+
+                    // Tooltip (hidden)
+                    '<div class="donut-tooltip" style="display:none;position:absolute;pointer-events:none;' +
+                        'z-index:1050;padding:10px 14px;background:#fff;color:#0f172a;border-radius:8px;' +
+                        'font-size:12px;box-shadow:0 10px 25px rgba(0,0,0,0.15);border:1px solid #e2e8f0;' +
+                        'white-space:nowrap;min-width:160px;"></div>' +
                 '</div>';
 
             $container.html(html);
 
-            // Tooltip & Hover Interactivity
+            // ---- Hover interactions ----
             var $tooltip = $container.find('.donut-tooltip');
 
-            function positionTooltip(e) {
-                var cOffset = $container.offset();
-                var x = e.pageX - cOffset.left + 14;
-                var y = e.pageY - cOffset.top - 24;
-
-                var ttW = $tooltip.outerWidth();
-                var ttH = $tooltip.outerHeight();
-                var cW = $container.width();
-                var cH = $container.height();
-
-                if (x + ttW > cW - 8) {
-                    x = e.pageX - cOffset.left - ttW - 14;
-                }
-                if (x < 8) x = 8;
-                if (y + ttH > cH - 8) {
-                    y = cH - ttH - 8;
-                }
-                if (y < 8) y = 8;
-
-                $tooltip.css({ left: x + 'px', top: y + 'px' });
-            }
-
-            $container.find('.donut-segment, .donut-table-row, .donut-segment-pct').on('mouseenter', function (e) {
+            $container.find('.donut-seg, .donut-table-row').on('mouseenter', function (e) {
                 var idx = parseInt($(this).attr('data-index'), 10);
                 if (isNaN(idx) || !items[idx]) return;
 
-                var itm = items[idx];
-                var col = palette[idx % palette.length];
-                var pct = ((itm.qty / total) * 100).toFixed(1) + '%';
-                var safeType = $('<div>').text(itm.type).html();
+                var itm    = items[idx];
+                var col    = palette[idx % palette.length];
+                var pct    = (itm.qty / total * 100).toFixed(1) + '%';
+                var name   = $('<div>').text(itm.type).html();
 
-                $container.find('.donut-segment').each(function () {
-                    if ($(this).attr('data-index') == idx) {
-                        $(this).css({ 'stroke-width': '46px', 'opacity': '1' });
-                    } else {
-                        $(this).css({ 'stroke-width': '40px', 'opacity': '0.35' });
-                    }
+                $container.find('.donut-seg').each(function () {
+                    var isActive = $(this).attr('data-index') == idx;
+                    this.setAttribute('stroke-width', isActive ? (sw + 6) : sw);
+                    this.style.opacity = isActive ? '1' : '0.35';
                 });
 
-                $container.find('.donut-table-row').removeClass('active');
-                $container.find('.donut-table-row[data-index="' + idx + '"]').addClass('active');
+                $container.find('.donut-table-row').each(function () {
+                    $(this).css('background', $(this).attr('data-index') == idx
+                        ? (isFailed ? 'rgba(239,68,68,0.08)' : 'rgba(16,185,129,0.08)')
+                        : '');
+                });
 
-                var ttContent =
-                    '<div class="donut-tt-header">' +
-                        '<span class="donut-tt-dot" style="background-color:' + col + ';"></span>' +
-                        safeType +
+                $tooltip.html(
+                    '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;' +
+                        'padding-bottom:5px;border-bottom:1px solid rgba(148,163,184,0.25);' +
+                        'font-size:13px;font-weight:700;">' +
+                        '<span style="width:8px;height:8px;border-radius:50%;background:' + col + ';flex-shrink:0;display:inline-block;"></span>' +
+                        name +
                     '</div>' +
-                    '<div class="donut-tt-body">' +
-                        '<div><span class="donut-tt-lbl">Battery Type:</span><span class="donut-tt-val">' + safeType + '</span></div>' +
-                        '<div><span class="donut-tt-lbl">Qty:</span><span class="donut-tt-val">' + itm.qty.toLocaleString() + '</span></div>' +
-                        '<div><span class="donut-tt-lbl">Percentage:</span><span class="donut-tt-val">' + pct + '</span></div>' +
-                    '</div>';
+                    '<div style="display:flex;flex-direction:column;gap:3px;">' +
+                        '<div><span style="color:#64748B;margin-right:6px;">Battery Type:</span><span style="font-weight:700;">' + name + '</span></div>' +
+                        '<div><span style="color:#64748B;margin-right:6px;">Qty:</span><span style="font-weight:700;">' + itm.qty.toLocaleString() + '</span></div>' +
+                        '<div><span style="color:#64748B;margin-right:6px;">Percentage:</span><span style="font-weight:700;">' + pct + '</span></div>' +
+                    '</div>'
+                ).stop(true, true).fadeIn(120);
 
-                $tooltip.html(ttContent).stop(true, true).fadeIn(120);
-                positionTooltip(e);
+                var cOff = $container.offset();
+                var tx = e.pageX - cOff.left + 14;
+                var ty = e.pageY - cOff.top  - 24;
+                if (tx + 180 > $container.width())  tx = e.pageX - cOff.left - 194;
+                if (tx < 8) tx = 8;
+                if (ty < 8) ty = 8;
+                $tooltip.css({ left: tx + 'px', top: ty + 'px' });
             });
 
-            $container.find('.donut-segment, .donut-table-row, .donut-segment-pct').on('mousemove', function (e) {
-                positionTooltip(e);
+            $container.find('.donut-seg, .donut-table-row').on('mousemove', function (e) {
+                var cOff = $container.offset();
+                var tx = e.pageX - cOff.left + 14;
+                var ty = e.pageY - cOff.top  - 24;
+                if (tx + 180 > $container.width())  tx = e.pageX - cOff.left - 194;
+                if (tx < 8) tx = 8;
+                if (ty < 8) ty = 8;
+                $tooltip.css({ left: tx + 'px', top: ty + 'px' });
             });
 
-            $container.find('.donut-segment, .donut-table-row, .donut-segment-pct').on('mouseleave', function () {
-                $container.find('.donut-segment').css({ 'stroke-width': '40px', 'opacity': '1' });
-                $container.find('.donut-table-row').removeClass('active');
+            $container.find('.donut-seg, .donut-table-row').on('mouseleave', function () {
+                $container.find('.donut-seg').each(function () {
+                    this.setAttribute('stroke-width', sw);
+                    this.style.opacity = '1';
+                });
+                $container.find('.donut-table-row').css('background', '');
                 $tooltip.stop(true, true).fadeOut(100);
             });
-        }
+        } // end drawChart
 
-        // Branch 1: Pre-computed or filtered items array
+        // ----------------------------------------------------------------
+        // Data loading
+        // ----------------------------------------------------------------
         if (Array.isArray(dataOrUrl)) {
+            // Pre-computed array (e.g. from Summary Report)
             var res = sanitizeRecords(dataOrUrl);
-            drawWithData(res.items, res.total);
+            drawChart(res.items, res.total);
             return;
         }
 
-        // Branch 2: String URL endpoint
         if (typeof dataOrUrl === 'string') {
             $.ajax({
-                type: "GET",
+                type: 'GET',
                 url: dataOrUrl,
-                dataType: "text",
+                dataType: 'text',
                 cache: false,
                 success: function (response) {
-                    var rawData = [];
+                    var raw = [];
                     try {
-                        rawData = JSON.parse(response);
-                        if (rawData && rawData.record && Array.isArray(rawData.record)) {
-                            rawData = rawData.record;
-                        }
-                    } catch (e) {
-                        rawData = [];
-                    }
-
-                    var res = sanitizeRecords(rawData);
-                    drawWithData(res.items, res.total);
+                        raw = JSON.parse(response);
+                        if (raw && raw.record && Array.isArray(raw.record)) raw = raw.record;
+                    } catch (e) { raw = []; }
+                    var res2 = sanitizeRecords(raw);
+                    drawChart(res2.items, res2.total);
                 },
                 error: function () {
-                    // On error, fallback to reference demo so preview is always available
-                    drawWithData([], 0);
+                    drawChart([], 0);
                 }
             });
         }

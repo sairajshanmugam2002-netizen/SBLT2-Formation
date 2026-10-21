@@ -64,10 +64,10 @@
             max-width: calc((100% - 10px) / 2) !important;
             width: calc((100% - 10px) / 2) !important;
         }
-        #formReworkRejection > .row:first-child > .col-md-4 {
-            flex: 0 0 calc((100% - 20px) / 3) !important;
-            max-width: calc((100% - 20px) / 3) !important;
-            width: calc((100% - 20px) / 3) !important;
+        #formReworkRejection > .row:first-child > .col-md-6 {
+            flex: 0 0 calc((100% - 10px) / 2) !important;
+            max-width: calc((100% - 10px) / 2) !important;
+            width: calc((100% - 10px) / 2) !important;
         }
     }
 
@@ -238,27 +238,24 @@
                         </div>
 
                         <form class="form-horizontal" role="form" id="formReworkRejection" onsubmit="return false;">
-                            <div class="row">
-                                <!-- Field 1: Rework / Rejection Type -->
-                                <div class="col-md-4 col-sm-6 form-group" style="padding-right: 15px;">
-                                    <label for="ddlType">
-                                        <span class="required-star">*</span> 1. Rework / Rejection Type
-                                    </label>
-                                    <div id="ddlType"></div>
-                                </div>
+                            <!-- Hidden ddlType dropdown container to preserve adapter, event handlers and backend POST data -->
+                            <div style="position: absolute; left: -9999px; visibility: hidden; width: 200px; height: 34px;" aria-hidden="true">
+                                <div id="ddlType"></div>
+                            </div>
 
-                                <!-- Field 2: Reason -->
-                                <div class="col-md-4 col-sm-6 form-group" style="padding-right: 15px;">
+                            <div class="row">
+                                <!-- Field 1: Reason -->
+                                <div class="col-md-6 col-sm-6 form-group">
                                     <label for="ddlReason">
-                                        <span class="required-star">*</span> 2. Reason
+                                        <span class="required-star">*</span> 1. Reason
                                     </label>
                                     <div id="ddlReason"></div>
                                 </div>
 
-                                <!-- Field 3: Employee -->
-                                <div class="col-md-4 col-sm-6 form-group">
+                                <!-- Field 2: Employee -->
+                                <div class="col-md-6 col-sm-6 form-group">
                                     <label for="ddlEmployee">
-                                        <span class="required-star">*</span> 3. Employee
+                                        <span class="required-star">*</span> 2. Employee
                                     </label>
                                     <div id="ddlEmployee"></div>
                                 </div>
@@ -535,11 +532,10 @@
         });
 
         function saveRecord() {
-            // Validation 1: Rework / Rejection Type
+            // Validation 1: Defect Mode (Rework / Rejection Type)
             var selectedTypeIndex = $('#ddlType').jqxDropDownList('selectedIndex');
             if (selectedTypeIndex < 0) {
-                $('#ddlType').jqxDropDownList('focus');
-                $.toaster({ priority: 'danger', title: 'Notice', message: "Please Select Rework / Rejection Type" });
+                $.toaster({ priority: 'danger', title: 'Notice', message: "Please Select Defect Mode (Rework or Rejection)" });
                 return;
             }
 

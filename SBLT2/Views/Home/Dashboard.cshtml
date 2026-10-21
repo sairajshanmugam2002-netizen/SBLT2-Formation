@@ -84,6 +84,17 @@
         }
 
 
+        var modernBarPalette = [
+            '#3B82F6', // Royal Blue
+            '#10B981', // Emerald Green
+            '#F59E0B', // Amber
+            '#8B5CF6', // Purple
+            '#EC4899', // Pink
+            '#06B6D4', // Cyan
+            '#EF4444', // Red
+            '#6366F1'  // Indigo
+        ];
+
         function chartRework() {
             var url = "pr_fetch_Today_Rework_Chart";
             var source =
@@ -98,36 +109,47 @@
             };
             var dataAdapter = new $.jqx.dataAdapter(source);
             var settings = {
-                title: "Rework",
+                title: "",
                 description: "",
-                showLegend: true,
+                showLegend: false,
                 enableAnimations: true,
-                padding: { left: 5, top: 5, right: 5, bottom: 5 },
-                titlePadding: { left: 90, top: 0, right: 0, bottom: 10 },
+                backgroundColor: 'transparent',
+                padding: { left: 10, top: 10, right: 10, bottom: 10 },
                 source: dataAdapter,
                 xAxis:
                 {
                     dataField: 'Reason',
-                    description: 'Reason',
+                    description: '',
                     showGridLines: false,
-                    valuesOnTicks: false
+                    valuesOnTicks: false,
+                    labels: { angle: -30, offset: { x: 0, y: 0 } }
                 },
-                colorScheme: 'scheme03',
                 columnSeriesOverlap: false,
                 seriesGroups:
                     [
                         {
                             type: 'column',
+                            columnsGapPercent: 40,
+                            seriesGapPercent: 15,
                             valueAxis:
                             {
-                                description: 'Qty(Nos)',
+                                description: 'Qty (Nos)',
                                 visible: true,
                                 minValue: 0,
-                                showGridLines: false,
-                                title: { text: 'Qty(Nos)<br>' }
+                                showGridLines: true,
+                                gridLinesColor: '#E2E8F0',
+                                title: { text: 'Qty(Nos)' }
                             },
                             series: [
-                                { dataField: 'Qty', displayText: 'Qty', showLabels: true, labelAngle: -90, color: '#F59E0B' },
+                                {
+                                    dataField: 'Qty',
+                                    displayText: 'Qty',
+                                    showLabels: true,
+                                    labelAngle: 0,
+                                    colorFunction: function (value, itemIndex, serie, group) {
+                                        return modernBarPalette[itemIndex % modernBarPalette.length];
+                                    }
+                                }
                             ]
                         }
                     ]
@@ -152,36 +174,47 @@
             };
             var dataAdapter = new $.jqx.dataAdapter(source);
             var settings = {
-                title: "Rejection",
+                title: "",
                 description: "",
-                showLegend: true,
+                showLegend: false,
                 enableAnimations: true,
-                padding: { left: 5, top: 5, right: 5, bottom: 5 },
-                titlePadding: { left: 90, top: 0, right: 0, bottom: 10 },
+                backgroundColor: 'transparent',
+                padding: { left: 10, top: 10, right: 10, bottom: 10 },
                 source: dataAdapter,
                 xAxis:
                 {
                     dataField: 'Reason',
-                    description: 'Reason',
+                    description: '',
                     showGridLines: false,
-                    valuesOnTicks: false
+                    valuesOnTicks: false,
+                    labels: { angle: -30, offset: { x: 0, y: 0 } }
                 },
-                colorScheme: 'scheme07',
                 columnSeriesOverlap: false,
                 seriesGroups:
                     [
                         {
                             type: 'column',
+                            columnsGapPercent: 40,
+                            seriesGapPercent: 15,
                             valueAxis:
                             {
-                                description: 'Qty(Nos)',
+                                description: 'Qty (Nos)',
                                 visible: true,
                                 minValue: 0,
-                                showGridLines: false,
-                                title: { text: 'Qty(Nos)<br>' }
+                                showGridLines: true,
+                                gridLinesColor: '#E2E8F0',
+                                title: { text: 'Qty(Nos)' }
                             },
                             series: [
-                                { dataField: 'Qty', displayText: 'Qty', showLabels: true, labelAngle: -90, color: '#dd4b39' },
+                                {
+                                    dataField: 'Qty',
+                                    displayText: 'Qty',
+                                    showLabels: true,
+                                    labelAngle: 0,
+                                    colorFunction: function (value, itemIndex, serie, group) {
+                                        return modernBarPalette[itemIndex % modernBarPalette.length];
+                                    }
+                                }
                             ]
                         }
                     ]

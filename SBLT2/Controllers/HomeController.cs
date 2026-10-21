@@ -15,7 +15,7 @@ namespace SBLT2.Controllers
 
         //GET: /Home/
 
-        public ActionResult Index()
+        public ActionResult Index() 
         {
             return View();
         }
