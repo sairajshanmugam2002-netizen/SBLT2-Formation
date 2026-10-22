@@ -2,6 +2,560 @@
     ViewBag.Title = "Assembly_Product_Master";
 }
 
+<style type="text/css">
+    /* ==========================================================================
+       Product Master Grid — Layout & Visual Alignment Fixes
+       Scoped strictly to #Grid and Product Master grid section
+       ========================================================================== */
+
+    /* Section & Container */
+    .product-grid-card-body {
+        padding: 16px 20px 24px 20px !important;
+        background: var(--bg-card, #ffffff);
+        border-radius: 0 0 10px 10px;
+        box-sizing: border-box;
+    }
+
+    .dark-theme .product-grid-card-body,
+    .dark-mode .product-grid-card-body {
+        background: var(--bg-card, #243041) !important;
+    }
+
+    .product-grid-toolbar-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border-color, #E2E8F0);
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .dark-theme .product-grid-toolbar-container,
+    .dark-mode .product-grid-toolbar-container {
+        border-bottom-color: #374151;
+    }
+
+    .product-grid-catalog-title {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-primary, #1E293B);
+        letter-spacing: -0.1px;
+    }
+
+    .product-grid-catalog-title .text-primary-icon {
+        color: var(--ar-primary, #007A3D);
+        font-size: 15px;
+    }
+
+    .dark-theme .product-grid-catalog-title .text-primary-icon,
+    .dark-mode .product-grid-catalog-title .text-primary-icon {
+        color: #10B981;
+    }
+
+    /* Delete Button */
+    .btn-product-grid-delete {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 6px !important;
+        padding: 6px 16px !important;
+        height: 34px !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.3px !important;
+        color: #FFFFFF !important;
+        background: #DC2626 !important;
+        border: 1px solid #B91C1C !important;
+        border-radius: 6px !important;
+        box-shadow: 0 1px 2px rgba(220, 38, 38, 0.2) !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease-in-out !important;
+        outline: none !important;
+    }
+
+    .btn-product-grid-delete:hover {
+        background: #B91C1C !important;
+        border-color: #991B1B !important;
+        box-shadow: 0 2px 5px rgba(185, 28, 28, 0.35) !important;
+        transform: translateY(-1px);
+    }
+
+    .btn-product-grid-delete:active {
+        transform: translateY(0);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .btn-product-grid-delete i {
+        font-size: 13px;
+    }
+
+    /* Viewport & Table Wrapper — Strictly constrained, no page overflow */
+    .product-grid-viewport {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+        border-radius: 8px;
+        border: 1px solid var(--border-color, #E2E8F0);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        background: var(--bg-card, #FFFFFF);
+        box-sizing: border-box;
+    }
+
+    .dark-theme .product-grid-viewport,
+    .dark-mode .product-grid-viewport {
+        border-color: #374151;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        background: #1F2937;
+    }
+
+    .table-wrapper {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+
+    /* Grid Root Element */
+    #Grid {
+        width: 100% !important;
+        border: none !important;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+        box-sizing: border-box !important;
+    }
+
+    #Grid.jqx-widget,
+    #Grid .jqx-widget-content {
+        border-color: transparent !important;
+    }
+
+    /* Column Headers Container */
+    #Grid .jqx-grid-header {
+        background: #F8FAFC !important;
+        border-bottom: 1px solid #CBD5E1 !important;
+        border-top: none !important;
+        border-left: none !important;
+        border-right: none !important;
+        box-sizing: border-box !important;
+    }
+
+    .dark-theme #Grid .jqx-grid-header,
+    .dark-mode #Grid .jqx-grid-header {
+        background: #1E293B !important;
+        border-bottom: 1px solid #334155 !important;
+    }
+
+    /* Column Header Cells */
+    #Grid .jqx-grid-column-header {
+        background: transparent !important;
+        border-color: #E2E8F0 !important;
+        border-right: 1px solid #E2E8F0 !important;
+        border-top: none !important;
+        border-bottom: none !important;
+        border-left: none !important;
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.5px !important;
+        text-transform: uppercase !important;
+        color: #334155 !important;
+        box-sizing: border-box !important;
+    }
+
+    .dark-theme #Grid .jqx-grid-column-header,
+    .dark-mode #Grid .jqx-grid-column-header {
+        border-color: #334155 !important;
+        color: #E2E8F0 !important;
+    }
+
+    #Grid .jqx-grid-column-header > div {
+        height: 100% !important;
+        box-sizing: border-box !important;
+        padding: 0 8px !important;
+    }
+
+    #Grid .jqx-grid-column-header > div > div {
+        line-height: 40px !important;
+    }
+
+    /* Header Checkbox Cell Centering */
+    #Grid .jqx-grid-column-header:first-child > div {
+        padding: 0 !important;
+        text-align: center !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    /* Filter Row Container & Cells */
+    #Grid .jqx-grid-cell-filter-row {
+        background-color: #F1F5F9 !important;
+        border-bottom: 1px solid #CBD5E1 !important;
+        border-top: 1px solid #E2E8F0 !important;
+        border-right: 1px solid #E2E8F0 !important;
+        border-left: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    .dark-theme #Grid .jqx-grid-cell-filter-row,
+    .dark-mode #Grid .jqx-grid-cell-filter-row {
+        background-color: #172033 !important;
+        border-bottom: 1px solid #334155 !important;
+        border-top: 1px solid #334155 !important;
+        border-right: 1px solid #334155 !important;
+    }
+
+    /* Filter Input */
+    #Grid .jqx-filter-input,
+    #Grid .jqx-input,
+    #Grid .jqx-grid-cell-filter-row input {
+        height: 28px !important;
+        line-height: 28px !important;
+        font-size: 12px !important;
+        font-family: inherit !important;
+        border: 1px solid #CBD5E1 !important;
+        border-radius: 4px !important;
+        padding: 2px 8px !important;
+        background: #FFFFFF !important;
+        color: #1E293B !important;
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+        box-sizing: border-box !important;
+    }
+
+    .dark-theme #Grid .jqx-filter-input,
+    .dark-theme #Grid .jqx-input,
+    .dark-theme #Grid .jqx-grid-cell-filter-row input,
+    .dark-mode #Grid .jqx-filter-input,
+    .dark-mode #Grid .jqx-input,
+    .dark-mode #Grid .jqx-grid-cell-filter-row input {
+        background: #0F172A !important;
+        border-color: #475569 !important;
+        color: #F8FAFC !important;
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    #Grid .jqx-filter-input:focus,
+    #Grid .jqx-grid-cell-filter-row input:focus {
+        border-color: #007A3D !important;
+        box-shadow: 0 0 0 2px rgba(0, 122, 61, 0.18) !important;
+        outline: none !important;
+    }
+
+    .dark-theme #Grid .jqx-filter-input:focus,
+    .dark-theme #Grid .jqx-grid-cell-filter-row input:focus,
+    .dark-mode #Grid .jqx-filter-input:focus,
+    .dark-mode #Grid .jqx-grid-cell-filter-row input:focus {
+        border-color: #10B981 !important;
+        box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25) !important;
+    }
+
+    #Grid .jqx-grid-cell-filter-row .jqx-icon-close {
+        opacity: 0.6;
+        cursor: pointer;
+    }
+
+    #Grid .jqx-grid-cell-filter-row .jqx-icon-close:hover {
+        opacity: 1;
+    }
+
+    /* Grid Cells & Rows */
+    #Grid .jqx-grid-cell {
+        border-color: #E2E8F0 !important;
+        border-bottom: 1px solid #E2E8F0 !important;
+        border-right: 1px solid #E2E8F0 !important;
+        border-top: none !important;
+        border-left: none !important;
+        background-color: #FFFFFF;
+        font-size: 13px !important;
+        color: #1E293B !important;
+        font-family: inherit !important;
+        box-sizing: border-box !important;
+        padding: 0 !important;
+    }
+
+    #Grid .jqx-grid-cell-alt {
+        background-color: #F8FAFC !important;
+    }
+
+    .dark-theme #Grid .jqx-grid-cell,
+    .dark-mode #Grid .jqx-grid-cell {
+        border-color: #334155 !important;
+        background-color: #1E293B !important;
+        color: #F1F5F9 !important;
+    }
+
+    .dark-theme #Grid .jqx-grid-cell-alt,
+    .dark-mode #Grid .jqx-grid-cell-alt {
+        background-color: #172033 !important;
+    }
+
+    /* Hover & Selection */
+    #Grid .jqx-fill-state-hover,
+    #Grid .jqx-grid-cell-hover {
+        background-color: #ECFDF5 !important;
+        color: #065F46 !important;
+    }
+
+    .dark-theme #Grid .jqx-fill-state-hover,
+    .dark-theme #Grid .jqx-grid-cell-hover,
+    .dark-mode #Grid .jqx-fill-state-hover,
+    .dark-mode #Grid .jqx-grid-cell-hover {
+        background-color: rgba(16, 185, 129, 0.15) !important;
+        color: #A7F3D0 !important;
+    }
+
+    #Grid .jqx-fill-state-pressed,
+    #Grid .jqx-grid-cell-selected {
+        background-color: #E0F2FE !important;
+        color: #0369A1 !important;
+    }
+
+    .dark-theme #Grid .jqx-fill-state-pressed,
+    .dark-theme #Grid .jqx-grid-cell-selected,
+    .dark-mode #Grid .jqx-fill-state-pressed,
+    .dark-mode #Grid .jqx-grid-cell-selected {
+        background-color: rgba(14, 165, 233, 0.22) !important;
+        color: #BAE6FD !important;
+    }
+
+    /* Cell Content Types */
+    .pm-cell-text {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        padding: 0 10px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: normal;
+        font-size: 13px;
+        font-weight: 400;
+        color: #1E293B;
+        box-sizing: border-box;
+    }
+
+    .dark-theme .pm-cell-text,
+    .dark-mode .pm-cell-text {
+        color: #F1F5F9;
+    }
+
+    .pm-cell-code {
+        font-weight: 400;
+        color: #1E293B;
+        font-size: 13px;
+        letter-spacing: normal;
+    }
+
+    .dark-theme .pm-cell-code,
+    .dark-mode .pm-cell-code {
+        color: #F1F5F9;
+        font-weight: 400;
+    }
+
+    .pm-cell-desc {
+        font-weight: 400;
+        color: #1E293B;
+    }
+
+    .dark-theme .pm-cell-desc,
+    .dark-mode .pm-cell-desc {
+        color: #F8FAFC;
+    }
+
+    .pm-cell-number {
+        justify-content: flex-end;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+        font-weight: 400;
+        color: #1E293B;
+        padding-right: 12px;
+    }
+
+    .dark-theme .pm-cell-number,
+    .dark-mode .pm-cell-number {
+        color: #F1F5F9;
+    }
+
+    /* Action: Edit Cell */
+    .pm-grid-action-cell {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    .pm-action-edit-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        border-radius: 6px;
+        background: #EFF6FF;
+        color: #2563EB;
+        border: 1px solid #BFDBFE;
+        cursor: pointer;
+        transition: all 0.15s ease-in-out;
+        padding: 0;
+        font-size: 12px;
+    }
+
+    .pm-grid-action-cell:hover .pm-action-edit-btn,
+    .pm-action-edit-btn:hover {
+        background: #2563EB;
+        color: #FFFFFF;
+        border-color: #2563EB;
+        transform: scale(1.08);
+        box-shadow: 0 2px 4px rgba(37, 99, 255, 0.25);
+    }
+
+    .dark-theme .pm-action-edit-btn,
+    .dark-mode .pm-action-edit-btn {
+        background: rgba(37, 99, 235, 0.15);
+        color: #60A5FA;
+        border-color: rgba(96, 165, 250, 0.3);
+    }
+
+    .dark-theme .pm-grid-action-cell:hover .pm-action-edit-btn,
+    .dark-theme .pm-action-edit-btn:hover,
+    .dark-mode .pm-grid-action-cell:hover .pm-action-edit-btn,
+    .dark-mode .pm-action-edit-btn:hover {
+        background: #2563EB;
+        color: #FFFFFF;
+        border-color: #2563EB;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Checkbox Alignment & Styling */
+    #Grid .jqx-checkbox {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin: 0 auto !important;
+    }
+
+    #Grid .jqx-checkbox-default {
+        width: 15px !important;
+        height: 15px !important;
+        border: 1.5px solid #94A3B8 !important;
+        border-radius: 4px !important;
+        background: #FFFFFF !important;
+        transition: all 0.15s ease !important;
+    }
+
+    .dark-theme #Grid .jqx-checkbox-default,
+    .dark-mode #Grid .jqx-checkbox-default {
+        background: #1E293B !important;
+        border-color: #64748B !important;
+    }
+
+    #Grid .jqx-checkbox-check-checked {
+        background-color: #007A3D !important;
+        border-color: #007A3D !important;
+    }
+
+    .dark-theme #Grid .jqx-checkbox-check-checked,
+    .dark-mode #Grid .jqx-checkbox-check-checked {
+        background-color: #10B981 !important;
+        border-color: #10B981 !important;
+    }
+
+    /* Pager Styling */
+    #Grid .jqx-grid-pager {
+        background: #F8FAFC !important;
+        border-top: 1px solid #CBD5E1 !important;
+        border-bottom: none !important;
+        border-left: none !important;
+        border-right: none !important;
+        font-size: 12px !important;
+        color: #475569 !important;
+        height: 38px !important;
+        padding: 0 10px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Prevent rightmost pager text clipping (e.g. '1-10 of 1269') */
+    #Grid .jqx-grid-pager > div:last-child {
+        margin-right: 18px !important;
+    }
+
+    .dark-theme #Grid .jqx-grid-pager,
+    .dark-mode #Grid .jqx-grid-pager {
+        background: #1E293B !important;
+        border-top-color: #334155 !important;
+        color: #94A3B8 !important;
+    }
+
+    #Grid .jqx-grid-pager-simple-button,
+    #Grid .jqx-grid-pager .jqx-button {
+        background: #FFFFFF !important;
+        border: 1px solid #CBD5E1 !important;
+        border-radius: 5px !important;
+        color: #334155 !important;
+        padding: 3px 8px !important;
+        margin: 0 2px !important;
+        transition: all 0.15s ease !important;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+    }
+
+    #Grid .jqx-grid-pager-simple-button:hover,
+    #Grid .jqx-grid-pager .jqx-button:hover {
+        background: #F1F5F9 !important;
+        border-color: #94A3B8 !important;
+        color: #0F172A !important;
+    }
+
+    .dark-theme #Grid .jqx-grid-pager-simple-button,
+    .dark-theme #Grid .jqx-grid-pager .jqx-button,
+    .dark-mode #Grid .jqx-grid-pager-simple-button,
+    .dark-mode #Grid .jqx-grid-pager .jqx-button {
+        background: #0F172A !important;
+        border-color: #475569 !important;
+        color: #CBD5E1 !important;
+    }
+
+    .dark-theme #Grid .jqx-grid-pager-simple-button:hover,
+    .dark-theme #Grid .jqx-grid-pager .jqx-button:hover,
+    .dark-mode #Grid .jqx-grid-pager-simple-button:hover,
+    .dark-mode #Grid .jqx-grid-pager .jqx-button:hover {
+        background: #334155 !important;
+        color: #FFFFFF !important;
+    }
+
+    /* Scrollbars inside Grid */
+    #Grid .jqx-scrollbar {
+        background: #F1F5F9 !important;
+    }
+
+    .dark-theme #Grid .jqx-scrollbar,
+    .dark-mode #Grid .jqx-scrollbar {
+        background: #0F172A !important;
+    }
+
+    #Grid .jqx-scrollbar-thumb-state-normal,
+    #Grid .jqx-scrollbar-thumb-state-hover {
+        background: #CBD5E1 !important;
+        border-radius: 4px !important;
+        border: none !important;
+    }
+
+    .dark-theme #Grid .jqx-scrollbar-thumb-state-normal,
+    .dark-theme #Grid .jqx-scrollbar-thumb-state-hover,
+    .dark-mode #Grid .jqx-scrollbar-thumb-state-normal,
+    .dark-mode #Grid .jqx-scrollbar-thumb-state-hover {
+        background: #475569 !important;
+    }
+</style>
+
 <script type="text/javascript">
     $(document).ready(function () {
         var ID = 0;
@@ -205,215 +759,173 @@
             $("#Grid").jqxGrid({
                 theme: 'ui-sunny',
                 width: '100%',
-                height: '480px',
+                autoheight: true,
                 source: dataAdapter,
                 columnsresize: true,
                 pageable: true,
-                enabletooltips: false,
+                altrows: true,
+                columnsheight: 40,
+                rowsheight: 38,
+                filterrowheight: 38,
                 pagermode: 'simple',
                 selectionmode: 'checkbox',
                 enabletooltips: true,
                 showfilterrow: true,
                 filterable: true,
-                pagesize: 14,
+                pagesize: 10,
                 columns: [
                     {
-                    text: 'Edit',
-                    datafield: 'Edit',
-                    filterable: false,
-                    width: 50,
-                    cellsrenderer: function () {
-                        return '<div style="width: 100%"><img src="../../../img/Edit1.png" style="margin-left: 25%"/></div>';
-                    }
-                    },
-                {
-                    text: 'ID',
-                    datafield: 'PM_iID',
-                    width: 80,
-                    hidden: true
+                        text: 'ID',
+                        datafield: 'PM_iID',
+                        width: 80,
+                        hidden: true
                     },
                     {
                         text: 'Product Code',
                         datafield: 'PM_Item_Code',
-                        width: 140,
-                        minwidth: 120
+                        width: '18%',
+                        minwidth: 130,
+                        align: 'left',
+                        cellsalign: 'left',
+                        cellsrenderer: function (row, columnfield, value) {
+                            var textVal = (value !== null && value !== undefined) ? value : '';
+                            return '<div class="pm-cell-text pm-cell-code" title="' + textVal + '">' + textVal + '</div>';
+                        }
                     },
-                {
-                    text: 'Product Name',
-                    datafield: 'PM_Description',
-                    width: 180,
-                    minwidth: 150
-                },
-                {
-                    text: 'Variant Code',
-                    datafield: 'PM_Variant_Code',
-                    width: 130,
-                    minwidth: 110
-                },
-                {
-                    text: 'Compare Code',
-                    datafield: 'compare_code',
-                    width: 140,
-                    minwidth: 120
-                },
-                {
-                    text: 'Skid Qty',
-                    datafield: 'PM_Skid_Qty',
-                    width: 100,
-                    minwidth: 80
-                },
-                {
-                    text: 'MOQ Qty',
-                    datafield: 'PM_MOQ_Qty',
-                    width: 100,
-                    minwidth: 80
-                },
-                {
-                    text: 'Inv Qty',
-                    datafield: 'inv_Qty',
-                    width: 100,
-                    minwidth: 80
-                },
+                    {
+                        text: 'Product Name',
+                        datafield: 'PM_Description',
+                        width: '27%',
+                        minwidth: 200,
+                        align: 'left',
+                        cellsalign: 'left',
+                        cellsrenderer: function (row, columnfield, value) {
+                            var textVal = (value !== null && value !== undefined) ? value : '';
+                            return '<div class="pm-cell-text pm-cell-desc" title="' + textVal + '">' + textVal + '</div>';
+                        }
+                    },
+                    {
+                        text: 'Variant Code',
+                        datafield: 'PM_Variant_Code',
+                        width: '13%',
+                        minwidth: 100,
+                        align: 'left',
+                        cellsalign: 'left',
+                        cellsrenderer: function (row, columnfield, value) {
+                            var textVal = (value !== null && value !== undefined) ? value : '';
+                            return '<div class="pm-cell-text" title="' + textVal + '">' + textVal + '</div>';
+                        }
+                    },
+                    {
+                        text: 'Compare Code',
+                        datafield: 'compare_code',
+                        width: '13%',
+                        minwidth: 100,
+                        align: 'left',
+                        cellsalign: 'left',
+                        cellsrenderer: function (row, columnfield, value) {
+                            var textVal = (value !== null && value !== undefined) ? value : '';
+                            return '<div class="pm-cell-text" title="' + textVal + '">' + textVal + '</div>';
+                        }
+                    },
+                    {
+                        text: 'Skid Qty',
+                        datafield: 'PM_Skid_Qty',
+                        width: '8.5%',
+                        minwidth: 75,
+                        align: 'right',
+                        cellsalign: 'right',
+                        cellsrenderer: function (row, columnfield, value) {
+                            var textVal = (value !== null && value !== undefined) ? value : '';
+                            return '<div class="pm-cell-text pm-cell-number" title="' + textVal + '">' + textVal + '</div>';
+                        }
+                    },
+                    {
+                        text: 'MOQ Qty',
+                        datafield: 'PM_MOQ_Qty',
+                        width: '8.5%',
+                        minwidth: 75,
+                        align: 'right',
+                        cellsalign: 'right',
+                        cellsrenderer: function (row, columnfield, value) {
+                            var textVal = (value !== null && value !== undefined) ? value : '';
+                            return '<div class="pm-cell-text pm-cell-number" title="' + textVal + '">' + textVal + '</div>';
+                        }
+                    },
+                    {
+                        text: 'Inv Qty',
+                        datafield: 'inv_Qty',
+                        width: '8%',
+                        minwidth: 75,
+                        align: 'right',
+                        cellsalign: 'right',
+                        cellsrenderer: function (row, columnfield, value) {
+                            var textVal = (value !== null && value !== undefined) ? value : '';
+                            return '<div class="pm-cell-text pm-cell-number" title="' + textVal + '">' + textVal + '</div>';
+                        }
+                    }
                 ]
             });
         }
-        $("#Grid").on("cellclick", function (event) {
-            var column = event.args.column;
-            var rowindex = event.args.rowindex;
-            var columnindex = event.args.columnindex;
-            if (columnindex == 0) {
-                editrow = rowindex;
-                var dataRecord = $("#Grid").jqxGrid('getrowdata', editrow);
-                ID = dataRecord.PM_iID;
-                var url = "Pr_Fetch_Product_MasterAssy_ByID?ID=" + ID;
-                var source = {
-                    datatype: "json",
-                    datafields: [{
-                        name: 'PM_iID',
-                        type: 'string'
-                    },
-                        {
-                            name: 'PM_Description',
-                            type: 'string'
-                        },
-                        {
-                            name: 'PM_Variant_Code',
-                            type: 'string'
-                        },
-                        {
-                            name: 'compare_code',
-                            type: 'string'
-                        },
-                        {
-                            name: 'PM_Skid_Qty',
-                            type: 'string'
-                        },
-                        {
-                            name: 'PM_MOQ_Qty',
-                            type: 'string'
-                        },
-                        {
-                            name: 'inv_Qty',
-                            type: 'string'
-                        },
-                        {
-                            name: 'inv_LabelCount',
-                            type: 'string'
-                        },
-                        {
-                            name: 'PM_Item_Code',
-                            type: 'string'
-                        },
-                        {
-                            name: 'mr_BE_No',
-                            type: 'string'
-                        },
-                        {
-                            name: 'mr_Place',
-                            type: 'string'
-                        },
-                        {
-                            name: 'mr_Source',
-                            type: 'string'
-                        },
-                        {
-                            name: 'mr_SupplierName',
-                            type: 'string'
-                        },
-                        {
-                            name: 'mr_Lot_No',
-                            type: 'string'
-                        }, {
-                            name: 'mr_DOM',
-                            type: 'string'
-                        }, {
-                            name: 'mr_Remarks',
-                            type: 'string'
-                        }, {
-                            name: 'mr_CreadtedBy',
-                            type: 'string'
-                        }, {
-                            name: 'mr_ApprovedSource',
-                            type: 'string'
-                        }, {
-                            name: 'mr_AvgWeight',
-                            type: 'string'
-                        },
-                    ],
-                    id: 'id',
-                    url: url
-                };
-                var dataAdapter_per = new $.jqx.dataAdapter(source, {
-                    contentType: 'application/json; charset=utf-8',
-                    loadComplete: function () {
-                        var length = dataAdapter_per.records.length;
-                        var records = dataAdapter_per.records;
-                        var record = records[0];
-                        //if (record.mr_ApprovedSource == "yes" || record.sm_ApprovedSupplier == "Yes") {
-                        //    $('#mr_ApprovedSource').css('color', '#15c40c');
-                        //    $('#mr_ApprovedSource').val(record.mr_ApprovedSource);
-                        //}
-                        //if (record.mr_ApprovedSource == "No") {
-                        //    $('#mr_ApprovedSource').css('color', '#ff0000');
-                        //    $('#mr_ApprovedSource').val(record.mr_ApprovedSource);
-                        //}
-                        //if (record.mr_ApprovedSource == "Trial") {
-                        //    $('#mr_ApprovedSource').css('color', '#fcb80a');
-                        //    $('#mr_ApprovedSource').val(record.mr_ApprovedSource);
-                        //}
-                        $('#PM_Description').val(record.PM_Description);
-                        $('#PM_Variant_Code').val(record.PM_Variant_Code);
-                        $('#compare_code').val(record.compare_code);
-                        $('#blah1').attr('src', "../../" + record.TM_vDocumentLocation);
-                        $('#PM_Skid_Qty').val(record.PM_Skid_Qty);
-                        $('#PM_MOQ_Qty').val(record.PM_MOQ_Qty);
-                        $('#inv_Qty').val(record.inv_Qty);
-                        $('#inv_LabelCount').val(record.inv_LabelCount);
-                        $('#PM_Item_Code').val(record.PM_Item_Code);
-                        $('#mr_BE_No').val(record.mr_BE_No);
-                        $('#mr_Place').val(record.mr_Place);
-                        $('#mr_Source').val(record.mr_Source);
-                        $('#mr_SupplierName').val(record.mr_SupplierName);
-                        //$("#mr_SupplierName").jqxComboBox({ source: record.mr_SupplierName});
-                        $('#mr_Lot_No').val(record.mr_Lot_No);
-                        $('#mr_DOM').val(record.mr_DOM);
-                        $('#mr_Remarks').val(record.mr_Remarks);
-                        $('#mr_CreadtedBy').val(record.mr_CreadtedBy);
-                        $('#mr_AvgWeight').val(record.mr_AvgWeight);
-                        $("#btn_save_label").text('Update');
-                        $('#myModal').modal('show');
-                    },
-                    error: function (xhr, status, error) {
-                        alert(JSON.stringify(xhr));
+
+        var isClearing = false;
+
+        function loadProductForEdit(rowindex) {
+            var dataRecord = $("#Grid").jqxGrid('getrowdata', rowindex);
+            if (!dataRecord || !dataRecord.PM_iID) return;
+            ID = dataRecord.PM_iID;
+            $.ajax({
+                type: "GET",
+                url: "Pr_Fetch_Product_MasterAssy_ByID?ID=" + ID,
+                dataType: "json",
+                success: function (data) {
+                    if (typeof data === "string") {
+                        try { data = JSON.parse(data); } catch (e) { }
                     }
-                })
-                dataAdapter_per.dataBind();
+                    var records = data && data.record ? data.record : (Array.isArray(data) ? data : []);
+                    if (records && records.length > 0) {
+                        var record = records[0];
+                        $('#PM_Item_Code').val(record.PM_Item_Code || '');
+                        $('#PM_Mold').val(record.PM_Mold || '');
+                        $('#PM_Sector').val(record.PM_Sector || '');
+                        $('#PM_Description').val(record.PM_Description || '');
+                        $('#PM_Variant_Code').val(record.PM_Variant_Code || '');
+                        $('#compare_code').val(record.compare_code || '');
+                        $('#PM_Skid_Qty').val(record.PM_Skid_Qty || '');
+                        $('#PM_MOQ_Qty').val(record.PM_MOQ_Qty || '');
+                        $('#inv_Qty').val(record.inv_Qty || '');
+                        $('#VStart').val(record.VStart || '');
+                        $('#VEnd').val(record.VEnd || '');
+                        $('#SerialStart').val(record.SerialStart || '');
+                        $('#SerialEnd').val(record.SerialEnd || '');
+                        $('#chargeing_Dub_Hrs').val(record.chargeing_Dub_Hrs || '');
+                        $("#btn_save_label").text('Update');
+                        $('html, body').animate({
+                            scrollTop: $(".box-primary").offset().top - 15
+                        }, 250);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error loading product record:", error);
+                }
+            });
+        }
+
+        $("#Grid").on("rowselect", function (event) {
+            if (isClearing) return;
+            var rowindex = event.args.rowindex;
+            if (rowindex !== undefined && rowindex >= 0) {
+                loadProductForEdit(rowindex);
             }
-            if (columnindex == 2) {
-                editrow = rowindex;
-                var dataRecord = $("#Grid").jqxGrid('getrowdata', editrow);
-                var inv_Id = dataRecord.inv_Id;
-                printpdf(inv_Id);
+        });
+
+        $("#Grid").on("rowunselect", function (event) {
+            if (isClearing) return;
+            var selectedrows = $('#Grid').jqxGrid('getselectedrowindexes');
+            if (!selectedrows || selectedrows.length === 0) {
+                Clear();
+            } else {
+                loadProductForEdit(selectedrows[selectedrows.length - 1]);
             }
         });
 
@@ -623,6 +1135,7 @@
                         $.toaster({ priority: 'success', title: 'Notice', message: "Record Saved Successfully" });
                         $('#blah1').attr('src', "../../");
                         Clear();
+                        $("#Grid").jqxGrid('updatebounddata');
                     } else {
                         $.toaster({ priority: 'danger', title: 'Notice', message: response });
                     }
@@ -631,7 +1144,7 @@
                     alert(er.responseText);
                 }
             });
-            getGrid();
+            $("#Grid").jqxGrid('updatebounddata');
         }
 
         function Update() {
@@ -693,9 +1206,30 @@
         })
 
         function Clear() {
-            $('#PM_Item_Code').val('');$("#btn_save_label").text('Save');
+            if (isClearing) return;
+            isClearing = true;
+            ID = 0;
+            $('#PM_Item_Code').val('');
+            $('#PM_Mold').val('');
+            $('#PM_Sector').val('');
+            $('#PM_Description').val('');
+            $('#PM_Variant_Code').val('');
+            $('#compare_code').val('');
+            $('#PM_Skid_Qty').val('');
+            $('#PM_MOQ_Qty').val('');
+            $('#inv_Qty').val('');
+            $('#VStart').val('');
+            $('#VEnd').val('');
+            $('#SerialStart').val('');
+            $('#SerialEnd').val('');
+            $('#chargeing_Dub_Hrs').val('');
+            $("#btn_save_label").text('Save');
             $('#blah1').attr('src', "../../");
+            if ($("#Grid").length) {
+                $('#Grid').jqxGrid('clearselection');
+            }
             flag = false;
+            isClearing = false;
         }
 
         $("#Transactions").addClass("active");
@@ -707,6 +1241,20 @@
         })
         $("#sidebar-collapse").click(function () {
             $("#Grid").jqxGrid('updatebounddata');
+            setTimeout(function () {
+                if ($("#Grid").length) {
+                    $("#Grid").jqxGrid({ width: '100%' });
+                }
+            }, 300);
+        });
+        var resizeTimer;
+        $(window).on('resize', function () {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function () {
+                if ($("#Grid").length) {
+                    $("#Grid").jqxGrid({ width: '100%' });
+                }
+            }, 100);
         });
         $("#btn_Clear").click(function () {
             Clear();
@@ -841,11 +1389,21 @@
                         </p>
                     </div>
 
-                    <div class="box-body">
-                        <div class="col-sm-4" style="max-width: 70px; padding-left: 0px; padding-right: 0px">
-                            <button type="button" id="Delete" style="width: 100px;background-color: red">Delete</button>
+                    <div class="box-body product-grid-card-body">
+                        <div class="product-grid-toolbar-container">
+                            <div class="product-grid-toolbar-left">
+                                <span class="product-grid-catalog-title">
+                                    <i class="fa fa-list-alt text-primary-icon"></i>
+                                    Product Catalog Records
+                                </span>
+                            </div>
+                            <div class="product-grid-toolbar-right">
+                                <button type="button" id="Delete" class="btn-product-grid-delete" title="Delete selected records">
+                                    <i class="fa fa-trash-o"></i> Delete
+                                </button>
+                            </div>
                         </div>
-                        <div class="col-md-12" style="padding-left:0px; padding-right:0px">
+                        <div class="product-grid-viewport">
                             <div class="table-wrapper">
                                 <div id="Grid"></div>
                             </div>

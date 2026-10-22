@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -14,6 +14,7 @@ namespace SBLT2.App_Start
             bundles.Add(new System.Web.Optimization.ScriptBundle("~/bundle/js")
             .Include("~/Scripts/JQWidgets/globalization/globalize.js",
              "~/Scripts/jquery-2.1.1.min.js",
+             "~/Scripts/jquery-ui.min.js",
              "~/Scripts/JQWidgets/jqx-all.js",
              "~/Scripts/JQWidgets/jqxcore.js",
              "~/Scripts/jquery.toaster.js",
@@ -42,9 +43,7 @@ namespace SBLT2.App_Start
        "~/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js",
 "~/plugins/slimScroll/jquery.slimscroll.min.js",
        "~/plugins/fastclick/fastclick.min.js",
-       "~/scripts/app.min.js",
-        "~/scripts/pages/dashboard.js"
-
+       "~/scripts/app.min.js"
 ));
 
 

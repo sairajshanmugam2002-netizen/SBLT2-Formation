@@ -1,4 +1,4 @@
-﻿using CrystalDecisions.CrystalReports.Engine;
+using CrystalDecisions.CrystalReports.Engine;
 using SriPravanTech;
 using System;
 using System.Collections.Generic;
@@ -67,14 +67,14 @@ namespace SBLT2.Controllers
 
         public string Pr_Fetch_Product_MasterAssy()
         {
-            DataTable dt = dbFunctions.getTable("select   PM_iID as iID,  PM_Item_Code as Part_No,   PM_Description as Description,  PM_Skid_Qty as Skid_Qty, chargeing_Dub_Hrs as [Charge Hrs],PM_Created_by as  Created_by  from  Product_Master_Assembly  where  PM_Status='A'  ");
+            DataTable dt = dbFunctions.getTable("select *, '' as inv_Qty, '' as inv_LabelCount from Product_Master_Assembly where PM_Status='A' order by PM_iID desc");
             string s = dbFunctions.GetJSONString(dt);
             return s;
         }
 
-        public string Pr_Fetch_Product_MasterAssy(string ID)
+        public string Pr_Fetch_Product_MasterAssy_ByID(string ID)
         {
-            DataTable dt = dbFunctions.getTable("select * from  Product_Master_Assembly  where  PM_iID= " + ID);
+            DataTable dt = dbFunctions.getTable("select * from Product_Master_Assembly where PM_iID= " + ID);
             string s = dbFunctions.GetJSONString(dt);
             return s;
         }
@@ -2291,25 +2291,28 @@ namespace SBLT2.Controllers
             SqlConnection con = new SqlConnection(dbFunctions.connectionstring);
             try
             {
+                int moqVal, ssVal, seVal, vsVal, veVal;
+                decimal chVal;
+
                 con.Open();
                 SqlCommand com = new SqlCommand();
                 com.Connection = con;
-                com.CommandType = CommandType.StoredProcedure;
+                com.CommandType = CommandType.Text;
                 com.CommandText = "declare @PM_iID  int select  @PM_iID = isnull(max(PM_iID), 0) + 1 from Product_Master_Assembly insert into Product_Master_Assembly    (PM_iID, PM_Item_Code, PM_Mold, PM_Sector, PM_Description, PM_Variant_Code, PM_Skid_Qty, PM_MOQ_Qty, PM_Created_by, PM_Created_Date, PM_Status, SerialStart, SerialEnd, VStart, VEnd, compare_code, chargeing_Dub_Hrs) Values(@PM_iID, @PM_Item_Code, @PM_Mold, @PM_Sector, @PM_Description, @PM_Variant_Code, @PM_Skid_Qty, @PM_MOQ_Qty, @PM_Created_by, getdate(),    'A',  @SerialStart,  @SerialEnd,  @VStart,  @VEnd   ,  @compare_code ,@chargeing_Dub_Hrs )    ";
-                com.Parameters.Add("@PM_Item_Code", SqlDbType.VarChar).Value = PM_Item_Code;
-                com.Parameters.Add("@PM_Mold", SqlDbType.VarChar).Value = PM_Mold;
-                com.Parameters.Add("@PM_Sector", SqlDbType.VarChar).Value = PM_Sector;
-                com.Parameters.Add("@PM_Description", SqlDbType.VarChar).Value = PM_Description;
-                com.Parameters.Add("@PM_Variant_Code", SqlDbType.VarChar).Value = PM_Variant_Code;
-                com.Parameters.Add("@PM_Skid_Qty", SqlDbType.VarChar).Value = PM_Skid_Qty;
-                com.Parameters.Add("@PM_MOQ_Qty", SqlDbType.VarChar).Value = PM_MOQ_Qty;
-                com.Parameters.Add("@PM_Created_by", SqlDbType.VarChar).Value = PM_Created_by;
-                com.Parameters.Add("@SerialStart", SqlDbType.VarChar).Value = SerialStart;
-                com.Parameters.Add("@SerialEnd", SqlDbType.VarChar).Value = SerialEnd;
-                com.Parameters.Add("@VStart", SqlDbType.VarChar).Value = VStart;
-                com.Parameters.Add("@VEnd", SqlDbType.VarChar).Value = VEnd;
-                com.Parameters.Add("@compare_code", SqlDbType.VarChar).Value = compare_code;
-                com.Parameters.Add("@chargeing_Dub_Hrs", SqlDbType.VarChar).Value = chargeing_Dub_Hrs;
+                com.Parameters.Add("@PM_Item_Code", SqlDbType.VarChar).Value = (object)PM_Item_Code ?? DBNull.Value;
+                com.Parameters.Add("@PM_Mold", SqlDbType.VarChar).Value = (object)PM_Mold ?? DBNull.Value;
+                com.Parameters.Add("@PM_Sector", SqlDbType.VarChar).Value = (object)PM_Sector ?? DBNull.Value;
+                com.Parameters.Add("@PM_Description", SqlDbType.VarChar).Value = (object)PM_Description ?? DBNull.Value;
+                com.Parameters.Add("@PM_Variant_Code", SqlDbType.VarChar).Value = (object)PM_Variant_Code ?? DBNull.Value;
+                com.Parameters.Add("@PM_Skid_Qty", SqlDbType.VarChar).Value = (object)PM_Skid_Qty ?? DBNull.Value;
+                com.Parameters.Add("@PM_MOQ_Qty", SqlDbType.Int).Value = int.TryParse(PM_MOQ_Qty, out moqVal) ? (object)moqVal : DBNull.Value;
+                com.Parameters.Add("@PM_Created_by", SqlDbType.VarChar).Value = (object)PM_Created_by ?? DBNull.Value;
+                com.Parameters.Add("@SerialStart", SqlDbType.Int).Value = int.TryParse(SerialStart, out ssVal) ? (object)ssVal : DBNull.Value;
+                com.Parameters.Add("@SerialEnd", SqlDbType.Int).Value = int.TryParse(SerialEnd, out seVal) ? (object)seVal : DBNull.Value;
+                com.Parameters.Add("@VStart", SqlDbType.Int).Value = int.TryParse(VStart, out vsVal) ? (object)vsVal : DBNull.Value;
+                com.Parameters.Add("@VEnd", SqlDbType.Int).Value = int.TryParse(VEnd, out veVal) ? (object)veVal : DBNull.Value;
+                com.Parameters.Add("@compare_code", SqlDbType.VarChar).Value = (object)compare_code ?? DBNull.Value;
+                com.Parameters.Add("@chargeing_Dub_Hrs", SqlDbType.Decimal).Value = decimal.TryParse(chargeing_Dub_Hrs, out chVal) ? (object)chVal : DBNull.Value;
                 com.ExecuteNonQuery();
                 con.Close();
                 return "True";
@@ -2328,25 +2331,28 @@ namespace SBLT2.Controllers
             SqlConnection con = new SqlConnection(dbFunctions.connectionstring);
             try
             {
+                int moqVal, ssVal, seVal, vsVal, veVal;
+                decimal chVal;
+
                 con.Open();
                 SqlCommand com = new SqlCommand();
                 com.Connection = con;
-                com.CommandType = CommandType.StoredProcedure;
+                com.CommandType = CommandType.Text;
                 com.CommandText = "update Product_Master_Assembly Set PM_Item_Code=@PM_Item_Code, PM_Mold=@PM_Mold, PM_Sector=@PM_Sector, PM_Description=@PM_Description,    PM_Variant_Code=@PM_Variant_Code, PM_Skid_Qty=@PM_Skid_Qty, PM_MOQ_Qty=@PM_MOQ_Qty, SerialStart=@SerialStart,  SerialEnd=@SerialEnd,  VStart=@VStart ,  VEnd=@VEnd ,  compare_code=@compare_code, chargeing_Dub_Hrs = @chargeing_Dub_Hrs  where  PM_iID=@PM_iID   ";
-                com.Parameters.Add("@PM_iID", SqlDbType.VarChar).Value = PM_iID;
-                com.Parameters.Add("@PM_Item_Code", SqlDbType.VarChar).Value = PM_Item_Code;
-                com.Parameters.Add("@PM_Mold", SqlDbType.VarChar).Value = PM_Mold;
-                com.Parameters.Add("@PM_Sector", SqlDbType.VarChar).Value = PM_Sector;
-                com.Parameters.Add("@PM_Description", SqlDbType.VarChar).Value = PM_Description;
-                com.Parameters.Add("@PM_Variant_Code", SqlDbType.VarChar).Value = PM_Variant_Code;
-                com.Parameters.Add("@PM_Skid_Qty", SqlDbType.VarChar).Value = PM_Skid_Qty;
-                com.Parameters.Add("@PM_MOQ_Qty", SqlDbType.VarChar).Value = PM_MOQ_Qty;
-                com.Parameters.Add("@SerialStart", SqlDbType.VarChar).Value = SerialStart;
-                com.Parameters.Add("@SerialEnd", SqlDbType.VarChar).Value = SerialEnd;
-                com.Parameters.Add("@VStart", SqlDbType.VarChar).Value = VStart;
-                com.Parameters.Add("@VEnd", SqlDbType.VarChar).Value = VEnd;
-                com.Parameters.Add("@compare_code", SqlDbType.VarChar).Value = compare_code;
-                com.Parameters.Add("@chargeing_Dub_Hrs", SqlDbType.VarChar).Value = chargeing_Dub_Hrs;
+                com.Parameters.Add("@PM_iID", SqlDbType.VarChar).Value = (object)PM_iID ?? DBNull.Value;
+                com.Parameters.Add("@PM_Item_Code", SqlDbType.VarChar).Value = (object)PM_Item_Code ?? DBNull.Value;
+                com.Parameters.Add("@PM_Mold", SqlDbType.VarChar).Value = (object)PM_Mold ?? DBNull.Value;
+                com.Parameters.Add("@PM_Sector", SqlDbType.VarChar).Value = (object)PM_Sector ?? DBNull.Value;
+                com.Parameters.Add("@PM_Description", SqlDbType.VarChar).Value = (object)PM_Description ?? DBNull.Value;
+                com.Parameters.Add("@PM_Variant_Code", SqlDbType.VarChar).Value = (object)PM_Variant_Code ?? DBNull.Value;
+                com.Parameters.Add("@PM_Skid_Qty", SqlDbType.VarChar).Value = (object)PM_Skid_Qty ?? DBNull.Value;
+                com.Parameters.Add("@PM_MOQ_Qty", SqlDbType.Int).Value = int.TryParse(PM_MOQ_Qty, out moqVal) ? (object)moqVal : DBNull.Value;
+                com.Parameters.Add("@SerialStart", SqlDbType.Int).Value = int.TryParse(SerialStart, out ssVal) ? (object)ssVal : DBNull.Value;
+                com.Parameters.Add("@SerialEnd", SqlDbType.Int).Value = int.TryParse(SerialEnd, out seVal) ? (object)seVal : DBNull.Value;
+                com.Parameters.Add("@VStart", SqlDbType.Int).Value = int.TryParse(VStart, out vsVal) ? (object)vsVal : DBNull.Value;
+                com.Parameters.Add("@VEnd", SqlDbType.Int).Value = int.TryParse(VEnd, out veVal) ? (object)veVal : DBNull.Value;
+                com.Parameters.Add("@compare_code", SqlDbType.VarChar).Value = (object)compare_code ?? DBNull.Value;
+                com.Parameters.Add("@chargeing_Dub_Hrs", SqlDbType.Decimal).Value = decimal.TryParse(chargeing_Dub_Hrs, out chVal) ? (object)chVal : DBNull.Value;
                 com.ExecuteNonQuery();
                 con.Close();
                 return "True";
