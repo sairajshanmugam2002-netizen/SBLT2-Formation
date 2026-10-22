@@ -61,9 +61,9 @@
         var $btn = $('#btn-global-theme-toggle');
 
         if (isDark) {
-            $('html').addClass('dark-theme');
-            $('body').addClass('dark-theme');
-            $('.wrapper').addClass('dark-theme');
+            $('html').addClass('dark-theme dark-mode');
+            $('body').addClass('dark-theme dark-mode');
+            $('.wrapper').addClass('dark-theme dark-mode');
             if ($icon.length) {
                 $icon.removeClass('fa-moon-o').addClass('fa-sun-o');
             }
@@ -74,9 +74,9 @@
                 $btn.attr('title', 'Switch to Light Mode');
             }
         } else {
-            $('html').removeClass('dark-theme');
-            $('body').removeClass('dark-theme');
-            $('.wrapper').removeClass('dark-theme');
+            $('html').removeClass('dark-theme dark-mode');
+            $('body').removeClass('dark-theme dark-mode');
+            $('.wrapper').removeClass('dark-theme dark-mode');
             if ($icon.length) {
                 $icon.removeClass('fa-sun-o').addClass('fa-moon-o');
             }
@@ -200,7 +200,8 @@
 
                 <!-- Brand Title -->
                 <div class="brand-title">
-                    <img src="@Url.Content("~/img/Logo11.png")" id="Limg" style="height:32px; width:auto; vertical-align:middle;" alt="Amara Raja" onerror="this.src='../../img/Logo11.png'">
+                    <img src="@Url.Content("~/img/Logo11.png")" id="Limg" style="height:32px; width:26px; object-fit:cover; object-position:0% 50%; vertical-align:middle; margin-right:6px;" alt="Amara Raja" onerror="this.src='../../img/Logo11.png'">
+                    <span class="amara-raja-name">AMARA RAJA</span>
                     <span id="Ltxt">MVRLA Formation</span>
                     <span class="brand-badge">Traceability</span>
                 </div>

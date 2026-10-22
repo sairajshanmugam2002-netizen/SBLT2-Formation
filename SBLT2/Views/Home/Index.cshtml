@@ -16,9 +16,9 @@
             try {
                 var savedTheme = localStorage.getItem('app_theme');
                 if (savedTheme === 'dark') {
-                    document.documentElement.classList.add('dark-theme');
+                    document.documentElement.classList.add('dark-theme', 'dark-mode');
                 } else {
-                    document.documentElement.classList.remove('dark-theme');
+                    document.documentElement.classList.remove('dark-theme', 'dark-mode');
                 }
             } catch (e) { }
         })();
@@ -51,6 +51,26 @@
 
     body {
         min-height: 100%;
+    }
+
+    /* Amara Raja Brand Name Display */
+    .amara-raja-name {
+        display: inline-block;
+        font-size: 16px;
+        font-weight: 800;
+        color: var(--text-primary, #0F172A);
+        letter-spacing: 0.5px;
+        vertical-align: middle;
+        margin-left: 10px;
+    }
+
+    .dark-theme .amara-raja-name,
+    .dark-mode .amara-raja-name,
+    body.dark-theme .amara-raja-name,
+    body.dark-mode .amara-raja-name,
+    html.dark-theme .amara-raja-name,
+    html.dark-mode .amara-raja-name {
+        display: none !important;
     }
 
     .flex-center {
@@ -701,7 +721,8 @@
         <!-- Brand Header Above Card -->
         <div style="text-align: center; margin-bottom: 24px;">
             <div style="display: inline-flex; align-items: center; justify-content: center; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 20px; margin-bottom: 12px; box-shadow: var(--ar-shadow-sm);">
-                <img src="~/img/Logo11.png" style="height: 38px; width: auto;" alt="Amara Raja" onerror="this.src='../../img/Logo11.png'" />
+                <img src="~/img/Logo11.png" class="brand-logo-icon" style="height: 38px; width: 31px; object-fit: cover; object-position: 0% 50%; margin-right: 8px;" alt="Amara Raja" onerror="this.src='../../img/Logo11.png'" />
+                <span class="amara-raja-name">AMARA RAJA</span>
             </div>
             <h2 style="font-size: 20px; font-weight: 800; color: var(--text-primary); margin: 0; letter-spacing: -0.3px;">
                 MVRLA FORMATION PLANT
@@ -856,8 +877,8 @@
             var $btn = $('#login-theme-toggle');
 
             if (isDark) {
-                $('html').addClass('dark-theme');
-                $('body').addClass('dark-theme');
+                $('html').addClass('dark-theme dark-mode');
+                $('body').addClass('dark-theme dark-mode');
                 if ($icon.length) {
                     $icon.removeClass('fa-moon-o').addClass('fa-sun-o');
                 }
@@ -868,8 +889,8 @@
                     $btn.attr('title', 'Switch to Light Mode');
                 }
             } else {
-                $('html').removeClass('dark-theme');
-                $('body').removeClass('dark-theme');
+                $('html').removeClass('dark-theme dark-mode');
+                $('body').removeClass('dark-theme dark-mode');
                 if ($icon.length) {
                     $icon.removeClass('fa-sun-o').addClass('fa-moon-o');
                 }

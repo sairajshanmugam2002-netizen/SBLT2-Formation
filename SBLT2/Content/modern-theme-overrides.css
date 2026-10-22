@@ -428,11 +428,25 @@ input[type="datetime-local"],
 .main-header .brand-title #Limg {
     height: 32px !important;
     max-height: 32px !important;
-    width: auto !important;
+    width: 26px !important;
     display: inline-block !important;
     vertical-align: middle !important;
-    object-fit: contain !important;
+    object-fit: cover !important;
+    object-position: 0% 50% !important;
     flex-shrink: 0 !important;
+    margin-right: 6px !important;
+}
+
+.login-page img[src*="Logo11"],
+.login-box img[src*="Logo11"],
+.brand-logo-icon {
+    height: 38px !important;
+    width: 31px !important;
+    object-fit: cover !important;
+    object-position: 0% 50% !important;
+    display: inline-block !important;
+    vertical-align: middle !important;
+    margin-right: 8px !important;
 }
 
 .main-header .brand-title #Ltxt {
@@ -2762,3 +2776,35 @@ body.dark-theme #toaster .alert .close:hover {
         min-height: 420px;
     }
 }
+
+/* ==========================================================================
+   14. AMARA RAJA BRAND NAME DISPLAY (Dark Mode vs Light Mode)
+   ========================================================================== */
+.amara-raja-name {
+    display: inline-block;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text-primary, #0F172A);
+    letter-spacing: 0.5px;
+    vertical-align: middle;
+}
+
+.main-header .brand-title .amara-raja-name {
+    font-size: 14.5px !important;
+    font-weight: 800 !important;
+    color: var(--header-text, #0F172A) !important;
+    letter-spacing: -0.2px !important;
+    vertical-align: middle !important;
+    display: inline-block !important;
+}
+
+/* Hide ONLY the Amara Raja name in Dark Mode */
+.dark-theme .amara-raja-name,
+.dark-mode .amara-raja-name,
+body.dark-theme .amara-raja-name,
+body.dark-mode .amara-raja-name,
+html.dark-theme .amara-raja-name,
+html.dark-mode .amara-raja-name {
+    display: none !important;
+}
+
