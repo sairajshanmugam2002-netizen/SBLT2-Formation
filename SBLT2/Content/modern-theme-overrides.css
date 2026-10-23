@@ -1003,6 +1003,12 @@ input[type="datetime-local"],
     margin-bottom: 16px !important;
 }
 
+/* Many forms wrap each row of fields in its own .col-md-12 > .row without .form-group,
+   which leaves every label flush against the input above. Space those fields out. */
+#form1 .col-md-12 > .row > [class*="col-"]:not(.form-group) {
+    margin-bottom: 12px;
+}
+
 label, .control-label, .filter-label {
     font-family: var(--ar-font) !important;
     font-size: 12.5px !important;
@@ -1515,8 +1521,14 @@ button#Delete:hover {
     background: var(--table-header-bg) !important;
     border-top: 1px solid var(--table-border) !important;
     color: var(--text-secondary) !important;
-    padding: 6px 12px !important;
+    /* no vertical padding: jqxGrid already offsets the pager content itself,
+       extra top padding pushes the page buttons below the grid edge */
+    padding: 0 12px !important;
     font-size: 12px !important;
+    /* jqxGrid gives the pager an inline px width; without border-box the padding
+       pushes it past the grid edge and clips the "1-10 of N" text */
+    width: 100% !important;
+    box-sizing: border-box !important;
 }
 
 .jqx-grid-pager input {

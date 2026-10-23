@@ -269,9 +269,22 @@ namespace SBLT2.Controllers
 
         public string Pr_Fetch_MVRLA()
         {
-            DataTable dt = dbFunctions.getTable("Pr_Fetch_MVRLA");
-            string s = dbFunctions.GetJSONString(dt);
-            return s;
+            // Pr_Fetch_MVRLA only returns today's rows; the MVRLA grid shows every stored record, newest first
+            DataTable dt = dbFunctions.getTable("select * from MVRLA where mv_Status='A' order by mv_ID desc");
+
+            // GetJSONString does a string Replace per column per row (~9s for 15k rows), so serialize directly.
+            // Same shape and string values as GetJSONString: {"record":[{"col":"value",...}]}
+            var rows = new List<Dictionary<string, string>>(dt.Rows.Count);
+            foreach (DataRow row in dt.Rows)
+            {
+                var item = new Dictionary<string, string>(dt.Columns.Count);
+                foreach (DataColumn col in dt.Columns)
+                {
+                    item[col.ColumnName] = row[col].ToString();
+                }
+                rows.Add(item);
+            }
+            return Newtonsoft.Json.JsonConvert.SerializeObject(new { record = rows });
         }
 
         public string pr_FetchProductDetails(string ID)

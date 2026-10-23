@@ -1,4 +1,4 @@
-@{
+﻿@{
     ViewBag.Title = "Assembly_Product_Master";
 }
 
@@ -177,8 +177,12 @@
         padding: 0 8px !important;
     }
 
+    /* line-height already centres the text in the 40px header; drop jqxGrid's own
+       vertical margins or the text ends up ~11px below centre */
     #Grid .jqx-grid-column-header > div > div {
         line-height: 40px !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
     }
 
     /* Header Checkbox Cell Centering */
@@ -188,6 +192,14 @@
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
+    }
+
+    /* The flex container above already centres the checkbox; cancel jqxGrid's own
+       top:50% / negative-margin offset or it is pushed down twice */
+    #Grid .jqx-grid-column-header:first-child > div > div {
+        top: 0 !important;
+        margin-top: 0 !important;
+        margin-left: 0 !important;
     }
 
     /* Filter Row Container & Cells */
@@ -435,14 +447,9 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
     }
 
-    /* Checkbox Alignment & Styling */
-    #Grid .jqx-checkbox {
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        margin: 0 auto !important;
-    }
-
+    /* Checkbox Alignment & Styling
+       jqxGrid centres the checkbox itself (top/left 50% + negative inline margins),
+       so don't override its margin/display here or it drifts down-right. */
     #Grid .jqx-checkbox-default {
         width: 15px !important;
         height: 15px !important;
@@ -478,14 +485,7 @@
         border-right: none !important;
         font-size: 12px !important;
         color: #475569 !important;
-        height: 38px !important;
-        padding: 0 10px !important;
         box-sizing: border-box !important;
-    }
-
-    /* Prevent rightmost pager text clipping (e.g. '1-10 of 1269') */
-    #Grid .jqx-grid-pager > div:last-child {
-        margin-right: 18px !important;
     }
 
     .dark-theme #Grid .jqx-grid-pager,
@@ -1292,15 +1292,15 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-4">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star">*</span>Product Code</label>
+                                            <label class="control-label no-padding-right" for="form-field-1"><span class="star">*</span>Product Code</label>
                                             <input id="PM_Item_Code" type="text" placeholder="Product Code" class="form-control" />
                                         </div>
                                         <div class="col-md-4">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star">*</span>Mold</label>
+                                            <label class="control-label no-padding-right" for="form-field-1"><span class="star">*</span>Mold</label>
                                             <input id="PM_Mold" type="text" placeholder="Mold" class="form-control" />
                                         </div>
                                         <div class="col-md-4">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star">*</span>Sector</label>
+                                            <label class="control-label no-padding-right" for="form-field-1"><span class="star">*</span>Sector</label>
                                             <input id="PM_Sector" type="text" placeholder="Sector" class="form-control" />
                                         </div>
                                     </div>
@@ -1308,15 +1308,15 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-4">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Description</label>
+                                            <label class="control-label no-padding-right" for="form-field-1"><span class="star"></span>Description</label>
                                             <input id="PM_Description" type="text" placeholder="Description" class="form-control" />
                                         </div>
                                         <div class="col-md-4">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Variant Code</label>
+                                            <label class="control-label no-padding-right" for="form-field-1"><span class="star"></span>Variant Code</label>
                                             <input id="PM_Variant_Code" type="text" placeholder="Variant Code" class="form-control" />
                                         </div>
                                         <div class="col-md-4">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Compare Code</label>
+                                            <label class="control-label no-padding-right" for="form-field-1"><span class="star"></span>Compare Code</label>
                                             <input id="compare_code" type="text" placeholder="Compare Code" class="form-control" />
                                         </div>
                                     </div>
@@ -1324,15 +1324,15 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-4">
-                                            <label control-label no-padding-right" for="form-field-1"> <span class="star"></span>Skid Qty</label>
+                                            <label class="control-label no-padding-right" for="form-field-1"> <span class="star"></span>Skid Qty</label>
                                             <input id="PM_Skid_Qty" type="text" placeholder="Skid Qty" class="form-control" />
                                         </div>
                                         <div class="col-md-4">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Qty</label>
+                                            <label class="control-label no-padding-right" for="form-field-1"><span class="star"></span>Qty</label>
                                             <input id="PM_MOQ_Qty" type="text" placeholder="Qty" class="form-control" />
                                         </div>
                                         <div class="col-md-4">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Bosh Code</label>
+                                            <label class="control-label no-padding-right" for="form-field-1"><span class="star"></span>Bosh Code</label>
                                             <input id="inv_Qty" type="text" placeholder="Bosh Code" class="form-control" />
                                         </div>
                                     </div>
@@ -1340,15 +1340,15 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-4">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star">*</span>Start Variant Code</label>
+                                            <label class="control-label no-padding-right" for="form-field-1"><span class="star">*</span>Start Variant Code</label>
                                             <input id="VStart" type="text" placeholder="Start Variant Code" class="form-control" />
                                         </div>
                                         <div class="col-md-4">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star">*</span>End Variant Code</label>
+                                            <label class="control-label no-padding-right" for="form-field-1"><span class="star">*</span>End Variant Code</label>
                                             <input id="VEnd" type="text" placeholder="End Variant Code" class="form-control" />
                                         </div>
                                         <div class="col-md-4">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Start Serial No</label>
+                                            <label class="control-label no-padding-right" for="form-field-1"><span class="star"></span>Start Serial No</label>
                                             <input id="SerialStart" type="text" placeholder="Start Serial No" class="form-control" />
                                         </div>
                                     </div>
@@ -1356,11 +1356,11 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-4">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>End Serial No</label>
+                                            <label class="control-label no-padding-right" for="form-field-1"><span class="star"></span>End Serial No</label>
                                             <input id="SerialEnd" type="text" placeholder="End Serial No" class="form-control" />
                                         </div>
                                         <div class="col-md-4">
-                                            <label control-label no-padding-right" for="form-field-1"><span class="star"></span>Charge Hrs</label>
+                                            <label class="control-label no-padding-right" for="form-field-1"><span class="star"></span>Charge Hrs</label>
                                             <input id="chargeing_Dub_Hrs" type="text" placeholder="Charge Hrs" class="form-control" />
                                         </div>
                                     </div>

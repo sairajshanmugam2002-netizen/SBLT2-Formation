@@ -538,82 +538,74 @@
         }
 
 
-        $('#form1').jqxValidator({
-            hintType: 'label',
-            animationDuration: 2,
-            rules: [
-                {
-                input: '#mv_BatteryType',
-                message: 'Battery Type Required..!',
-                action: 'keyup, blur',
-                rule: 'required',
-                focus: true
-            },
-                //{
-                //    input: '#mr_Source',
-                //    message: 'Source Required..!',
-                //    action: 'keyup, blur',
-                //    rule: 'required',
-                //    focus: true
-                //},
-                //{
-                //    input: '#mv_CDPassedQty',
-                //    message: 'Material Code Required..!',
-                //    action: 'keyup',
-                //    rule: 'required',
-                //    focus: true
-                //},
-            ]
-        });
-        var flag = false;
-        var flag = false;
-        $('#form1').on('validationSuccess', function (event) {
-            flag = true;
-        });
+        // jqxComboBox renders as a <div>, so jqxValidator's 'required' rule never sees its value.
+        // Validate the mandatory fields directly instead.
+        var requiredCombos = [
+            { id: 'mv_BatteryType', name: 'Battery Type' },
+            { id: 'mv_FillingLine', name: 'Filling Line' },
+            { id: 'mv_BankNo', name: 'Bank No' },
+            { id: 'mv_TubNo', name: 'Tub No' }
+        ];
+
+        function validateForm() {
+            for (var i = 0; i < requiredCombos.length; i++) {
+                var c = requiredCombos[i];
+                if ($.trim($('#' + c.id).val()) == '') {
+                    $.toaster({ priority: 'danger', title: 'Notice', message: "Please Select " + c.name });
+                    $('#' + c.id).jqxComboBox('focus');
+                    return false;
+                }
+            }
+            if ($.trim($('#mv_QRCode').val()) == '') {
+                $.toaster({ priority: 'danger', title: 'Notice', message: "Please Scan QR Code" });
+                $('#mv_QRCode').focus();
+                return false;
+            }
+            return true;
+        }
+
+        function isQRCodeValid() {
+            var qr = $.trim($('#mv_QRCode').val());
+            if (qr.length != 10) {
+                $.toaster({ priority: 'danger', title: 'Notice', message: "QR Code must be exactly 10 characters" });
+                $('#mv_QRCode').focus();
+                return false;
+            }
+            var a = "false";
+            $.ajax({
+                type: "POST",
+                url: "pr_Fetch_QRCode_Available?ID=" + encodeURIComponent(qr),
+                dataType: "text",
+                async: false,
+                success: function (response) {
+                    a = response;
+                }
+            });
+            if (a != "false") {
+                $.toaster({ priority: 'danger', title: 'Notice', message: "QR Code Already Scanned" });
+                $('#mv_QRCode').val("");
+                $('#mv_QRCode').focus();
+                return false;
+            }
+            return true;
+        }
 
         $('#mv_QRCode').keypress(function (e) {
-            var flag = true;
             if (e.keyCode == 13) {
-                var a = "false";
-                if ($('#mv_QRCode').val().length != 10) {
-                    alert("QRCode length exceeds more or less than 10");
-                    return;
-                }
-                else {
-                    $.ajax({
-                        type: "POST",
-                        url: "pr_Fetch_QRCode_Available?ID=" + $('#mv_QRCode').val(),
-                        dataType: "text",
-                        async: false,
-                        success: function (response) {
-                            a = response;
-                            //alert(a);
-                        }
-                    });
-                    if (a != "false") {
-                        alert("QR Code Already Scanned");
-                        $('#mv_QRCode').val("");
-                        $('#mv_QRCode').focus();
-                        return;
-                    }
-                    else {
-                        save();
-                    }
-                }
+                e.preventDefault();
+                $("#btn_Save").trigger('click');
             }
         });
 
 
         $("#btn_Save").click(function () {
-            debugger
-            $('#form1').jqxValidator('validate');
-            if (flag == true) {
-                if ($("#btn_save_label").text() == 'Save') {
-                    save();
-                } else {
-                    Update();
-                }
-                flag = false;
+            if (!validateForm() || !isQRCodeValid()) {
+                return;
+            }
+            if ($("#btn_save_label").text() == 'Save') {
+                save();
+            } else {
+                Update();
             }
         });
 
@@ -647,34 +639,35 @@
             //    $.toaster({ priority: 'danger', title: 'Notice', message: "Please Select Supplier Name" });
             //    return;
             //}
+            // Send as form fields so values are encoded properly (spaces, '&', '#', etc.)
             $.ajax({
-                url: "pr_insert_MVRLA??mv_Id=" + ID + "&mv_BatteryType=" + $('#mv_BatteryType').val() + "&mv_FillingLine=" + $('#mv_FillingLine').val() +
-                    "&mv_BankNo=" + $('#mv_BankNo').val() + "&mv_Date=" + $('#mv_Date').val() + "&mv_NoOfCells=" + $('#mv_NoOfCells').val() +
-                    "&mv_FillingStartTime=" + $('#mv_FillingStartTime').val() + "&mv_FillingEndTime=" + $('#mv_FillingEndTime').val() +
-                    "&mv_CDPassedQty=" + "" + "&mv_CDFailQty=" + "" + "&mv_AcidSPG=" + $('#mv_AcidSPG').val() + "&mv_ReadingOperator=" + $('#mv_ReadingOperator').val() +
-                    "&mv_AcidVolume=" + $('#mv_AcidVolume').val() + "&mv_TubNo=" + $('#mv_TubNo').val() + "&mv_CKTNo=" + $('#mv_CKTNo').val() +
-                    "&mv_CellShortQty=" + $('#mv_CellShortQty').val() + "&mv_Temperature=" + $('#mv_Temperature').val() + "&mv_PRDSupervisior=" + $('#mv_PRDSupervisior').val() +
-                    "&mv_FillingOperator=" + $('#mv_FillingOperator').val() + "&mv_QAInspector=" + $('#mv_QAInspector').val() + "&mv_Shift=" + $('#mv_Shift').val() +
-                    "&mv_ShiftEngineer=" + $('#mv_ShiftEngineer').val() + "&mv_QRCode=" + $('#mv_QRCode').val() + "&mv_User=" + User,
+                url: "pr_insert_MVRLA",
                 type: "POST",
-                processData: false,
-                contentType: false,
-                data: data,
+                data: {
+                    mv_BatteryType: $('#mv_BatteryType').val(), mv_FillingLine: $('#mv_FillingLine').val(),
+                    mv_BankNo: $('#mv_BankNo').val(), mv_Date: $('#mv_Date').val(), mv_NoOfCells: $('#mv_NoOfCells').val(),
+                    mv_FillingStartTime: $('#mv_FillingStartTime').val(), mv_FillingEndTime: $('#mv_FillingEndTime').val(),
+                    mv_CDPassedQty: "", mv_CDFailQty: "", mv_AcidSPG: $('#mv_AcidSPG').val(), mv_ReadingOperator: $('#mv_ReadingOperator').val(),
+                    mv_AcidVolume: $('#mv_AcidVolume').val(), mv_TubNo: $('#mv_TubNo').val(), mv_CKTNo: $('#mv_CKTNo').val(),
+                    mv_CellShortQty: $('#mv_CellShortQty').val(), mv_Temperature: $('#mv_Temperature').val(), mv_PRDSupervisior: $('#mv_PRDSupervisior').val(),
+                    mv_FillingOperator: $('#mv_FillingOperator').val(), mv_QAInspector: $('#mv_QAInspector').val(), mv_Shift: $('#mv_Shift').val(),
+                    mv_ShiftEngineer: $('#mv_ShiftEngineer').val(), mv_QRCode: $.trim($('#mv_QRCode').val()), mv_User: User
+                },
+                dataType: "text",
                 async: false,
                 success: function (response) {
                     if (response == 'True') {
                         $.toaster({ priority: 'success', title: 'Notice', message: "Record Saved Successfully" });
-                        $('#blah1').attr('src', "../../");
                         Clear();
+                        $("#Grid").jqxGrid('updatebounddata');
                     } else {
                         $.toaster({ priority: 'danger', title: 'Notice', message: response });
                     }
                 },
                 error: function (er) {
-                    alert(er.responseText);
+                    $.toaster({ priority: 'danger', title: 'Notice', message: "Save failed: " + er.status + " " + er.statusText });
                 }
             });
-            getGrid();
         }
 
         function Update() {
@@ -741,7 +734,7 @@
             $('#mv_QRCode').val('');
             $("#btn_save_label").text('Save');
             $('#blah1').attr('src', "../../");
-            flag = false;
+            $('#mv_QRCode').focus();
         }
 
         $("#Transactions").addClass("active");

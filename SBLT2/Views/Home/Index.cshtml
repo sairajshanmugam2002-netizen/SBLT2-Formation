@@ -1,4 +1,4 @@
-@{
+﻿@{
     Layout = null;
 }
 
@@ -7,8 +7,9 @@
 <html>
 <head>
 
-    <meta name="viewport" content="width=device-width" />
-    <title>Index</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sign in | MVRLA Formation</title>
 
     <!-- ANTI-FOUT Immediate Theme Script (Zero-Flicker Execution) -->
     <script type="text/javascript">
@@ -37,178 +38,385 @@
     <script src="~/Scripts/jquery.toaster.js"></script>
 </head>
 
-<!-- Styles -->
+<!-- Login page design: split screen (brand panel + sign-in form). Classes prefixed lg- to stay clear of materialize / global theme rules -->
 <style>
-    .dropdown-button {
-    }
-
     html, body {
-        color: #636b6f;
-        font-family: 'Roboto', sans-serif;
         margin: 0;
-        background: #f2f2f2;
-    }
-
-    body {
         min-height: 100%;
     }
 
-    /* Amara Raja Brand Name Display */
-    .amara-raja-name {
-        display: inline-block;
-        font-size: 16px;
-        font-weight: 800;
-        color: var(--text-primary, #0F172A);
-        letter-spacing: 0.5px;
-        vertical-align: middle;
-        margin-left: 10px;
-    }
-
-    .dark-theme .amara-raja-name,
-    .dark-mode .amara-raja-name,
-    body.dark-theme .amara-raja-name,
-    body.dark-mode .amara-raja-name,
-    html.dark-theme .amara-raja-name,
-    html.dark-mode .amara-raja-name {
-        display: none !important;
-    }
-
-    .flex-center {
-        /*align-items: center;
-            display: flex;
-            justify-content: center;*/
-    }
-
-    .position-ref {
-        position: relative;
-    }
-
-    .top-right {
-        position: absolute;
-        right: 10px;
-        top: 18px;
-    }
-
-    #app {
+    body.login-page {
         min-height: 100vh;
+        font-family: var(--ar-font, 'Segoe UI', Roboto, Arial, sans-serif);
+        background: var(--content-bg, #f5f7fa) !important;
+        color: var(--text-primary, #1f2937) !important;
     }
 
-    .main-content {
-        min-height: calc(100vh - 112px);
+    .lg-shell {
+        display: flex;
+        min-height: 100vh;
+        width: 100%;
     }
 
-    /*
-                .content {
-                    text-align: center;
-                }
-        */
-
-
-    .title {
-        font-size: 84px;
+    /* ---------- Left: brand panel ---------- */
+    .lg-brand {
+        position: relative;
+        flex: 1 1 52%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 48px 56px;
+        overflow: hidden;
+        color: #ffffff;
+        background: linear-gradient(150deg, #00843f 0%, #006a35 45%, #013d20 100%);
     }
 
-    .links > a {
-        color: #636b6f;
-        padding: 0 25px;
+    /* Decorative concentric arcs (Amara Raja swirl colours), centred on the panel's bottom-right corner */
+    .lg-arc {
+        position: absolute;
+        border-radius: 50%;
+        border: 14px solid transparent;
+        pointer-events: none;
+        transform: translate(50%, 50%);
+        right: 0;
+        bottom: 0;
+    }
+
+    .lg-arc-1 { width: 760px; height: 760px; border-top-color: rgba(178, 210, 53, .22); border-left-color: rgba(178, 210, 53, .22); }
+    .lg-arc-2 { width: 600px; height: 600px; border-top-color: rgba(243, 123, 35, .22); border-left-color: rgba(243, 123, 35, .22); }
+    .lg-arc-3 { width: 440px; height: 440px; border-top-color: rgba(236, 92, 160, .22); border-left-color: rgba(236, 92, 160, .22); }
+    .lg-arc-4 { width: 280px; height: 280px; border-top-color: rgba(0, 150, 199, .26); border-left-color: rgba(0, 150, 199, .26); }
+
+    .lg-brand-top,
+    .lg-brand-main,
+    .lg-brand-foot {
+        position: relative;
+        z-index: 1;
+    }
+
+    .lg-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, .12);
+        border: 1px solid rgba(255, 255, 255, .22);
         font-size: 12px;
         font-weight: 600;
-        letter-spacing: .1rem;
-        text-decoration: none;
+        letter-spacing: .6px;
         text-transform: uppercase;
     }
 
-    .m-b-md {
-        margin-bottom: 30px;
+    .lg-badge-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #7CF0A6;
+        box-shadow: 0 0 0 3px rgba(124, 240, 166, .25);
     }
 
-    .dropdown-content {
-        top: 50px !important;
+    .login-page .lg-brand-main h1 {
+        margin: 0 0 14px 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        font-size: 40px !important;
+        line-height: 1.15 !important;
+        font-weight: 800 !important;
+        letter-spacing: -.5px;
+        color: #ffffff !important;
     }
 
-    .GST {
-        background: #E7ECEF;
-        border: 10px solid white;
+    .login-page .lg-brand-main h1::before,
+    .login-page .lg-brand-main h1::after {
+        content: none !important;
+        display: none !important;
     }
 
-    .modal.GST h4 {
-        font-size: 2.125rem;
+    .lg-brand-main p {
+        margin: 0 0 32px 0;
+        max-width: 440px;
+        font-size: 15px;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, .82);
+    }
+
+    .lg-features {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 14px;
+        max-width: 440px;
+    }
+
+    .lg-features li {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-size: 14px;
+        color: rgba(255, 255, 255, .92);
+    }
+
+    .lg-feature-icon {
+        flex: 0 0 38px;
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, .12);
+        border: 1px solid rgba(255, 255, 255, .18);
+        font-size: 16px;
+    }
+
+    .lg-features strong {
+        display: block;
+        font-size: 14px;
+        font-weight: 700;
+        color: #ffffff;
+    }
+
+    .lg-features span {
+        font-size: 12.5px;
+        color: rgba(255, 255, 255, .72);
+    }
+
+    .lg-brand-foot {
+        font-size: 12px;
+        color: rgba(255, 255, 255, .65);
+    }
+
+    /* ---------- Right: sign-in form ---------- */
+    .lg-panel {
+        position: relative;
+        flex: 1 1 48%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 24px;
+        background: var(--bg-card, #ffffff);
+    }
+
+    .lg-form-wrap {
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .lg-logo-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 10px;
+        margin-bottom: 28px;
+        border-radius: 10px;
+        background: #ffffff;
+    }
+
+    .login-page .lg-logo-chip img.lg-logo {
+        height: 56px !important;
+        width: auto !important;
+        object-fit: contain !important;
+        object-position: center !important;
+        margin: 0 !important;
+        display: block !important;
+    }
+
+    .lg-form-wrap h2 {
+        margin: 0 0 6px 0;
+        font-size: 26px;
+        font-weight: 800;
+        letter-spacing: -.3px;
+        color: var(--text-primary, #1f2937);
+    }
+
+    .lg-sub {
+        margin: 0 0 28px 0;
+        font-size: 14px;
+        color: var(--text-secondary, #6b7280);
+    }
+
+    .lg-field {
+        margin-bottom: 18px;
+    }
+
+    .login-page .lg-field label.lg-label {
+        display: block !important;
+        margin: 0 0 7px 0 !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        color: var(--text-primary, #1f2937) !important;
+        position: static !important;
+        transform: none !important;
+    }
+
+    .lg-input-wrap {
+        position: relative;
+    }
+
+    .lg-input-icon {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-secondary, #6b7280);
+        font-size: 15px;
+        pointer-events: none;
+        transition: color .15s ease;
+    }
+
+    .login-page .lg-input-wrap input.lg-input {
+        display: block !important;
+        width: 100% !important;
+        height: 48px !important;
+        min-height: 48px !important;
+        margin: 0 !important;
+        padding: 0 44px 0 42px !important;
+        box-sizing: border-box !important;
+        border: 1.5px solid var(--input-border, #CBD5E1) !important;
+        border-radius: 10px !important;
+        background: var(--input-bg, #ffffff) !important;
+        color: var(--input-text, #1f2937) !important;
+        font-size: 14.5px !important;
+        font-weight: 500 !important;
+        box-shadow: none !important;
+        outline: none !important;
+        transition: border-color .15s ease, box-shadow .15s ease !important;
+    }
+
+    .login-page .lg-input-wrap input.lg-input::placeholder {
+        color: var(--input-placeholder, #9CA3AF);
+        font-weight: 400;
+    }
+
+    .login-page .lg-input-wrap input.lg-input:focus {
+        border-color: var(--ar-primary, #007A3D) !important;
+        box-shadow: 0 0 0 4px var(--ar-primary-ring, rgba(0, 122, 61, .18)) !important;
+    }
+
+    .lg-input-wrap:focus-within .lg-input-icon {
+        color: var(--ar-primary, #007A3D);
+    }
+
+    .lg-eye {
+        position: absolute;
+        right: 6px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 36px;
+        height: 36px;
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        color: var(--text-secondary, #6b7280);
+        cursor: pointer;
+        font-size: 15px;
+    }
+
+    .lg-eye:hover,
+    .lg-eye:focus {
+        color: var(--ar-primary, #007A3D);
+        background: var(--ar-primary-subtle, #F0FDF4);
+        outline: none;
+    }
+
+    .lg-caps {
+        display: none;
+        margin-top: 6px;
+        font-size: 12px;
+        color: #B45309;
+    }
+
+    .lg-caps.show {
+        display: block;
+    }
+
+    .login-page button.lg-submit {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100% !important;
+        height: 50px !important;
+        margin: 26px 0 0 0 !important;
+        border: 0 !important;
+        border-radius: 10px !important;
+        background: var(--ar-primary, #007A3D) !important;
+        color: #ffffff !important;
+        font-size: 15px !important;
+        font-weight: 700 !important;
+        letter-spacing: .3px;
+        text-transform: none !important;
+        cursor: pointer;
+        box-shadow: 0 8px 18px -6px rgba(0, 122, 61, .55) !important;
+        transition: background .15s ease, transform .1s ease, box-shadow .15s ease !important;
+    }
+
+    .login-page button.lg-submit:hover {
+        background: var(--ar-primary-hover, #006030) !important;
+        box-shadow: 0 10px 22px -6px rgba(0, 122, 61, .6) !important;
+    }
+
+    .login-page button.lg-submit:active {
+        transform: translateY(1px);
+    }
+
+    .login-page button.lg-submit:disabled {
+        opacity: .75;
+        cursor: wait;
+    }
+
+    .lg-help {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-top: 24px;
+        padding: 12px 14px;
+        border-radius: 10px;
+        background: var(--bg-secondary, #f5f7fa);
+        border: 1px solid var(--border-color, #e5e7eb);
+        font-size: 12.5px;
+        line-height: 1.5;
+        color: var(--text-secondary, #6b7280);
+    }
+
+    .lg-help i {
+        margin-top: 2px;
+        color: var(--ar-primary, #007A3D);
+    }
+
+    .lg-foot-mobile {
+        display: none;
+        margin-top: 28px;
         text-align: center;
+        font-size: 11.5px;
+        color: var(--text-secondary, #6b7280);
     }
 
-    .modal.GST .input-field label:not(.label-icon).active {
-        transform: translateY(-175deg) !important;
-        -webkit-transform: translateY(-175%) !important;
+    /* materialize paints focused buttons teal */
+    .login-page .lg-eye:focus {
+        background: var(--ar-primary-subtle, #F0FDF4) !important;
     }
 
-    .modal.GST .input-field textarea.materialize-textarea {
-        padding-left: 8px;
-        background: white;
-        border-radius: 4px;
-        /*border: 1px solid #bdbdbd;*/
-        height: 6rem;
-        border: 0;
-        box-shadow: inset 1px 3px rgba(0, 0, 0, .14);
+    /* ---------- Responsive ---------- */
+    @@media (max-width: 1100px) {
+        .lg-brand { padding: 40px; }
+        .lg-brand-main h1 { font-size: 32px; }
     }
 
-    .modal.GST .input-field input[type='email'] {
-        padding-left: 8px;
-        background: white;
-        border-radius: 4px;
-        /*border: 1px solid #bdbdbd;*/
-        border: 0;
-        box-shadow: inset 1px 3px rgba(0, 0, 0, .14);
+    @@media (max-width: 860px) {
+        .lg-brand { display: none; }
+        .lg-panel { padding: 32px 16px; background: var(--content-bg, #f5f7fa); }
+        .lg-form-wrap {
+            padding: 28px 22px;
+            border-radius: 14px;
+            background: var(--bg-card, #ffffff);
+            border: 1px solid var(--border-color, #e5e7eb);
+            border-top: 4px solid var(--ar-primary, #007A3D);
+            box-shadow: 0 10px 30px -12px rgba(15, 23, 42, .25);
+        }
+        .lg-foot-mobile { display: block; }
     }
-
-    .modal.GST .input-field label {
-        padding-left: 8px;
-    }
-
-    .modal.GST .input-field .material-icons {
-        color: #aaa !important;
-    }
-
-        .modal.GST .input-field .material-icons.active {
-            color: #097aa8 !important;
-        }
-
-
-
-    /*.GST{
-          background:#097aa8;
-        }
-        .modal.GST h4{
-          font-size: 2.125rem;
-          text-align: center;
-          color: #E7ECEF;
-        }
-        .modal.GST .input-field label:not(.label-icon).active{
-          transform: translateY(-175deg)!important;
-          -webkit-transform: translateY(-175%)!important;
-        }
-        .modal.GST .input-field textarea.materialize-textarea{
-          padding-left: 8px;
-          background: white;
-          border-radius: 4px;
-          border: 1px solid #bdbdbd;
-          border:0;
-          box-shadow: inset 1px 3px rgba(0, 0, 0, .14);
-        }
-        .modal.GST .input-field input[type='email']{
-          padding-left: 8;
-          background: white;
-          border-radius: 4px;
-          border: 1px solid #bdbdbd;
-          border:0;
-          box-shadow: inset 1px 3px rgba(0, 0, 0, .14);
-        }
-        .modal.GST .input-field label{
-          padding-left: 8px;
-        }
-        .modal.GST .input-field .material-icons{
-          color: #E7ECEF!important;
-        }*/
-
 </style>
 
 <style>
@@ -354,101 +562,6 @@
         }
     }
 
-    /* ==========================================================================
-       Login Page: Form Label & Input-Field Strict Alignment
-       ========================================================================== */
-    .login-card .form-group {
-        display: block !important;
-        width: 100% !important;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-        margin-bottom: 20px !important;
-        padding: 0 !important;
-        box-sizing: border-box !important;
-    }
-
-    .login-card label.login-label {
-        display: block !important;
-        width: 100% !important;
-        text-align: left !important;
-        font-family: var(--ar-font) !important;
-        font-size: 12.5px !important;
-        font-weight: 600 !important;
-        color: var(--text-primary) !important;
-        margin: 0 0 6px 0 !important;
-        padding: 0 !important;
-        line-height: 1.4 !important;
-        box-sizing: border-box !important;
-    }
-
-    .login-card .login-input-group {
-        display: flex !important;
-        flex-direction: row !important;
-        align-items: stretch !important;
-        width: 100% !important;
-        height: 44px !important;
-        min-height: 44px !important;
-        max-height: 44px !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        box-sizing: border-box !important;
-    }
-
-    .login-card .login-input-addon {
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        width: 44px !important;
-        min-width: 44px !important;
-        max-width: 44px !important;
-        height: 44px !important;
-        min-height: 44px !important;
-        max-height: 44px !important;
-        flex-shrink: 0 !important;
-        background: var(--input-addon-bg) !important;
-        border: 1px solid var(--input-border) !important;
-        border-right: none !important;
-        border-radius: 6px 0 0 6px !important;
-        color: var(--input-addon-text) !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        box-sizing: border-box !important;
-        float: none !important;
-    }
-
-    .login-card .login-input {
-        display: block !important;
-        flex: 1 1 auto !important;
-        width: 100% !important;
-        min-width: 0 !important;
-        height: 44px !important;
-        min-height: 44px !important;
-        max-height: 44px !important;
-        border-radius: 0 6px 6px 0 !important;
-        border: 1px solid var(--input-border) !important;
-        border-left: none !important;
-        background-color: var(--input-bg) !important;
-        color: var(--input-text) !important;
-        font-family: var(--ar-font) !important;
-        font-size: 14px !important;
-        font-weight: 500 !important;
-        padding: 10px 14px !important;
-        margin: 0 !important;
-        box-sizing: border-box !important;
-        float: none !important;
-        outline: none !important;
-        box-shadow: none !important;
-        transition: border-color 0.15s ease, background-color 0.2s ease !important;
-    }
-
-    .login-card .login-input:focus {
-        border-color: var(--ar-primary) !important;
-        box-shadow: 0 0 0 2px rgba(0, 122, 61, 0.15) !important;
-    }
-
-    .login-card .login-input-group:focus-within .login-input-addon {
-        border-color: var(--ar-primary) !important;
-    }
 </style>
 
 <script type="text/javascript">
@@ -487,7 +600,7 @@
             }
 
             $("#spinner").show();
-            $('#btnlogin').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> SIGNING IN...');
+            $('#btnlogin').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Signing in...');
 
             var f = "false";
             $.ajax({
@@ -505,7 +618,7 @@
 
             if (f === "false" || !f) {
                 $("#spinner").hide();
-                $('#btnlogin').prop('disabled', false).html('<i class="fa fa-sign-in"></i> SIGN IN TO FORMATION CONSOLE');
+                $('#btnlogin').prop('disabled', false).html('<i class="fa fa-sign-in"></i> Sign in');
                 $('#Password').val("");
                 $.toaster({ priority: 'danger', title: '', message: 'Invalid User Name or Password' });
             }
@@ -704,95 +817,112 @@
 
 <body class="login-page">
 
-    <div style="width: 100%; max-width: 440px; margin: auto;">
-        <!-- Brand Header Above Card -->
-        <div style="text-align: center; margin-bottom: 24px;">
-            <div style="display: inline-flex; align-items: center; justify-content: center; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 20px; margin-bottom: 12px; box-shadow: var(--ar-shadow-sm);">
-                <img src="~/img/Logo11.png" class="brand-logo-icon" style="height: 38px; width: 31px; object-fit: cover; object-position: 0% 50%; margin-right: 8px;" alt="Amara Raja" onerror="this.src='../../img/Logo11.png'" />
-                <span class="amara-raja-name">AMARA RAJA</span>
-            </div>
-            <h2 style="font-size: 20px; font-weight: 800; color: var(--text-primary); margin: 0; letter-spacing: -0.3px;">
-                MVRLA FORMATION PLANT
-            </h2>
-            <p style="font-size: 13px; color: var(--text-secondary); margin: 4px 0 0 0;">
-                Battery Barcode Traceability & Quality Console
-            </p>
-        </div>
+    <div class="lg-shell">
 
-        <!-- Modern Industrial Card -->
-        <div class="box login-card" style="background: var(--card-bg) !important; border-radius: 12px !important; box-shadow: var(--ar-shadow-lg) !important; border: 1px solid var(--border-color) !important; border-top: 4px solid var(--ar-primary) !important; padding: 32px 28px !important; margin-bottom: 20px !important;">
-            <div style="margin-bottom: 24px; border-bottom: 1px solid var(--border-color); padding-bottom: 16px;">
-                <h3 style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
-                    <i class="fa fa-shield" style="color: var(--ar-primary);"></i> Operator Authentication
-                </h3>
-                <span style="font-size: 12px; color: var(--text-secondary);">Enter your plant credentials to access the terminal</span>
+        <!-- Brand panel -->
+        <aside class="lg-brand" aria-hidden="true">
+            <span class="lg-arc lg-arc-1"></span>
+            <span class="lg-arc lg-arc-2"></span>
+            <span class="lg-arc lg-arc-3"></span>
+            <span class="lg-arc lg-arc-4"></span>
+
+            <div class="lg-brand-top">
+                <span class="lg-badge"><span class="lg-badge-dot"></span> Formation Plant Console</span>
             </div>
 
-            <form id="form1" onsubmit="return false;" style="margin: 0; padding: 0;">
-                <!-- User Name Field -->
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label for="UserName" class="login-label" style="display: block; width: 100%; text-align: left; font-size: 12.5px; font-weight: 600; color: var(--text-primary); margin: 0 0 6px 0; padding: 0;">
-                        Username <span class="text-danger" style="color: #EF4444;">*</span>
-                    </label>
-                    <div class="input-group login-input-group" style="display: flex; width: 100%; height: 44px; margin: 0; padding: 0;">
-                        <span class="input-group-addon login-input-addon" style="display: inline-flex; align-items: center; justify-content: center; width: 44px; min-width: 44px; max-width: 44px; height: 44px; flex-shrink: 0; background: var(--input-addon-bg); border: 1px solid var(--input-border); border-right: none; border-radius: 6px 0 0 6px !important; color: var(--input-addon-text); margin: 0; padding: 0; box-sizing: border-box;">
-                            <i class="fa fa-user" style="font-size: 15px;"></i>
-                        </span>
-                        <input id="UserName" 
-                               name="email" 
-                               type="text" 
-                               class="form-control login-input" 
-                               placeholder="e.g. operator1 or admin" 
-                               required 
-                               autocomplete="username" 
-                               autofocus 
-                               style="display: block; flex: 1 1 auto; width: 100%; min-width: 0; height: 44px !important; min-height: 44px !important; max-height: 44px !important; border-radius: 0 6px 6px 0 !important; border: 1px solid var(--input-border) !important; border-left: none !important; background-color: var(--input-bg) !important; color: var(--input-text) !important; font-size: 14px; font-weight: 500; padding: 10px 14px !important; margin: 0 !important; box-sizing: border-box !important;" />
-                    </div>
+            <div class="lg-brand-main">
+                <h1>MVRLA Formation<br />Traceability</h1>
+                <p>Track every battery from filling to formation &mdash; barcode scanning, process parameters and quality records in one place.</p>
+                <ul class="lg-features">
+                    <li>
+                        <span class="lg-feature-icon"><i class="fa fa-qrcode"></i></span>
+                        <div><strong>Barcode traceability</strong><span>Scan each battery serial at every stage</span></div>
+                    </li>
+                    <li>
+                        <span class="lg-feature-icon"><i class="fa fa-flask"></i></span>
+                        <div><strong>Formation log sheets</strong><span>Acid SPG, volume, temperature and timings</span></div>
+                    </li>
+                    <li>
+                        <span class="lg-feature-icon"><i class="fa fa-bar-chart"></i></span>
+                        <div><strong>Quality &amp; reports</strong><span>Rework, rejection and shift summaries</span></div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="lg-brand-foot">
+                &copy; 2026 Amara Raja Energy &amp; Mobility Ltd. &middot; Industrial Plant V1.0
+            </div>
+        </aside>
+
+        <!-- Sign-in panel -->
+        <main class="lg-panel">
+            <div class="lg-form-wrap">
+                <div class="lg-logo-chip">
+                    <img src="~/img/Logo11.png" class="lg-logo" alt="Amara Raja" />
                 </div>
 
-                <!-- Password Field -->
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label for="Password" class="login-label" style="display: block; width: 100%; text-align: left; font-size: 12.5px; font-weight: 600; color: var(--text-primary); margin: 0 0 6px 0; padding: 0;">
-                        Password <span class="text-danger" style="color: #EF4444;">*</span>
-                    </label>
-                    <div class="input-group login-input-group" style="display: flex; width: 100%; height: 44px; margin: 0; padding: 0;">
-                        <span class="input-group-addon login-input-addon" style="display: inline-flex; align-items: center; justify-content: center; width: 44px; min-width: 44px; max-width: 44px; height: 44px; flex-shrink: 0; background: var(--input-addon-bg); border: 1px solid var(--input-border); border-right: none; border-radius: 6px 0 0 6px !important; color: var(--input-addon-text); margin: 0; padding: 0; box-sizing: border-box;">
-                            <i class="fa fa-lock" style="font-size: 15px;"></i>
-                        </span>
-                        <input id="Password" 
-                               name="password" 
-                               type="password" 
-                               class="form-control login-input" 
-                               placeholder="••••••••" 
-                               required 
-                               autocomplete="current-password" 
-                               style="display: block; flex: 1 1 auto; width: 100%; min-width: 0; height: 44px !important; min-height: 44px !important; max-height: 44px !important; border-radius: 0 6px 6px 0 !important; border: 1px solid var(--input-border) !important; border-left: none !important; background-color: var(--input-bg) !important; color: var(--input-text) !important; font-size: 14px; font-weight: 500; padding: 10px 14px !important; margin: 0 !important; box-sizing: border-box !important;" />
-                    </div>
-                </div>
+                <h2>Welcome back</h2>
+                <p class="lg-sub">Sign in with your plant credentials to continue.</p>
 
-                <!-- Sign In Action Button -->
-                <div style="margin-top: 24px;">
-                    <button type="button" 
-                            id="btnlogin" 
-                            class="btn btn-primary" 
-                            style="width: 100%; height: 46px; background-color: var(--ar-primary) !important; border-color: var(--ar-primary) !important; color: #FFFFFF !important; font-size: 14px; font-weight: 700; border-radius: 6px; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 6px -1px rgba(0, 122, 61, 0.4); cursor: pointer; margin: 0;">
-                        <i class="fa fa-sign-in"></i> SIGN IN TO FORMATION CONSOLE
+                <form id="form1" onsubmit="return false;" autocomplete="on">
+                    <div class="lg-field">
+                        <label for="UserName" class="lg-label">Username</label>
+                        <div class="lg-input-wrap">
+                            <i class="fa fa-user lg-input-icon"></i>
+                            <input id="UserName" name="email" type="text" class="browser-default lg-input"
+                                   placeholder="Enter your username" required autocomplete="username" autofocus />
+                        </div>
+                    </div>
+
+                    <div class="lg-field">
+                        <label for="Password" class="lg-label">Password</label>
+                        <div class="lg-input-wrap">
+                            <i class="fa fa-lock lg-input-icon"></i>
+                            <input id="Password" name="password" type="password" class="browser-default lg-input"
+                                   placeholder="Enter your password" required autocomplete="current-password" />
+                            <button type="button" id="lg-toggle-pwd" class="lg-eye" title="Show password" aria-label="Show password">
+                                <i class="fa fa-eye"></i>
+                            </button>
+                        </div>
+                        <div id="lg-caps" class="lg-caps"><i class="fa fa-exclamation-triangle"></i> Caps Lock is on</div>
+                    </div>
+
+                    <button type="button" id="btnlogin" class="lg-submit">
+                        <i class="fa fa-sign-in"></i> Sign in
                     </button>
+                </form>
+
+                <div class="lg-help">
+                    <i class="fa fa-info-circle"></i>
+                    <span>Forgot your password or need a different role? Contact your Shift Supervisor.</span>
                 </div>
-            </form>
 
-            <div style="margin-top: 20px; text-align: center; border-top: 1px solid var(--border-color); padding-top: 14px;">
-                <span style="font-size: 11.5px; color: var(--text-secondary);">
-                    <i class="fa fa-info-circle text-info"></i> For credential resets or role changes, contact Shift Supervisor.
-                </span>
+                <div class="lg-foot-mobile">&copy; 2026 Amara Raja Energy &amp; Mobility Ltd. &middot; Industrial Plant V1.0</div>
             </div>
-        </div>
-
-        <!-- Footer Notice -->
-        <div style="text-align: center; color: var(--text-secondary); font-size: 11px;">
-            &copy; 2026 Amara Raja Energy & Mobility Ltd. | Industrial Plant V1.0
-        </div>
+        </main>
     </div>
+
+    <script type="text/javascript">
+        // Show / hide password and Caps Lock hint
+        $(function () {
+            $('#lg-toggle-pwd').on('click', function () {
+                var $pwd = $('#Password');
+                var show = $pwd.attr('type') === 'password';
+                $pwd.attr('type', show ? 'text' : 'password');
+                $(this).attr({ title: show ? 'Hide password' : 'Show password', 'aria-label': show ? 'Hide password' : 'Show password' })
+                    .find('i').toggleClass('fa-eye', !show).toggleClass('fa-eye-slash', show);
+                $pwd.focus();
+            });
+            $('#Password').on('keyup keydown', function (e) {
+                if (e.originalEvent && e.originalEvent.getModifierState) {
+                    $('#lg-caps').toggleClass('show', e.originalEvent.getModifierState('CapsLock'));
+                }
+            });
+            $('#UserName').on('keypress', function (e) {
+                if (e.keyCode == 13) { $('#Password').focus(); }
+            });
+        });
+    </script>
     <div class="spinner" id="spinner" hidden>
         <div class="sk-fading-circle">
             <div class="sk-circle1 sk-circle"></div>
