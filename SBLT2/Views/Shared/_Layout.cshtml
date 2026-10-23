@@ -128,6 +128,48 @@
             $("#vin_Menu").html(html);
         }
 
+        // Enforce Setting menu structure: Setting -> User Master, Rights Assignment
+        function configureSettingMenu() {
+            var $menuUl = $("#vin_Menu").find("ul.sidebar-menu");
+            if (!$menuUl.length) return;
+
+            var $settingLi = $menuUl.find("#Setting, #Settings");
+            if ($settingLi.length) {
+                var $subMenu = $settingLi.find("ul.treeview-menu");
+                if ($subMenu.length) {
+                    $subMenu.html(
+                        '<li id="User_Master"><a href="../../Setting/User_Master"><i class="fa fa-circle-o"></i> User Master</a></li>' +
+                        '<li id="Rights_Assing"><a href="../../Setting/Role_Assignment"><i class="fa fa-circle-o"></i> Rights Assignment</a></li>'
+                    );
+                }
+            } else {
+                $menuUl.append(
+                    '<li class="treeview" id="Setting">' +
+                        '<a href="#">' +
+                            '<i class="fa fa-wrench"></i>' +
+                            '<span> Setting </span>' +
+                            '<i class="fa fa-angle-left pull-right"></i>' +
+                        '</a>' +
+                        '<ul class="treeview-menu">' +
+                            '<li id="User_Master"><a href="../../Setting/User_Master"><i class="fa fa-circle-o"></i> User Master</a></li>' +
+                            '<li id="Rights_Assing"><a href="../../Setting/Role_Assignment"><i class="fa fa-circle-o"></i> Rights Assignment</a></li>' +
+                        '</ul>' +
+                    '</li>'
+                );
+            }
+
+            var currentPath = window.location.pathname.toLowerCase();
+            if (currentPath.indexOf("setting/user_master") !== -1) {
+                $("#Setting, #Settings").addClass("active");
+                $("#User_Master").addClass("active");
+            } else if (currentPath.indexOf("setting/role_assignment") !== -1) {
+                $("#Setting, #Settings").addClass("active");
+                $("#Rights_Assing").addClass("active");
+            }
+        }
+
+        configureSettingMenu();
+
         // Global HTML Table Layout Handler:
         // Automatically ensures every standard HTML table is safely wrapped inside .table-wrapper.
         // NEVER wraps JQWidgets Grids (jqxGrid has its own scrolling engine).

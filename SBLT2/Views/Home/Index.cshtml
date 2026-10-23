@@ -792,6 +792,11 @@
                             Data += '<li class="" id="Landing_Dashboard"><a href="../../Home/Dashboard"><i class="fa fa-circle-o"></i> Landing Dashboard </a></li>';
                             return;
                         }
+                        if (Parent == 28 || Parent == "28") {
+                            Data += '<li class="" id="User_Master"><a href="../../Setting/User_Master"><i class="fa fa-circle-o"></i> User Master </a></li>';
+                            Data += '<li class="" id="Rights_Assing"><a href="../../Setting/Role_Assignment"><i class="fa fa-circle-o"></i> Rights Assignment </a></li>';
+                            return;
+                        }
                         for (var i = 0; i < length; i++) {
                             var record = records[i];
                             if (record.MM_vURL && record.MM_vURL.indexOf("Home/Dashboard") !== -1) {

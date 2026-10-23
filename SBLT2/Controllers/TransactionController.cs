@@ -1252,7 +1252,7 @@ namespace SBLT2.Controllers
                             string filePath = System.IO.Path.Combine(string.Format("E:/Rajesh/Captures/{0}.jpg", fileName));
                             System.IO.File.WriteAllBytes(filePath, imageBytes1);
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
                             //MessageBox.Show(ex.Message);
                             //imagedata = imageData_Enter;

@@ -1,4 +1,4 @@
-﻿using SriPravanTech;
+using SriPravanTech;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -78,7 +78,16 @@ namespace SBLT2.Controllers
 
         public string pr_get_T_Setting_Menu_Master(string Role, string module)
         {
-            DataTable dt = dbFunctions.getTable("pr_get_T_Setting_Menu_Master " + Role + "," + module + ",1");
+            int roleId = 0, moduleId = 1;
+            int.TryParse(Role, out roleId);
+            int.TryParse(module, out moduleId);
+            if (moduleId == 6 || moduleId == 0) moduleId = 1;
+
+            DataTable dt = dbFunctions.getTable("pr_get_T_Setting_Menu_Master " + roleId + "," + moduleId + ",1");
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                return "{\"record\":[]}";
+            }
             string s = dbFunctions.GetJSONString(dt);
             return s;
         }
