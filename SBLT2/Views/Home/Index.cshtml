@@ -1,4 +1,4 @@
-﻿@{
+@{
     Layout = null;
 }
 
@@ -858,7 +858,8 @@
         <main class="lg-panel">
             <div class="lg-form-wrap">
                 <div class="lg-logo-chip">
-                    <img src="~/img/Logo11.png" class="lg-logo" alt="Amara Raja" />
+                    <img src="@Url.Content("~/img/Logo11.png")" class="lg-logo" alt="Amara Raja"
+                         onerror="if (this.src.indexOf('Logo11.png') !== -1) { this.src='@Url.Content("~/img/LOGO.png")'; } else if (this.src.indexOf('LOGO.png') !== -1) { this.src='@Url.Content("~/img/LOGO1.png")'; } else { this.src='../../img/Logo11.png'; }" />
                 </div>
 
                 <h2>Welcome back</h2>

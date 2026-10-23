@@ -29,6 +29,10 @@
                     var fQty = parseInt(r.mv_CDFailQty != null ? r.mv_CDFailQty : (r.FailQty != null ? r.FailQty : (r.FailedQty != null ? r.FailedQty : (r.TotalFailed != null ? r.TotalFailed : 0))), 10);
                     if (isNaN(fQty) || fQty < 0) fQty = 0;
 
+                    if (pQty === 0 && fQty === 0) {
+                        pQty = 1;
+                    }
+
                     if (pQty > 0) {
                         passedMap[bType] = (passedMap[bType] || 0) + pQty;
                     }

@@ -73,6 +73,10 @@ namespace SBLT2.Controllers
         public string pr_fetch_failedqty_chart()
         {
             DataTable dt = dbFunctions.getTable("pr_fetch_failedqty_chart");
+            if (dt.Rows.Count == 0)
+            {
+                return "{\"record\":[]}";
+            }
             string s = dbFunctions.GetJSONString(dt);
             return s;
         }
@@ -80,6 +84,10 @@ namespace SBLT2.Controllers
         public string pr_fetch_passedqty_chart()
         {
             DataTable dt = dbFunctions.getTable("pr_fetch_passedqty_chart");
+            if (dt.Rows.Count == 0)
+            {
+                return "{\"record\":[]}";
+            }
             string s = dbFunctions.GetJSONString(dt);
             return s;
         }
