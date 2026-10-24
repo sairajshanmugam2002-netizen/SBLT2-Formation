@@ -74,12 +74,11 @@ namespace SBLT2.Controllers
         public string pr_fetch_Rework_Rejection_Reasons(string Type_ID = null, string ID = null)
         {
             string selectedType = !string.IsNullOrEmpty(Type_ID) ? Type_ID : ID;
-            if (string.IsNullOrEmpty(selectedType))
-            {
-                return "[]";
-            }
-            DataTable dt = dbFunctions.getTable("pr_fetch_Rework_Rejection_Reasons '" + selectedType.Replace("'", "''") + "'");
-            if (dt.Rows.Count == 0)
+            string query = string.IsNullOrEmpty(selectedType)
+                ? "pr_fetch_Rework_Rejection_Reasons"
+                : "pr_fetch_Rework_Rejection_Reasons '" + selectedType.Replace("'", "''") + "'";
+            DataTable dt = dbFunctions.getTable(query);
+            if (dt == null || dt.Rows.Count == 0)
             {
                 return "[]";
             }
@@ -138,7 +137,20 @@ namespace SBLT2.Controllers
             string FRR_Created_By,
             string FRR_QRCode = "",
             string FRR_BatteryType = "",
-            string FRR_CKTNo = ""
+            string FRR_CKTNo = "",
+            string FRR_Cell1 = "",
+            string FRR_Cell2 = "",
+            string FRR_Cell3 = "",
+            string FRR_Cell4 = "",
+            string FRR_Cell5 = "",
+            string FRR_Cell6 = "",
+            string FRR_DefectCell = "",
+            string FRR_OCV = "",
+            string FRR_PlateNo = "",
+            string FRR_Location = "",
+            string FRR_PlateType = "",
+            string FRR_DefectReasonType = "",
+            string FRR_DefectReason = ""
         )
         {
             SqlConnection con = new SqlConnection(dbFunctions.connectionstring);
@@ -159,6 +171,19 @@ namespace SBLT2.Controllers
                 com.Parameters.Add("@FRR_QRCode", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_QRCode) ? (object)DBNull.Value : FRR_QRCode;
                 com.Parameters.Add("@FRR_BatteryType", SqlDbType.VarChar, 100).Value = string.IsNullOrEmpty(FRR_BatteryType) ? (object)DBNull.Value : FRR_BatteryType;
                 com.Parameters.Add("@FRR_CKTNo", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_CKTNo) ? (object)DBNull.Value : FRR_CKTNo;
+                com.Parameters.Add("@FRR_Cell1", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_Cell1) ? (object)DBNull.Value : FRR_Cell1;
+                com.Parameters.Add("@FRR_Cell2", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_Cell2) ? (object)DBNull.Value : FRR_Cell2;
+                com.Parameters.Add("@FRR_Cell3", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_Cell3) ? (object)DBNull.Value : FRR_Cell3;
+                com.Parameters.Add("@FRR_Cell4", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_Cell4) ? (object)DBNull.Value : FRR_Cell4;
+                com.Parameters.Add("@FRR_Cell5", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_Cell5) ? (object)DBNull.Value : FRR_Cell5;
+                com.Parameters.Add("@FRR_Cell6", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_Cell6) ? (object)DBNull.Value : FRR_Cell6;
+                com.Parameters.Add("@FRR_DefectCell", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_DefectCell) ? (object)DBNull.Value : FRR_DefectCell;
+                com.Parameters.Add("@FRR_OCV", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_OCV) ? (object)DBNull.Value : FRR_OCV;
+                com.Parameters.Add("@FRR_PlateNo", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_PlateNo) ? (object)DBNull.Value : FRR_PlateNo;
+                com.Parameters.Add("@FRR_Location", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_Location) ? (object)DBNull.Value : FRR_Location;
+                com.Parameters.Add("@FRR_PlateType", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_PlateType) ? (object)DBNull.Value : FRR_PlateType;
+                com.Parameters.Add("@FRR_DefectReasonType", SqlDbType.VarChar, 100).Value = string.IsNullOrEmpty(FRR_DefectReasonType) ? (object)DBNull.Value : FRR_DefectReasonType;
+                com.Parameters.Add("@FRR_DefectReason", SqlDbType.VarChar, 500).Value = string.IsNullOrEmpty(FRR_DefectReason) ? (object)(FRR_Reason ?? "") : FRR_DefectReason;
                 com.ExecuteNonQuery();
                 con.Close();
                 return "True";
@@ -167,6 +192,21 @@ namespace SBLT2.Controllers
             {
                 return ex.Message;
             }
+        }
+
+        public string pr_fetch_Defect_Reason_Types()
+        {
+            DataTable dt = dbFunctions.getTable("pr_fetch_Defect_Reason_Types");
+            string s = dbFunctions.GetJSONString(dt);
+            return s;
+        }
+
+        public string pr_fetch_Defect_Reasons_ByType(string DefectReasonType)
+        {
+            string cleanType = (DefectReasonType ?? "").Replace("'", "''");
+            DataTable dt = dbFunctions.getTable("pr_fetch_Defect_Reasons_ByType '" + cleanType + "'");
+            string s = dbFunctions.GetJSONString(dt);
+            return s;
         }
 
         public string pr_fetch_Formation_Rework_Rejection_List()

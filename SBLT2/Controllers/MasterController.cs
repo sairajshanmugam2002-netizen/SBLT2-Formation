@@ -2595,9 +2595,8 @@ namespace SBLT2.Controllers
         }
 
 
-        public string Pr_Insert_ReferenceGroup_Value(string RGV_iRG_ID, string RGV_vCode, string RGV_vDesciption )
+        public string Pr_Insert_ReferenceGroup_Value(string RGV_iRG_ID, string RGV_vCode, string RGV_vDesciption, string RGV_vDefectReasonType = "")
         {
-            
             SqlConnection con = new SqlConnection(dbFunctions.connectionstring);
             try
             {
@@ -2606,9 +2605,10 @@ namespace SBLT2.Controllers
                 com.Connection = con;
                 com.CommandType = CommandType.StoredProcedure;
                 com.CommandText = "Pr_Insert_ReferenceGroup_Value";
-                com.Parameters.Add("@RGV_iRG_ID", SqlDbType.VarChar).Value = RGV_iRG_ID;
-                com.Parameters.Add("@RGV_vCode", SqlDbType.VarChar).Value = RGV_vCode;
-                com.Parameters.Add("@RGV_vDesciption", SqlDbType.VarChar).Value = RGV_vDesciption;
+                com.Parameters.Add("@RGV_iRG_ID", SqlDbType.VarChar).Value = RGV_iRG_ID ?? "";
+                com.Parameters.Add("@RGV_vCode", SqlDbType.VarChar).Value = RGV_vCode ?? "";
+                com.Parameters.Add("@RGV_vDesciption", SqlDbType.VarChar).Value = RGV_vDesciption ?? "";
+                com.Parameters.Add("@RGV_vDefectReasonType", SqlDbType.VarChar, 100).Value = string.IsNullOrEmpty(RGV_vDefectReasonType) ? (object)DBNull.Value : RGV_vDefectReasonType;
                 com.ExecuteNonQuery();
                 con.Close();
                 return "True";
@@ -2619,7 +2619,7 @@ namespace SBLT2.Controllers
             }
         }
 
-        public string Pr_Update_ReferenceGroup_Value(string RGV_iID, string RGV_vCode, string RGV_vDesciption)
+        public string Pr_Update_ReferenceGroup_Value(string RGV_iID, string RGV_vCode, string RGV_vDesciption, string RGV_vDefectReasonType = "")
         {
             SqlConnection con = new SqlConnection(dbFunctions.connectionstring);
             try
@@ -2630,9 +2630,9 @@ namespace SBLT2.Controllers
                 com.CommandType = CommandType.StoredProcedure;
                 com.CommandText = "Pr_Update_ReferenceGroup_Value";
                 com.Parameters.Add("@RGV_iID", SqlDbType.VarChar).Value = RGV_iID;
-                //com.Parameters.Add("@RGV_iRG_ID", SqlDbType.VarChar).Value = RGV_iRG_ID;
-                com.Parameters.Add("@RGV_vCode", SqlDbType.VarChar).Value = RGV_vCode;
-                com.Parameters.Add("@RGV_vDesciption", SqlDbType.VarChar).Value = RGV_vDesciption;
+                com.Parameters.Add("@RGV_vCode", SqlDbType.VarChar).Value = RGV_vCode ?? "";
+                com.Parameters.Add("@RGV_vDesciption", SqlDbType.VarChar).Value = RGV_vDesciption ?? "";
+                com.Parameters.Add("@RGV_vDefectReasonType", SqlDbType.VarChar, 100).Value = string.IsNullOrEmpty(RGV_vDefectReasonType) ? (object)DBNull.Value : RGV_vDefectReasonType;
                 com.ExecuteNonQuery();
                 con.Close();
                 return "True";
@@ -2641,6 +2641,21 @@ namespace SBLT2.Controllers
             {
                 return ex.Message;
             }
+        }
+
+        public string pr_fetch_Defect_Reason_Types()
+        {
+            DataTable dt = dbFunctions.getTable("pr_fetch_Defect_Reason_Types");
+            string s = dbFunctions.GetJSONString(dt);
+            return s;
+        }
+
+        public string pr_fetch_Defect_Reasons_ByType(string DefectReasonType)
+        {
+            string cleanType = (DefectReasonType ?? "").Replace("'", "''");
+            DataTable dt = dbFunctions.getTable("pr_fetch_Defect_Reasons_ByType '" + cleanType + "'");
+            string s = dbFunctions.GetJSONString(dt);
+            return s;
         }
 
       

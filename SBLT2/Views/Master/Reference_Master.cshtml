@@ -37,25 +37,38 @@
             var url = "Pr_Fetch_ReferenceGroup_Value_Details?ID=" + ID;
             var source = {
                 datatype: "json",
-                datafields: [{name: 'ID',type: 'string'},{name: 'Code',type: 'string'},
-                {name: 'Desciption',type: 'string'},            
+                datafields: [
+                    { name: 'ID', type: 'string' },
+                    { name: 'Code', type: 'string' },
+                    { name: 'Desciption', type: 'string' }
                 ],
                 id: 'id',
                 url: url
             };
             var dataAdapter = new $.jqx.dataAdapter(source);
-            $("#Grid").jqxGrid({theme: 'ui-sunny',width: '100%',height: '480px',source: dataAdapter,
-                columnsresize: true,pageable: true,enabletooltips: false,pagermode: 'simple',
-                enabletooltips: true,showfilterrow: true, selectionmode: 'checkbox',filterable: true,
+            $("#Grid").jqxGrid({
+                theme: 'ui-sunny',
+                width: '100%',
+                height: '480px',
+                source: dataAdapter,
+                columnsresize: true,
+                pageable: true,
+                enabletooltips: true,
+                pagermode: 'simple',
+                showfilterrow: true,
+                selectionmode: 'checkbox',
+                filterable: true,
                 pagesize: 14,
-                columns: [{text: 'Edit',datafield: 'Edit',filterable: false,width: 50,
-                    cellsrenderer: function () {
-                        return '<div style="width: 100%"><img src="../../../img/Edit1.png" style="margin-left: 25%" /></div>';
-                    }
-                },
-                {text: 'id',datafield: 'ID',width: 80,hidden: true},
-                {text: 'Code',datafield: 'Code',width: '35%',minwidth: 150},
-                {text: 'Desciption',datafield: 'Desciption',width: '55%',minwidth: 250},
+                columns: [
+                    {
+                        text: 'Edit', datafield: 'Edit', filterable: false, width: 50,
+                        cellsrenderer: function () {
+                            return '<div style="width: 100%"><img src="../../../img/Edit1.png" style="margin-left: 25%" /></div>';
+                        }
+                    },
+                    { text: 'id', datafield: 'ID', width: 80, hidden: true },
+                    { text: 'Code', datafield: 'Code', width: '35%', minwidth: 150 },
+                    { text: 'Defect Reason / Description', datafield: 'Desciption', width: '55%', minwidth: 250 }
                 ]
             });
         }
@@ -69,7 +82,7 @@
                 var dataRecord = $("#Grid").jqxGrid('getrowdata', editrow);
                 ID = dataRecord.ID;
                 $('#RGV_vCode').val(dataRecord.Code);
-                $('#RGV_vDesciption').val(dataRecord.Desciption);     
+                $('#RGV_vDesciption').val(dataRecord.Desciption);
                 $("#btn_save_label").text('Update');
             }
             //if (columnindex == 1) {
@@ -187,8 +200,9 @@
         function save() {
             var data = new FormData();
             $.ajax({
-                url: "Pr_Insert_ReferenceGroup_Value?RGV_iRG_ID=" + $('#RG_vDescription').val() + "&RGV_vCode=" + $('#RGV_vCode').val() +
-                    "&RGV_vDesciption=" + $('#RGV_vDesciption').val(),
+                url: "Pr_Insert_ReferenceGroup_Value?RGV_iRG_ID=" + encodeURIComponent($('#RG_vDescription').val() || '') +
+                    "&RGV_vCode=" + encodeURIComponent($('#RGV_vCode').val() || '') +
+                    "&RGV_vDesciption=" + encodeURIComponent($('#RGV_vDesciption').val() || ''),
                 type: "POST",
                 processData: false,
                 contentType: false,
@@ -213,7 +227,9 @@
         function Update() {
             var data = new FormData();
             $.ajax({
-                url: "Pr_Update_ReferenceGroup_Value?RGV_iID=" + ID + "&RGV_vCode=" + $('#RGV_vCode').val() + "&RGV_vDesciption=" + $('#RGV_vDesciption').val(),
+                url: "Pr_Update_ReferenceGroup_Value?RGV_iID=" + ID +
+                    "&RGV_vCode=" + encodeURIComponent($('#RGV_vCode').val() || '') +
+                    "&RGV_vDesciption=" + encodeURIComponent($('#RGV_vDesciption').val() || ''),
                 type: "POST",
                 processData: false,
                 contentType: false,
@@ -301,15 +317,15 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label no-padding-right" for="form-field-1"> <span class="star"></span>Reference Code </label>
+                                    <label class="col-sm-4 control-label no-padding-right" for="RGV_vCode"> <span class="star"></span>Reference Code </label>
                                     <div class="col-sm-7">
                                         <input id="RGV_vCode" type="text" placeholder="Reference Code" class="form-control" />
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label no-padding-right" for="form-field-1"> <span class="star">*</span>Description</label>
+                                    <label class="col-sm-4 control-label no-padding-right" for="RGV_vDesciption"> <span class="star">*</span>Defect Reason / Description</label>
                                     <div class="col-sm-7">
-                                        <input id="RGV_vDesciption" type="text" placeholder="Description" class="form-control" />
+                                        <input id="RGV_vDesciption" type="text" placeholder="Enter Defect Reason or Description" class="form-control" />
                                     </div>
                                 </div>
 

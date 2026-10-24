@@ -266,11 +266,25 @@
                     { name: 'FRR_CKTNo', type: 'string' },
                     { name: 'FRR_Formation_ID', type: 'string' },
                     { name: 'FRR_Type_Name', type: 'string' },
+                    { name: 'FRR_DefectReasonType', type: 'string' },
+                    { name: 'FRR_DefectReason', type: 'string' },
                     { name: 'FRR_Reason', type: 'string' },
                     { name: 'FRR_Employee_Name', type: 'string' },
                     { name: 'FRR_Created_By', type: 'string' },
                     { name: 'FRR_Created_Date', type: 'string' },
-                    { name: 'FRR_Status', type: 'string' }
+                    { name: 'FRR_Status', type: 'string' },
+                    { name: 'FRR_Cell1', type: 'string' },
+                    { name: 'FRR_Cell2', type: 'string' },
+                    { name: 'FRR_Cell3', type: 'string' },
+                    { name: 'FRR_Cell4', type: 'string' },
+                    { name: 'FRR_Cell5', type: 'string' },
+                    { name: 'FRR_Cell6', type: 'string' },
+                    { name: 'FRR_DefectCell', type: 'string' },
+                    { name: 'FRR_OCV', type: 'string' },
+                    { name: 'FRR_PlateNo', type: 'string' },
+                    { name: 'FRR_Location', type: 'string' },
+                    { name: 'FRR_PlateType', type: 'string' },
+                    { name: 'FRR_DefectReason', type: 'string' }
                 ],
                 id: 'FRR_ID',
                 url: url,
@@ -291,16 +305,15 @@
                 sortable: true,
                 enabletooltips: true,
                 columns: [
-                    { text: 'S.No', datafield: 'SNo', width: '5%', minwidth: 50, align: 'center', cellsalign: 'center' },
-                    { text: 'QR Code', datafield: 'FRR_QRCode', width: '12%', minwidth: 110 },
-                    { text: 'Battery Type', datafield: 'FRR_BatteryType', width: '10%', minwidth: 95 },
-                    { text: 'CKT No', datafield: 'FRR_CKTNo', width: '8%', minwidth: 80 },
-                    { text: 'Formation ID', datafield: 'Formation_ID', width: '9%', minwidth: 90, align: 'center', cellsalign: 'center' },
+                    { text: 'S.No', datafield: 'SNo', width: 50, align: 'center', cellsalign: 'center' },
+                    { text: 'QR Code', datafield: 'FRR_QRCode', width: 110 },
+                    { text: 'Battery Type', datafield: 'FRR_BatteryType', width: 95 },
+                    { text: 'CKT No', datafield: 'FRR_CKTNo', width: 80 },
+                    { text: 'Formation ID', datafield: 'Formation_ID', width: 90, align: 'center', cellsalign: 'center' },
                     {
                         text: 'Type',
                         datafield: 'FRR_Type_Name',
-                        width: '9%',
-                        minwidth: 85,
+                        width: 85,
                         align: 'center',
                         cellsalign: 'center',
                         cellsrenderer: function (row, column, value) {
@@ -312,10 +325,22 @@
                             return '<div style="margin-top: 5px; text-align: center;">' + value + '</div>';
                         }
                     },
-                    { text: 'Reason', datafield: 'FRR_Reason', width: '18%', minwidth: 160 },
-                    { text: 'Employee', datafield: 'FRR_Employee_Name', width: '12%', minwidth: 120 },
-                    { text: 'Date / Time', datafield: 'FRR_Created_Date', width: '10%', minwidth: 120, align: 'center', cellsalign: 'center' },
-                    { text: 'Created By', datafield: 'FRR_Created_By', width: '7%', minwidth: 75 }
+                    { text: 'Defect Reason', datafield: 'FRR_Reason', width: 140 },
+                    { text: 'Defect Code Reason', datafield: 'FRR_DefectReason', width: 150 },
+                    { text: 'Employee', datafield: 'FRR_Employee_Name', width: 110 },
+                    { text: 'Defect Cell', datafield: 'FRR_DefectCell', width: 85, align: 'center', cellsalign: 'center' },
+                    { text: 'OCV', datafield: 'FRR_OCV', width: 75, align: 'center', cellsalign: 'center' },
+                    { text: 'Plate No', datafield: 'FRR_PlateNo', width: 75, align: 'center', cellsalign: 'center' },
+                    { text: 'Location', datafield: 'FRR_Location', width: 75, align: 'center', cellsalign: 'center' },
+                    { text: 'Plate Type', datafield: 'FRR_PlateType', width: 110 },
+                    { text: 'Cell 1', datafield: 'FRR_Cell1', width: 65, align: 'center', cellsalign: 'center' },
+                    { text: 'Cell 2', datafield: 'FRR_Cell2', width: 65, align: 'center', cellsalign: 'center' },
+                    { text: 'Cell 3', datafield: 'FRR_Cell3', width: 65, align: 'center', cellsalign: 'center' },
+                    { text: 'Cell 4', datafield: 'FRR_Cell4', width: 65, align: 'center', cellsalign: 'center' },
+                    { text: 'Cell 5', datafield: 'FRR_Cell5', width: 65, align: 'center', cellsalign: 'center' },
+                    { text: 'Cell 6', datafield: 'FRR_Cell6', width: 65, align: 'center', cellsalign: 'center' },
+                    { text: 'Date / Time', datafield: 'FRR_Created_Date', width: 120, align: 'center', cellsalign: 'center' },
+                    { text: 'Created By', datafield: 'FRR_Created_By', width: 75 }
                 ]
             });
         }

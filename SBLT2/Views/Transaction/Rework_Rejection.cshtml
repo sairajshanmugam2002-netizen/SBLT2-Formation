@@ -244,10 +244,10 @@
                             </div>
 
                             <div class="row">
-                                <!-- Field 1: Reason -->
+                                <!-- Field 1: Defect Reason -->
                                 <div class="col-md-6 col-sm-6 form-group">
                                     <label for="ddlReason">
-                                        <span class="required-star">*</span> 1. Reason
+                                        <span class="required-star">*</span> 1. Defect Reason
                                     </label>
                                     <div id="ddlReason"></div>
                                 </div>
@@ -258,6 +258,97 @@
                                         <span class="required-star">*</span> 2. Employee
                                     </label>
                                     <div id="ddlEmployee"></div>
+                                </div>
+                            </div>
+
+                            <!-- NEW CARD: Cell & Defect Details -->
+                            <div class="box box-solid" style="border: 1px solid #D2D6DE; border-radius: 6px; margin-top: 18px; margin-bottom: 18px; background: #FFF; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
+                                <div class="box-header with-border" style="background-color: var(--card-header-bg, #F8FAFC); padding: 12px 18px; border-bottom: 1px solid #E2E8F0; border-top-left-radius: 6px; border-top-right-radius: 6px;">
+                                    <h4 style="font-size: 14px; font-weight: 700; color: var(--text-primary, #1e395b); margin: 0; display: flex; align-items: center; gap: 8px;">
+                                        <i class="fa fa-th-large" style="color: var(--ar-primary, #007A3D);"></i>
+                                        <span>Cell &amp; Plate Details</span>
+                                    </h4>
+                                </div>
+                                <div class="box-body" style="padding: 18px 20px;">
+                                    <!-- Row 1: Cell 1 to Cell 6 -->
+                                    <div class="row" style="margin-bottom: 14px;">
+                                        <div class="col-md-2 col-sm-4 col-xs-6" style="margin-bottom: 10px;">
+                                            <div class="form-group" style="margin-bottom: 0;">
+                                                <label for="txt_Cell1" style="font-weight: 600; font-size: 12px; margin-bottom: 5px; display: block;">Cell 1</label>
+                                                <input type="text" id="txt_Cell1" name="txt_Cell1" class="form-control" value="C1" style="height: 34px; font-weight: 600;" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 col-sm-4 col-xs-6" style="margin-bottom: 10px;">
+                                            <div class="form-group" style="margin-bottom: 0;">
+                                                <label for="txt_Cell2" style="font-weight: 600; font-size: 12px; margin-bottom: 5px; display: block;">Cell 2</label>
+                                                <input type="text" id="txt_Cell2" name="txt_Cell2" class="form-control" value="C-2" style="height: 34px; font-weight: 600;" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 col-sm-4 col-xs-6" style="margin-bottom: 10px;">
+                                            <div class="form-group" style="margin-bottom: 0;">
+                                                <label for="txt_Cell3" style="font-weight: 600; font-size: 12px; margin-bottom: 5px; display: block;">Cell 3</label>
+                                                <input type="text" id="txt_Cell3" name="txt_Cell3" class="form-control" value="C-3" style="height: 34px; font-weight: 600;" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 col-sm-4 col-xs-6" style="margin-bottom: 10px;">
+                                            <div class="form-group" style="margin-bottom: 0;">
+                                                <label for="txt_Cell4" style="font-weight: 600; font-size: 12px; margin-bottom: 5px; display: block;">Cell 4</label>
+                                                <input type="text" id="txt_Cell4" name="txt_Cell4" class="form-control" value="C-4" style="height: 34px; font-weight: 600;" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 col-sm-4 col-xs-6" style="margin-bottom: 10px;">
+                                            <div class="form-group" style="margin-bottom: 0;">
+                                                <label for="txt_Cell5" style="font-weight: 600; font-size: 12px; margin-bottom: 5px; display: block;">Cell 5</label>
+                                                <input type="text" id="txt_Cell5" name="txt_Cell5" class="form-control" value="C-5" style="height: 34px; font-weight: 600;" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 col-sm-4 col-xs-6" style="margin-bottom: 10px;">
+                                            <div class="form-group" style="margin-bottom: 0;">
+                                                <label for="txt_Cell6" style="font-weight: 600; font-size: 12px; margin-bottom: 5px; display: block;">Cell 6</label>
+                                                <input type="text" id="txt_Cell6" name="txt_Cell6" class="form-control" value="C-6" style="height: 34px; font-weight: 600;" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Row 2: Defect Cell, Defect Code Reason, OCV, Plate No, Location, Plate Type -->
+                                    <div class="row">
+                                        <div class="col-md-2 col-sm-4 col-xs-6" style="margin-bottom: 10px;">
+                                            <div class="form-group" style="margin-bottom: 0;">
+                                                <label for="ddlDefectCell" style="font-weight: 600; font-size: 12px; margin-bottom: 5px; display: block;">Defect Cell</label>
+                                                <div id="ddlDefectCell"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 col-sm-8 col-xs-12" style="margin-bottom: 10px;">
+                                            <div class="form-group" style="margin-bottom: 0;">
+                                                <label for="ddlDefectCodeReason" style="font-weight: 600; font-size: 12px; margin-bottom: 5px; display: block;">Defect Code Reason</label>
+                                                <div id="ddlDefectCodeReason"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 col-sm-4 col-xs-6" style="margin-bottom: 10px;">
+                                            <div class="form-group" style="margin-bottom: 0;">
+                                                <label for="txt_OCV" style="font-weight: 600; font-size: 12px; margin-bottom: 5px; display: block;">OCV</label>
+                                                <input type="text" id="txt_OCV" name="txt_OCV" class="form-control" placeholder="Enter OCV..." style="height: 34px;" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 col-sm-4 col-xs-6" style="margin-bottom: 10px;">
+                                            <div class="form-group" style="margin-bottom: 0;">
+                                                <label for="ddlPlateNo" style="font-weight: 600; font-size: 12px; margin-bottom: 5px; display: block;">Plate No</label>
+                                                <div id="ddlPlateNo"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1 col-sm-4 col-xs-6" style="margin-bottom: 10px;">
+                                            <div class="form-group" style="margin-bottom: 0;">
+                                                <label for="ddlLocation" style="font-weight: 600; font-size: 12px; margin-bottom: 5px; display: block;">Location</label>
+                                                <div id="ddlLocation"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 col-sm-6 col-xs-12" style="margin-bottom: 10px;">
+                                            <div class="form-group" style="margin-bottom: 0;">
+                                                <label for="ddlPlateType" style="font-weight: 600; font-size: 12px; margin-bottom: 5px; display: block;">Plate Type</label>
+                                                <div id="ddlPlateType"></div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -326,28 +417,16 @@
         });
 
         // =========================================================================
-        // 2. Initialize Reason Dropdown (Dependent on Rework / Rejection Type)
-        // Flow: Selected Type -> Fetch Reference Master filtered by Type -> Display in Reason
-        // Initial state: No Type selected -> display "[ Select Type First ]"
+        // 2. Initialize Defect Reason Dropdown (Loads from Reference Master)
         // =========================================================================
         function loadReasons(typeId) {
-            if (!typeId) {
-                $("#ddlReason").jqxDropDownList({
-                    selectedIndex: -1,
-                    source: [],
-                    promptText: "Select Type First",
-                    width: '100%',
-                    height: '34px'
-                });
-                return;
-            }
-
-            var reasonUrl = "../../Transaction/pr_fetch_Rework_Rejection_Reasons?Type_ID=" + encodeURIComponent(typeId);
+            var reasonUrl = "../../Transaction/pr_fetch_Rework_Rejection_Reasons" + (typeId ? ("?Type_ID=" + encodeURIComponent(typeId)) : "");
             var reasonSource = {
                 datatype: "json",
                 datafields: [
                     { name: 'RGV_iID', type: 'string' },
                     { name: 'RGV_vDesciption', type: 'string' },
+                    { name: 'RGV_vCode', type: 'string' },
                     { name: 'RGV_iRG_ID', type: 'string' },
                     { name: 'Reference_Type', type: 'string' }
                 ],
@@ -361,7 +440,7 @@
                 source: reasonAdapter,
                 displayMember: "RGV_vDesciption",
                 valueMember: "RGV_vDesciption",
-                promptText: "Select Reason",
+                promptText: "Select Defect Reason",
                 width: '100%',
                 height: '34px',
                 filterable: true,
@@ -370,9 +449,8 @@
             $('#ddlReason').jqxDropDownList('clearSelection');
         }
 
-        // Initial State: No type selected, display "Select Type First"
+        // Initial State: Load all active reasons from Reference Master
         loadReasons(null);
-
         // Synchronize Defect Mode Toggle Buttons with Dropdown Selection
         function syncToggleWithDdl(typeText) {
             $('.defect-toggle-btn').removeClass('active');
@@ -387,6 +465,7 @@
 
         $('#toggle_Rework').on('click', function () {
             var items = $("#ddlType").jqxDropDownList('getItems');
+            console.log("Rework","List",items);
             if (items) {
                 for (var i = 0; i < items.length; i++) {
                     if (items[i].label.toLowerCase().indexOf('rework') !== -1) {
@@ -410,17 +489,10 @@
         });
 
         // When Rework / Rejection Type changes:
-        // Clear previous reason, fetch descriptions for selected type, bind to Reason dropdown
         $('#ddlType').on('select', function (event) {
-            if (event.args) {
-                var item = event.args.item;
-                if (item && item.value) {
-                    syncToggleWithDdl(item.label);
-                    loadReasons(item.value);
-                } else {
-                    syncToggleWithDdl(null);
-                    loadReasons(null);
-                }
+            if (event.args && event.args.item && event.args.item.value) {
+                syncToggleWithDdl(event.args.item.label);
+                loadReasons(event.args.item.value);
             } else {
                 syncToggleWithDdl(null);
                 loadReasons(null);
@@ -455,6 +527,75 @@
             height: '34px',
             filterable: true,
             filterPlaceHolder: "Search Employee..."
+        });
+
+        // =========================================================================
+        // 4. Initialize New Card Dropdowns (Defect Cell, Defect Code Reason, Plate No, Location, Plate Type)
+        // =========================================================================
+        var defectCellOptions = ['1', '2', '3', '4', '5', '6'];
+        $("#ddlDefectCell").jqxDropDownList({
+            source: defectCellOptions,
+            selectedIndex: -1,
+            placeHolder: "Select Defect Cell",
+            width: '100%',
+            height: '34px',
+            autoDropDownHeight: true
+        });
+
+        // Defect Code Reason — loads from Reference Master (Defect Reason group)
+        var defectCodeReasonSource = {
+            datatype: "json",
+            datafields: [
+                { name: 'RGV_iID', type: 'string' },
+                { name: 'RGV_vDesciption', type: 'string' },
+                { name: 'RGV_vCode', type: 'string' }
+            ],
+            id: 'RGV_iID',
+            url: "../../Transaction/pr_fetch_Rework_Rejection_Reasons",
+            async: false
+        };
+        var defectCodeReasonAdapter = new $.jqx.dataAdapter(defectCodeReasonSource);
+        $("#ddlDefectCodeReason").jqxDropDownList({
+            selectedIndex: -1,
+            source: defectCodeReasonAdapter,
+            displayMember: "RGV_vDesciption",
+            valueMember: "RGV_vDesciption",
+            placeHolder: "Select Defect Code Reason",
+            width: '100%',
+            height: '34px',
+            filterable: true,
+            filterPlaceHolder: "Search Reason...",
+            autoDropDownHeight: true
+        });
+
+        var plateNoOptions = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15'];
+        $("#ddlPlateNo").jqxDropDownList({
+            source: plateNoOptions,
+            selectedIndex: -1,
+            placeHolder: "Select Plate No",
+            width: '100%',
+            height: '34px',
+            dropDownHeight: 200
+        });
+
+        var locationOptions = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+        $("#ddlLocation").jqxDropDownList({
+            source: locationOptions,
+            selectedIndex: -1,
+            placeHolder: "Select Location",
+            width: '100%',
+            height: '34px',
+            dropDownHeight: 200
+        });
+
+        var plateTypeOptions = ['Positive plate', 'Negative plate'];
+        $("#ddlPlateType").jqxDropDownList({
+            source: plateTypeOptions,
+            selectedIndex: -1,
+            placeHolder: "Select Plate Type",
+            width: '100%',
+            height: '34px',
+            autoDropDownHeight: true
         });
 
         // =========================================================================
@@ -539,11 +680,11 @@
                 return;
             }
 
-            // Validation 2: Reason
+            // Validation 2: Defect Reason
             var selectedReasonIndex = $('#ddlReason').jqxDropDownList('selectedIndex');
             if (selectedReasonIndex < 0) {
                 $('#ddlReason').jqxDropDownList('focus');
-                $.toaster({ priority: 'danger', title: 'Notice', message: "Please Select Reason" });
+                $.toaster({ priority: 'danger', title: 'Notice', message: "Please Select Defect Reason" });
                 return;
             }
 
@@ -558,7 +699,15 @@
             var selectedTypeItem = $('#ddlType').jqxDropDownList('getSelectedItem');
             var selectedReasonItem = $('#ddlReason').jqxDropDownList('getSelectedItem');
             var selectedEmpItem = $('#ddlEmployee').jqxDropDownList('getSelectedItem');
-            var reason = selectedReasonItem.label;
+            var reason = (selectedReasonItem && selectedReasonItem.label) ? selectedReasonItem.label : '';
+
+            var defectCellItem = $('#ddlDefectCell').jqxDropDownList('getSelectedItem');
+            var defectCodeReasonItem = $('#ddlDefectCodeReason').jqxDropDownList('getSelectedItem');
+            var plateNoItem = $('#ddlPlateNo').jqxDropDownList('getSelectedItem');
+            var locationItem = $('#ddlLocation').jqxDropDownList('getSelectedItem');
+            var plateTypeItem = $('#ddlPlateType').jqxDropDownList('getSelectedItem');
+
+            var defectCodeReasonVal = (defectCodeReasonItem && defectCodeReasonItem.label) ? defectCodeReasonItem.label : '';
 
             // Send via AJAX to TransactionController
             $.ajax({
@@ -568,12 +717,25 @@
                     FRR_Type_ID: selectedTypeItem.value,
                     FRR_Type_Name: selectedTypeItem.label,
                     FRR_Reason: reason,
+                    FRR_DefectReason: defectCodeReasonVal,
+                    FRR_DefectReasonType: '',
                     FRR_Employee_ID: selectedEmpItem.value,
                     FRR_Employee_Name: selectedEmpItem.label,
                     FRR_Created_By: User,
                     FRR_QRCode: $.trim($('#txt_Scan_QRCode').val()),
                     FRR_BatteryType: $.trim($('#txt_Battery_Type').val()),
-                    FRR_CKTNo: $.trim($('#txt_CKT_No').val())
+                    FRR_CKTNo: $.trim($('#txt_CKT_No').val()),
+                    FRR_Cell1: $.trim($('#txt_Cell1').val()),
+                    FRR_Cell2: $.trim($('#txt_Cell2').val()),
+                    FRR_Cell3: $.trim($('#txt_Cell3').val()),
+                    FRR_Cell4: $.trim($('#txt_Cell4').val()),
+                    FRR_Cell5: $.trim($('#txt_Cell5').val()),
+                    FRR_Cell6: $.trim($('#txt_Cell6').val()),
+                    FRR_DefectCell: defectCellItem ? defectCellItem.value : '',
+                    FRR_OCV: $.trim($('#txt_OCV').val()),
+                    FRR_PlateNo: plateNoItem ? plateNoItem.value : '',
+                    FRR_Location: locationItem ? locationItem.value : '',
+                    FRR_PlateType: plateTypeItem ? plateTypeItem.value : ''
                 },
                 success: function (response) {
                     if (response === "True") {
@@ -625,6 +787,20 @@
             $('#btn_save_label').text('Save Record');
             $('#btn_Clear_Scan').trigger('click');
             syncToggleWithDdl(null);
+
+            // Reset new card controls
+            $('#txt_Cell1').val('C1');
+            $('#txt_Cell2').val('C-2');
+            $('#txt_Cell3').val('C-3');
+            $('#txt_Cell4').val('C-4');
+            $('#txt_Cell5').val('C-5');
+            $('#txt_Cell6').val('C-6');
+            $('#ddlDefectCell').jqxDropDownList('clearSelection');
+            $('#ddlDefectCodeReason').jqxDropDownList('clearSelection');
+            $('#txt_OCV').val('');
+            $('#ddlPlateNo').jqxDropDownList('clearSelection');
+            $('#ddlLocation').jqxDropDownList('clearSelection');
+            $('#ddlPlateType').jqxDropDownList('clearSelection');
         }
 
         // =========================================================================
@@ -641,11 +817,25 @@
                     { name: 'FRR_BatteryType', type: 'string' },
                     { name: 'FRR_CKTNo', type: 'string' },
                     { name: 'FRR_Type_Name', type: 'string' },
+                    { name: 'FRR_DefectReasonType', type: 'string' },
+                    { name: 'FRR_DefectReason', type: 'string' },
                     { name: 'FRR_Reason', type: 'string' },
                     { name: 'FRR_Employee_Name', type: 'string' },
                     { name: 'FRR_Created_By', type: 'string' },
                     { name: 'FRR_Created_Date', type: 'string' },
-                    { name: 'FRR_Status', type: 'string' }
+                    { name: 'FRR_Status', type: 'string' },
+                    { name: 'FRR_Cell1', type: 'string' },
+                    { name: 'FRR_Cell2', type: 'string' },
+                    { name: 'FRR_Cell3', type: 'string' },
+                    { name: 'FRR_Cell4', type: 'string' },
+                    { name: 'FRR_Cell5', type: 'string' },
+                    { name: 'FRR_Cell6', type: 'string' },
+                    { name: 'FRR_DefectCell', type: 'string' },
+                    { name: 'FRR_OCV', type: 'string' },
+                    { name: 'FRR_PlateNo', type: 'string' },
+                    { name: 'FRR_Location', type: 'string' },
+                    { name: 'FRR_PlateType', type: 'string' },
+                    { name: 'FRR_DefectReason', type: 'string' }
                 ],
                 id: 'FRR_ID',
                 url: gridUrl,
@@ -666,15 +856,27 @@
                 rowsheight: 30,
                 altrows: true,
                 columns: [
-                    { text: 'S.No', datafield: 'SNo', width: '5%', minwidth: 50, align: 'center', cellsalign: 'center' },
-                    { text: 'QR Code', datafield: 'FRR_QRCode', width: '13%', minwidth: 120 },
-                    { text: 'Battery Type', datafield: 'FRR_BatteryType', width: '11%', minwidth: 100 },
-                    { text: 'CKT No', datafield: 'FRR_CKTNo', width: '9%', minwidth: 85 },
-                    { text: 'Type', datafield: 'FRR_Type_Name', width: '9%', minwidth: 85 },
-                    { text: 'Reason', datafield: 'FRR_Reason', width: '22%', minwidth: 180 },
-                    { text: 'Employee', datafield: 'FRR_Employee_Name', width: '13%', minwidth: 120 },
-                    { text: 'Created By', datafield: 'FRR_Created_By', width: '8%', minwidth: 80 },
-                    { text: 'Date & Time', datafield: 'FRR_Created_Date', width: '10%', minwidth: 120 }
+                    { text: 'S.No', datafield: 'SNo', width: 50, align: 'center', cellsalign: 'center' },
+                    { text: 'QR Code', datafield: 'FRR_QRCode', width: 120 },
+                    { text: 'Battery Type', datafield: 'FRR_BatteryType', width: 100 },
+                    { text: 'CKT No', datafield: 'FRR_CKTNo', width: 80 },
+                    { text: 'Type', datafield: 'FRR_Type_Name', width: 85 },
+                    { text: 'Defect Reason', datafield: 'FRR_Reason', width: 140 },
+                    { text: 'Defect Code Reason', datafield: 'FRR_DefectReason', width: 150 },
+                    { text: 'Employee', datafield: 'FRR_Employee_Name', width: 110 },
+                    { text: 'Defect Cell', datafield: 'FRR_DefectCell', width: 80, align: 'center', cellsalign: 'center' },
+                    { text: 'OCV', datafield: 'FRR_OCV', width: 75, align: 'center', cellsalign: 'center' },
+                    { text: 'Plate No', datafield: 'FRR_PlateNo', width: 75, align: 'center', cellsalign: 'center' },
+                    { text: 'Location', datafield: 'FRR_Location', width: 75, align: 'center', cellsalign: 'center' },
+                    { text: 'Plate Type', datafield: 'FRR_PlateType', width: 110 },
+                    { text: 'Cell 1', datafield: 'FRR_Cell1', width: 60, align: 'center', cellsalign: 'center' },
+                    { text: 'Cell 2', datafield: 'FRR_Cell2', width: 60, align: 'center', cellsalign: 'center' },
+                    { text: 'Cell 3', datafield: 'FRR_Cell3', width: 60, align: 'center', cellsalign: 'center' },
+                    { text: 'Cell 4', datafield: 'FRR_Cell4', width: 60, align: 'center', cellsalign: 'center' },
+                    { text: 'Cell 5', datafield: 'FRR_Cell5', width: 60, align: 'center', cellsalign: 'center' },
+                    { text: 'Cell 6', datafield: 'FRR_Cell6', width: 60, align: 'center', cellsalign: 'center' },
+                    { text: 'Created By', datafield: 'FRR_Created_By', width: 80 },
+                    { text: 'Date & Time', datafield: 'FRR_Created_Date', width: 120 }
                 ]
             });
         }
