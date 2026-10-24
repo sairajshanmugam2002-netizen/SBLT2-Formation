@@ -217,21 +217,23 @@
             getGrid();
         });
 
+        function formatDateToYMD(d) {
+            if (!d) return "";
+            if (typeof d === "string") {
+                d = new Date(d);
+            }
+            if (isNaN(d.getTime())) return "";
+            var y = d.getFullYear();
+            var m = ('0' + (d.getMonth() + 1)).slice(-2);
+            var day = ('0' + d.getDate()).slice(-2);
+            return y + '-' + m + '-' + day;
+        }
+
         // Export to Excel Button
         $("#btn_Excel").click(function () {
             var selectedType = $('#ddlType').val() || "All";
-            var from = "";
-            var to = "";
-            if ($("#from_Date").val()) {
-                $("#from_Date").jqxDateTimeInput({ formatString: 'yyyy-MM-dd' });
-                from = $("#from_Date").val();
-                $("#from_Date").jqxDateTimeInput({ formatString: 'dd-MMM-yyyy' });
-            }
-            if ($("#to_Date").val()) {
-                $("#to_Date").jqxDateTimeInput({ formatString: 'yyyy-MM-dd' });
-                to = $("#to_Date").val();
-                $("#to_Date").jqxDateTimeInput({ formatString: 'dd-MMM-yyyy' });
-            }
+            var from = formatDateToYMD($("#from_Date").jqxDateTimeInput('getDate'));
+            var to = formatDateToYMD($("#to_Date").jqxDateTimeInput('getDate'));
             window.open("../../Master/Export_To_Excel?FileName=Rework_Rejection_Report&Heading=Rework / Rejection Report&Data=pr_fetch_Rework_Rejection_Report '" + selectedType + "','" + from + "','" + to + "'");
         });
 
@@ -240,19 +242,8 @@
         // =========================================================================
         function getGrid() {
             var selectedType = $('#ddlType').val() || "All";
-            var from = "";
-            var to = "";
-
-            if ($("#from_Date").val()) {
-                $("#from_Date").jqxDateTimeInput({ formatString: 'yyyy-MM-dd' });
-                from = $("#from_Date").val();
-                $("#from_Date").jqxDateTimeInput({ formatString: 'dd-MMM-yyyy' });
-            }
-            if ($("#to_Date").val()) {
-                $("#to_Date").jqxDateTimeInput({ formatString: 'yyyy-MM-dd' });
-                to = $("#to_Date").val();
-                $("#to_Date").jqxDateTimeInput({ formatString: 'dd-MMM-yyyy' });
-            }
+            var from = formatDateToYMD($("#from_Date").jqxDateTimeInput('getDate'));
+            var to = formatDateToYMD($("#to_Date").jqxDateTimeInput('getDate'));
 
             var url = "../../Reports/pr_fetch_Rework_Rejection_Report?Type=" + encodeURIComponent(selectedType) + "&from=" + encodeURIComponent(from) + "&to=" + encodeURIComponent(to);
             var source = {

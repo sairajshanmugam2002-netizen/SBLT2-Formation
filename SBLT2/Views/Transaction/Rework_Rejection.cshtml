@@ -417,10 +417,15 @@
         });
 
         // =========================================================================
-        // 2. Initialize Defect Reason Dropdown (Loads from Reference Master)
+        // 2. Initialize Defect Reason Dropdown
+        //    Loads from Reference Master filtered by selected type (Rework/Rejection).
+        //    Group 12 = Rework reasons, Group 13 = Rejection reasons.
         // =========================================================================
-        function loadReasons(typeId) {
+        function loadReasons(typeId, typeLabel) {
             var reasonUrl = "../../Transaction/pr_fetch_Rework_Rejection_Reasons" + (typeId ? ("?Type_ID=" + encodeURIComponent(typeId)) : "");
+            var promptText = typeLabel
+                ? ("Select " + typeLabel + " Reason")
+                : "-- Select Defect Mode first --";
             var reasonSource = {
                 datatype: "json",
                 datafields: [
@@ -440,17 +445,20 @@
                 source: reasonAdapter,
                 displayMember: "RGV_vDesciption",
                 valueMember: "RGV_vDesciption",
-                promptText: "Select Defect Reason",
+                promptText: promptText,
                 width: '100%',
                 height: '34px',
                 filterable: true,
                 filterPlaceHolder: "Search Reason..."
             });
             $('#ddlReason').jqxDropDownList('clearSelection');
+            // Update label dynamically
+            var labelText = typeLabel ? (typeLabel + ' Reason') : 'Defect Reason';
+            $("label[for='ddlReason']").html('<span class="required-star">*</span> 1. ' + labelText);
         }
 
-        // Initial State: Load all active reasons from Reference Master
-        loadReasons(null);
+        // Initial State: no type selected yet — placeholder shown
+        loadReasons(null, null);
         // Synchronize Defect Mode Toggle Buttons with Dropdown Selection
         function syncToggleWithDdl(typeText) {
             $('.defect-toggle-btn').removeClass('active');
@@ -465,7 +473,6 @@
 
         $('#toggle_Rework').on('click', function () {
             var items = $("#ddlType").jqxDropDownList('getItems');
-            console.log("Rework","List",items);
             if (items) {
                 for (var i = 0; i < items.length; i++) {
                     if (items[i].label.toLowerCase().indexOf('rework') !== -1) {
@@ -488,14 +495,30 @@
             }
         });
 
-        // When Rework / Rejection Type changes:
+        // When Rework / Rejection Type changes: reload Reason dropdown
         $('#ddlType').on('select', function (event) {
             if (event.args && event.args.item && event.args.item.value) {
                 syncToggleWithDdl(event.args.item.label);
-                loadReasons(event.args.item.value);
+                loadReasons(event.args.item.value, event.args.item.label);
             } else {
                 syncToggleWithDdl(null);
-                loadReasons(null);
+                loadReasons(null, null);
+            }
+        });
+
+        // When Defect Reason selection changes: map to Reference Type and filter Defect Code Reason
+        // Flow: Reference Type -> Defect Reason mapping -> Existing Defect Code/Reason Dropdown
+        $('#ddlReason').on('select', function (event) {
+            if (event.args && event.args.item && event.args.item.originalItem) {
+                var orig = event.args.item.originalItem;
+                var mappedRefType = orig.DefectReasonType || orig.Reference_Type || '';
+                if (mappedRefType && mappedRefType !== 'Rework' && mappedRefType !== 'Rejection') {
+                    loadDefectCodeReasons(mappedRefType);
+                } else {
+                    loadDefectCodeReasons(null);
+                }
+            } else {
+                loadDefectCodeReasons(null);
             }
         });
 
@@ -542,31 +565,49 @@
             autoDropDownHeight: true
         });
 
-        // Defect Code Reason — loads from Reference Master (Defect Reason group)
-        var defectCodeReasonSource = {
-            datatype: "json",
-            datafields: [
-                { name: 'RGV_iID', type: 'string' },
-                { name: 'RGV_vDesciption', type: 'string' },
-                { name: 'RGV_vCode', type: 'string' }
-            ],
-            id: 'RGV_iID',
-            url: "../../Transaction/pr_fetch_Rework_Rejection_Reasons",
-            async: false
-        };
-        var defectCodeReasonAdapter = new $.jqx.dataAdapter(defectCodeReasonSource);
-        $("#ddlDefectCodeReason").jqxDropDownList({
-            selectedIndex: -1,
-            source: defectCodeReasonAdapter,
-            displayMember: "RGV_vDesciption",
-            valueMember: "RGV_vDesciption",
-            placeHolder: "Select Defect Code Reason",
-            width: '100%',
-            height: '34px',
-            filterable: true,
-            filterPlaceHolder: "Search Reason...",
-            autoDropDownHeight: true
-        });
+        // =========================================================================
+        // Defect Code Reason — loads from Reference Master (Defect Reason group 17)
+        // mapped to Reference Type (e.g. Electrical, Mechanical, Quality)
+        // Flow: Reference Type -> Defect Reason mapping -> Existing Defect Code/Reason Dropdown
+        // =========================================================================
+        function loadDefectCodeReasons(refType) {
+            var url = "../../Transaction/pr_fetch_Rework_Rejection_Reasons?Type_ID=17" +
+                (refType ? ("&ReferenceType=" + encodeURIComponent(refType)) : "");
+            var defectCodeReasonSource = {
+                datatype: "json",
+                datafields: [
+                    { name: 'RGV_iID', type: 'string' },
+                    { name: 'RGV_vDesciption', type: 'string' },
+                    { name: 'RGV_vCode', type: 'string' },
+                    { name: 'Reference_Type', type: 'string' },
+                    { name: 'DefectReasonType', type: 'string' }
+                ],
+                id: 'RGV_iID',
+                url: url,
+                async: false
+            };
+            var defectCodeReasonAdapter = new $.jqx.dataAdapter(defectCodeReasonSource);
+            var placeholder = refType ? ("Select " + refType + " Reason") : "Select Defect Code Reason";
+            $("#ddlDefectCodeReason").jqxDropDownList({
+                selectedIndex: -1,
+                source: defectCodeReasonAdapter,
+                displayMember: "RGV_vDesciption",
+                valueMember: "RGV_vDesciption",
+                placeHolder: placeholder,
+                width: '100%',
+                height: '34px',
+                filterable: true,
+                filterPlaceHolder: "Search Reason...",
+                autoDropDownHeight: true
+            });
+            $('#ddlDefectCodeReason').jqxDropDownList('clearSelection');
+        }
+
+        // Expose helper globally for testing and integration
+        window.loadDefectCodeReasons = loadDefectCodeReasons;
+
+        // Initial binding: loads all defect reasons
+        loadDefectCodeReasons(null);
 
         var plateNoOptions = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15'];
         $("#ddlPlateNo").jqxDropDownList({
@@ -637,14 +678,37 @@
             });
         }
 
+        var lastScannedCode = "";
+
+        function triggerScanLookup() {
+            var val = $.trim($('#txt_Scan_QRCode').val());
+            if (val && val !== lastScannedCode) {
+                lastScannedCode = val;
+                handleScanQRCode(val);
+            }
+        }
+
         $('#txt_Scan_QRCode').on('keypress', function (e) {
             if (e.which === 13 || e.keyCode === 13) {
                 e.preventDefault();
-                handleScanQRCode($(this).val());
+                var val = $.trim($(this).val());
+                if (val) {
+                    lastScannedCode = val;
+                    handleScanQRCode(val);
+                }
             }
         });
 
+        $('#txt_Scan_QRCode').on('change', function () {
+            triggerScanLookup();
+        });
+
+        $('#txt_Scan_QRCode').on('blur', function () {
+            triggerScanLookup();
+        });
+
         $('#btn_Clear_Scan').on('click', function () {
+            lastScannedCode = "";
             $('#txt_Scan_QRCode').val('').focus();
             $('#txt_Battery_Type').val('');
             $('#txt_CKT_No').val('');
@@ -684,7 +748,8 @@
             var selectedReasonIndex = $('#ddlReason').jqxDropDownList('selectedIndex');
             if (selectedReasonIndex < 0) {
                 $('#ddlReason').jqxDropDownList('focus');
-                $.toaster({ priority: 'danger', title: 'Notice', message: "Please Select Defect Reason" });
+                var reasonLabel = ($('#ddlType').jqxDropDownList('getSelectedItem') || {}).label || 'Defect';
+                $.toaster({ priority: 'danger', title: 'Notice', message: "Please Select " + reasonLabel + " Reason" });
                 return;
             }
 
@@ -782,7 +847,7 @@
 
         function Clear() {
             $('#ddlType').jqxDropDownList('clearSelection');
-            loadReasons(null);
+            loadReasons(null, null);
             $('#ddlEmployee').jqxDropDownList('clearSelection');
             $('#btn_save_label').text('Save Record');
             $('#btn_Clear_Scan').trigger('click');
@@ -796,7 +861,7 @@
             $('#txt_Cell5').val('C-5');
             $('#txt_Cell6').val('C-6');
             $('#ddlDefectCell').jqxDropDownList('clearSelection');
-            $('#ddlDefectCodeReason').jqxDropDownList('clearSelection');
+            loadDefectCodeReasons(null);
             $('#txt_OCV').val('');
             $('#ddlPlateNo').jqxDropDownList('clearSelection');
             $('#ddlLocation').jqxDropDownList('clearSelection');

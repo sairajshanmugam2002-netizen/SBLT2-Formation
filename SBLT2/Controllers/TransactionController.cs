@@ -71,12 +71,30 @@ namespace SBLT2.Controllers
             return s;
         }
 
-        public string pr_fetch_Rework_Rejection_Reasons(string Type_ID = null, string ID = null)
+        public string pr_fetch_Rework_Rejection_Reasons(string Type_ID = null, string ID = null, string ReferenceType = null)
         {
             string selectedType = !string.IsNullOrEmpty(Type_ID) ? Type_ID : ID;
-            string query = string.IsNullOrEmpty(selectedType)
-                ? "pr_fetch_Rework_Rejection_Reasons"
-                : "pr_fetch_Rework_Rejection_Reasons '" + selectedType.Replace("'", "''") + "'";
+            string cleanType = !string.IsNullOrEmpty(selectedType) ? selectedType.Replace("'", "''") : null;
+            string cleanRefType = !string.IsNullOrEmpty(ReferenceType) ? ReferenceType.Replace("'", "''") : null;
+
+            string query;
+            if (!string.IsNullOrEmpty(cleanType) && !string.IsNullOrEmpty(cleanRefType))
+            {
+                query = "pr_fetch_Rework_Rejection_Reasons '" + cleanType + "', '" + cleanRefType + "'";
+            }
+            else if (!string.IsNullOrEmpty(cleanType))
+            {
+                query = "pr_fetch_Rework_Rejection_Reasons '" + cleanType + "'";
+            }
+            else if (!string.IsNullOrEmpty(cleanRefType))
+            {
+                query = "pr_fetch_Rework_Rejection_Reasons @ReferenceType = '" + cleanRefType + "'";
+            }
+            else
+            {
+                query = "pr_fetch_Rework_Rejection_Reasons";
+            }
+
             DataTable dt = dbFunctions.getTable(query);
             if (dt == null || dt.Rows.Count == 0)
             {

@@ -65,8 +65,21 @@ namespace SBLT2.Controllers
         public string pr_fetch_Rework_Rejection_Report(string Type = "All", string from = null, string to = null)
         {
             string cleanType = (Type ?? "All").Replace("'", "''");
-            string cleanFrom = (from ?? "").Replace("'", "''");
-            string cleanTo = (to ?? "").Replace("'", "''");
+            string cleanFrom = (from ?? "").Trim().Replace("'", "''");
+            string cleanTo = (to ?? "").Trim().Replace("'", "''");
+
+            DateTime dtFrom;
+            if (!string.IsNullOrEmpty(cleanFrom) && DateTime.TryParse(cleanFrom, out dtFrom))
+            {
+                cleanFrom = dtFrom.ToString("yyyy-MM-dd");
+            }
+
+            DateTime dtTo;
+            if (!string.IsNullOrEmpty(cleanTo) && DateTime.TryParse(cleanTo, out dtTo))
+            {
+                cleanTo = dtTo.ToString("yyyy-MM-dd");
+            }
+
             string query = string.Format("pr_fetch_Rework_Rejection_Report '{0}', '{1}', '{2}'", cleanType, cleanFrom, cleanTo);
             DataTable dt = dbFunctions.getTable(query);
             string s = dbFunctions.GetJSONString(dt);
