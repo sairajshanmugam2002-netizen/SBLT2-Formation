@@ -80,19 +80,19 @@ namespace SBLT2.Controllers
             string query;
             if (!string.IsNullOrEmpty(cleanType) && !string.IsNullOrEmpty(cleanRefType))
             {
-                query = "pr_fetch_Rework_Rejection_Reasons '" + cleanType + "', '" + cleanRefType + "'";
+                query = "EXEC dbo.pr_fetch_Rework_Rejection_Reasons @Type_ID = '" + cleanType + "', @ReferenceType = '" + cleanRefType + "'";
             }
             else if (!string.IsNullOrEmpty(cleanType))
             {
-                query = "pr_fetch_Rework_Rejection_Reasons '" + cleanType + "'";
+                query = "EXEC dbo.pr_fetch_Rework_Rejection_Reasons @Type_ID = '" + cleanType + "'";
             }
             else if (!string.IsNullOrEmpty(cleanRefType))
             {
-                query = "pr_fetch_Rework_Rejection_Reasons @ReferenceType = '" + cleanRefType + "'";
+                query = "EXEC dbo.pr_fetch_Rework_Rejection_Reasons @ReferenceType = '" + cleanRefType + "'";
             }
             else
             {
-                query = "pr_fetch_Rework_Rejection_Reasons";
+                query = "EXEC dbo.pr_fetch_Rework_Rejection_Reasons";
             }
 
             DataTable dt = dbFunctions.getTable(query);
