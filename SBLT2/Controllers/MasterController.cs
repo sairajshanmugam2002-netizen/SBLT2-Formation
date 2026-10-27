@@ -2975,27 +2975,35 @@ namespace SBLT2.Controllers
               "style='font-size:12.0pt; font-family:Times New Roman; background:white;'><caption><font  style='font-size:14.0pt;' >" + Heading + "</font></caption> <TR>");
             //am getting my grid's column headers
             DataTable dt = dbFunctions.getTable(Data);
-            int columnscount = dt.Columns.Count;
-            for (int j = 0; j < columnscount; j++)
-            {      //write in new column
-                Response.Write("<Td>");
-                //Get column headers and make it as bold in excel columns
-                Response.Write("<B>");
-                Response.Write(dt.Columns[j].ColumnName.ToString());
-                Response.Write("</B>");
-                Response.Write("</Td>");
-            }
-            Response.Write("</TR>");
-            for (int j = 0; j < dt.Rows.Count; j++)
-            {//write in new row
-                Response.Write("<TR style='font-size:11.0pt; font-family:Times New Roman; background:white;'>");
-                for (int i = 0; i < dt.Columns.Count; i++)
-                {
+            if (dt != null && dt.Columns.Count > 0)
+            {
+                int columnscount = dt.Columns.Count;
+                for (int j = 0; j < columnscount; j++)
+                {      //write in new column
                     Response.Write("<Td>");
-                    Response.Write(dt.Rows[j][i].ToString());
+                    //Get column headers and make it as bold in excel columns
+                    Response.Write("<B>");
+                    string header = dt.Columns[j].ColumnName.ToString();
+                    if (header.StartsWith("FRR_"))
+                    {
+                        header = header.Substring(4);
+                    }
+                    Response.Write(header);
+                    Response.Write("</B>");
                     Response.Write("</Td>");
                 }
                 Response.Write("</TR>");
+                for (int j = 0; j < dt.Rows.Count; j++)
+                {//write in new row
+                    Response.Write("<TR style='font-size:11.0pt; font-family:Times New Roman; background:white;'>");
+                    for (int i = 0; i < dt.Columns.Count; i++)
+                    {
+                        Response.Write("<Td>");
+                        Response.Write(dt.Rows[j][i].ToString());
+                        Response.Write("</Td>");
+                    }
+                    Response.Write("</TR>");
+                }
             }
             Response.Write("</Table>");
             Response.Write("</font>");

@@ -170,6 +170,57 @@
 
         configureSettingMenu();
 
+        // Enforce Transaction menu visibility: Ensure Rework and Rejection is always visible under Transactions
+        function configureTransactionMenu() {
+            var $menuUl = $("#vin_Menu").find("ul.sidebar-menu");
+            if (!$menuUl.length) return;
+
+            var $transLi = $menuUl.find("#Transactions, #Transaction, #Formation");
+            if (!$transLi.length) {
+                $menuUl.find("> li.treeview").each(function () {
+                    var txt = $(this).find("> a span").text().trim().toLowerCase();
+                    if (txt === "transactions" || txt === "transaction" || txt === "formation") {
+                        $transLi = $(this);
+                        return false;
+                    }
+                });
+            }
+
+            if ($transLi.length) {
+                var $subMenu = $transLi.find("ul.treeview-menu");
+                if ($subMenu.length) {
+                    if ($subMenu.find("#Rework_Rejection").length === 0 && $subMenu.find('a[href*="Transaction/Rework_Rejection"]').length === 0) {
+                        $subMenu.append('<li id="Rework_Rejection"><a href="../../Transaction/Rework_Rejection"><i class="fa fa-circle-o"></i> Rework and Rejection</a></li>');
+                    }
+                }
+            } else {
+                $menuUl.append(
+                    '<li class="treeview" id="Transactions">' +
+                        '<a href="#">' +
+                            '<i class="fa fa-edit"></i>' +
+                            '<span> Transactions </span>' +
+                            '<i class="fa fa-angle-left pull-right"></i>' +
+                        '</a>' +
+                        '<ul class="treeview-menu">' +
+                            '<li id="Rework_Rejection"><a href="../../Transaction/Rework_Rejection"><i class="fa fa-circle-o"></i> Rework and Rejection</a></li>' +
+                        '</ul>' +
+                    '</li>'
+                );
+                $transLi = $menuUl.find("#Transactions");
+            }
+
+            var currentPath = window.location.pathname.toLowerCase();
+            if (currentPath.indexOf("transaction/rework_rejection") !== -1) {
+                if ($transLi && $transLi.length) {
+                    $transLi.addClass("active");
+                }
+                $("#Transactions, #Transaction, #Formation").addClass("active");
+                $("#Rework_Rejection").addClass("active");
+            }
+        }
+
+        configureTransactionMenu();
+
         // Global HTML Table Layout Handler:
         // Automatically ensures every standard HTML table is safely wrapped inside .table-wrapper.
         // NEVER wraps JQWidgets Grids (jqxGrid has its own scrolling engine).

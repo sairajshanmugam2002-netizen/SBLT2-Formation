@@ -75,7 +75,7 @@
             if (!items || items.length === 0 || total === 0) {
                 $container.html(
                     '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;' +
-                        'min-height:220px;width:100%;text-align:center;padding:30px 20px;">' +
+                        'height:240px;min-height:240px;width:100%;text-align:center;padding:20px;box-sizing:border-box;">' +
                         '<i class="fa fa-pie-chart" style="font-size:42px;color:#CBD5E1;margin-bottom:12px;"></i>' +
                         '<div style="font-size:14px;font-weight:700;color:#64748B;margin-bottom:4px;">No data available</div>' +
                         '<div style="font-size:12px;color:#94A3B8;">No ' + (isFailed ? 'failed' : 'passed') +
@@ -138,8 +138,8 @@
                     var sLen2   = pct2 * C;
                     // angle of slice boundary in SVG coords (starting at top = -90deg)
                     var angle   = (-Math.PI / 2) + (acc2 / C) * 2 * Math.PI;
-                    var rInner  = r - sw / 2 - 1;
-                    var rOuter  = r + sw / 2 + 1;
+                    var rInner  = r - sw / 2;
+                    var rOuter  = r + sw / 2;
                     var x1      = cx + rInner * Math.cos(angle);
                     var y1      = cy + rInner * Math.sin(angle);
                     var x2      = cx + rOuter * Math.cos(angle);
@@ -164,8 +164,17 @@
             // Detect dark mode
             var isDark = $('body').hasClass('dark-theme') || $('html').hasClass('dark-theme') ||
                          $('[class*="dark-theme"]').length > 0;
-            var holeFill = isDark ? '#1E293B' : '#ffffff';
-            var numFill  = isDark ? '#F1F5F9'  : '#0F172A';
+            var holeFill    = isDark ? '#1E293B' : '#ffffff';
+            var numFill     = isDark ? '#F1F5F9' : '#0F172A';
+            var tableBg     = isDark ? '#1E293B' : '#F8FAFC';
+            var tableBorder = isDark ? '#334155' : '#E2E8F0';
+            var thBg        = isDark ? '#1E293B' : '#F8FAFC';
+            var thColor     = isDark ? '#94A3B8' : '#64748B';
+            var thBorder    = isDark ? '#334155' : '#E2E8F0';
+            var trBorder    = isDark ? '#334155' : '#F1F5F9';
+            var typeColor   = isDark ? '#F1F5F9' : '#1E293B';
+            var qtyColor    = isDark ? '#F8FAFC' : '#0F172A';
+            var pctColor    = isDark ? '#94A3B8' : '#64748B';
 
             // Shadow ring around hole for depth
             svgInner += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (holeR + 1) + '" fill="none" ' +
@@ -220,17 +229,17 @@
                 var safeName = $('<div>').text(items[t].type).html();
                 tableRows +=
                     '<tr class="donut-table-row" data-index="' + t + '" ' +
-                        'style="border-bottom:1px solid #F1F5F9;cursor:pointer;transition:background 0.15s;">' +
-                        '<td style="padding:9px 4px;vertical-align:middle;">' +
+                        'style="border-bottom:1px solid ' + trBorder + ';cursor:pointer;transition:background 0.15s;">' +
+                        '<td style="padding:8px 4px;vertical-align:middle;">' +
                             '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;' +
-                                'background:' + color2 + ';margin-right:10px;vertical-align:middle;"></span>' +
-                            '<span title="' + safeName + '" style="font-weight:600;font-size:13px;color:#1E293B;' +
-                                'vertical-align:middle;max-width:120px;display:inline-block;' +
+                                'background:' + color2 + ';margin-right:8px;vertical-align:middle;"></span>' +
+                            '<span title="' + safeName + '" style="font-weight:600;font-size:12.5px;color:' + typeColor + ';' +
+                                'vertical-align:middle;max-width:130px;display:inline-block;' +
                                 'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + safeName + '</span>' +
                         '</td>' +
-                        '<td style="padding:9px 4px;text-align:right;font-weight:800;font-size:13.5px;color:#0F172A;' +
+                        '<td style="padding:8px 4px;text-align:right;font-weight:800;font-size:13px;color:' + qtyColor + ';' +
                             'font-variant-numeric:tabular-nums;">' + items[t].qty.toLocaleString() + '</td>' +
-                        '<td style="padding:9px 4px;text-align:right;font-weight:500;font-size:12px;color:#64748B;' +
+                        '<td style="padding:8px 4px;text-align:right;font-weight:500;font-size:12px;color:' + pctColor + ';' +
                             'font-variant-numeric:tabular-nums;">' + pct4 + '</td>' +
                     '</tr>';
             }
@@ -240,7 +249,7 @@
 
             var html =
                 '<div class="' + cardClass + '" style="position:relative;display:flex;flex-direction:row;' +
-                    'align-items:center;width:100%;min-height:240px;gap:16px;box-sizing:border-box;">' +
+                    'align-items:center;width:100%;height:240px;min-height:240px;gap:16px;box-sizing:border-box;">' +
 
                     // SVG column
                     '<div style="flex:0 0 230px;width:230px;height:230px;display:flex;align-items:center;justify-content:center;">' +
@@ -252,22 +261,22 @@
                     '</div>' +
 
                     // Legend table column
-                    '<div style="flex:1 1 auto;min-width:200px;display:flex;flex-direction:column;justify-content:center;">' +
-                        '<div style="width:100%;max-height:280px;overflow-y:auto;overflow-x:hidden;' +
-                            'background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;' +
-                            'padding:12px 16px;box-sizing:border-box;">' +
+                    '<div style="flex:1 1 auto;min-width:190px;height:230px;display:flex;flex-direction:column;justify-content:center;">' +
+                        '<div style="width:100%;height:230px;max-height:230px;overflow-y:auto;overflow-x:hidden;' +
+                            'background:' + tableBg + ';border:1px solid ' + tableBorder + ';border-radius:12px;' +
+                            'padding:8px 12px;box-sizing:border-box;">' +
                             '<table style="width:100%;border-collapse:collapse;font-size:12.5px;text-align:left;">' +
                                 '<thead>' +
                                     '<tr>' +
-                                        '<th style="position:sticky;top:0;background:#F8FAFC;z-index:2;' +
-                                            'padding:6px 4px 10px;font-size:12px;font-weight:600;' +
-                                            'color:#64748B;border-bottom:1px solid #E2E8F0;text-align:left;width:48%;">Battery Type</th>' +
-                                        '<th style="position:sticky;top:0;background:#F8FAFC;z-index:2;' +
-                                            'padding:6px 4px 10px;font-size:12px;font-weight:600;' +
-                                            'color:#64748B;border-bottom:1px solid #E2E8F0;text-align:right;width:26%;">Qty</th>' +
-                                        '<th style="position:sticky;top:0;background:#F8FAFC;z-index:2;' +
-                                            'padding:6px 4px 10px;font-size:12px;font-weight:600;' +
-                                            'color:#64748B;border-bottom:1px solid #E2E8F0;text-align:right;width:26%;">%</th>' +
+                                        '<th style="position:sticky;top:0;background:' + thBg + ';z-index:2;' +
+                                            'padding:6px 4px 8px;font-size:12px;font-weight:600;' +
+                                            'color:' + thColor + ';border-bottom:1px solid ' + thBorder + ';text-align:left;width:48%;">Battery Type</th>' +
+                                        '<th style="position:sticky;top:0;background:' + thBg + ';z-index:2;' +
+                                            'padding:6px 4px 8px;font-size:12px;font-weight:600;' +
+                                            'color:' + thColor + ';border-bottom:1px solid ' + thBorder + ';text-align:right;width:26%;">Qty</th>' +
+                                        '<th style="position:sticky;top:0;background:' + thBg + ';z-index:2;' +
+                                            'padding:6px 4px 8px;font-size:12px;font-weight:600;' +
+                                            'color:' + thColor + ';border-bottom:1px solid ' + thBorder + ';text-align:right;width:26%;">%</th>' +
                                     '</tr>' +
                                 '</thead>' +
                                 '<tbody>' + tableRows + '</tbody>' +

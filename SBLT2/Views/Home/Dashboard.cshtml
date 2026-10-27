@@ -336,7 +336,7 @@
         function chartRework() {
             // 1. Fetch live count directly from count endpoint for fast, guaranteed active count
             $.ajax({
-                url: "pr_fetch_Today_Rework_Count",
+                url: "pr_fetch_Today_Rework_Count   ",
                 type: "GET",
                 dataType: "json",
                 cache: false,
@@ -452,27 +452,19 @@
 
         // Real-time synchronization listeners
         window.addEventListener('storage', function (e) {
-            if (e.key === 'rework_rejection_saved') {
+            if (e.key === 'rework_rejection_saved' || e.key === 'mvrla_saved') {
                 try {
-                    if (e.newValue) {
-                        var parsed = JSON.parse(e.newValue);
-                        if (parsed && parsed.type) {
-                            if (parsed.type.toLowerCase() === 'rework') {
-                                chartRework();
-                                return;
-                            } else if (parsed.type.toLowerCase() === 'rejection') {
-                                chartRejection();
-                                return;
-                            }
-                        }
-                    }
+                    chart1();
+                    chartcolumn2();
+                    chartRework();
+                    chartRejection();
                 } catch (err) { }
-                chartRework();
-                chartRejection();
             }
         });
 
         $(window).on('focus', function () {
+            chart1();
+            chartcolumn2();
             chartRework();
             chartRejection();
         });
@@ -486,11 +478,13 @@
             } catch (err) { }
         });
 
-        // Fast periodic polling (every 15 seconds)
+        // Auto-refresh dashboard charts periodically every 30 seconds for real-time counts
         setInterval(function () {
+            chart1();
+            chartcolumn2();
             chartRework();
             chartRejection();
-        }, 15000);
+        }, 30000);
 
         $("#spinner").hide();
         $("#Data").show();
@@ -522,37 +516,40 @@
                     </div>
                 </div>
 
-                <!-- 2x2 RESPONSIVE CHARTS GRID -->
-                <div class="row">
+                <!-- ROW 1: 2 DONUT CHARTS (Passed & Failed) - EQUAL SIZE -->
+                <div class="row" style="display: flex; flex-wrap: wrap; margin-bottom: 20px;">
                     <!-- Chart 1: Passed -->
-                    <div class="col-md-6 col-sm-12" style="margin-bottom: 20px;">
-                        <div class="modern-chart-card">
+                    <div class="col-md-6 col-sm-12" style="display: flex;">
+                        <div class="modern-chart-card" style="width: 100%; display: flex; flex-direction: column;">
                             <div class="modern-chart-card-header">
                                 <span class="donut-badge-icon badge-passed"><i class="fa fa-check"></i></span>
                                 <h4 class="modern-chart-title">Battery Type Wise Passed Qty</h4>
                             </div>
-                            <div class="modern-chart-card-body">
-                                <div id='chartContainer2' style="width:100%;"></div>
+                            <div class="modern-chart-card-body" style="flex: 1; display: flex; align-items: center; width: 100%;">
+                                <div id='chartContainer2' style="width: 100%;"></div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Chart 2: Failed -->
-                    <div class="col-md-6 col-sm-12" style="margin-bottom: 20px;">
-                        <div class="modern-chart-card">
+                    <div class="col-md-6 col-sm-12" style="display: flex;">
+                        <div class="modern-chart-card" style="width: 100%; display: flex; flex-direction: column;">
                             <div class="modern-chart-card-header">
                                 <span class="donut-badge-icon badge-failed"><i class="fa fa-exclamation"></i></span>
                                 <h4 class="modern-chart-title">Battery Type Wise Failed Qty</h4>
                             </div>
-                            <div class="modern-chart-card-body">
-                                <div id='chartContainer' style="width:100%;"></div>
+                            <div class="modern-chart-card-body" style="flex: 1; display: flex; align-items: center; width: 100%;">
+                                <div id='chartContainer' style="width: 100%;"></div>
                             </div>
                         </div>
                     </div>
+                </div>
 
+                <!-- ROW 2: 2 TREND CARDS (Rework & Rejection) -->
+                <div class="row" style="display: flex; flex-wrap: wrap;">
                     <!-- Chart 3: Rework (Model from image) -->
-                    <div class="col-md-6 col-sm-12" style="margin-bottom: 20px;">
-                        <div class="trend-model-card trend-card-rework" id="reworkCardContainer">
+                    <div class="col-md-6 col-sm-12" style="margin-bottom: 20px; display: flex;">
+                        <div class="trend-model-card trend-card-rework" id="reworkCardContainer" style="width: 100%;">
                             <div class="trend-card-header">
                                 <div class="trend-header-left">
                                     <div class="trend-icon-circle trend-icon-rework">
@@ -598,8 +595,8 @@
                     </div>
 
                     <!-- Chart 4: Rejection (Model from image) -->
-                    <div class="col-md-6 col-sm-12" style="margin-bottom: 20px;">
-                        <div class="trend-model-card trend-card-rejection" id="rejectionCardContainer">
+                    <div class="col-md-6 col-sm-12" style="margin-bottom: 20px; display: flex;">
+                        <div class="trend-model-card trend-card-rejection" id="rejectionCardContainer" style="width: 100%;">
                             <div class="trend-card-header">
                                 <div class="trend-header-left">
                                     <div class="trend-icon-circle trend-icon-rejection">

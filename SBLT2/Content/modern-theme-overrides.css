@@ -2336,6 +2336,16 @@ body.dark-theme #toaster .alert .close:hover {
     box-sizing: border-box;
     transition: all 0.2s ease;
     height: 100%;
+    min-height: 330px;
+    display: flex;
+    flex-direction: column;
+}
+
+.modern-chart-card-body {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    width: 100%;
 }
 
 .dark-theme .modern-chart-card {
@@ -2394,7 +2404,8 @@ body.dark-theme #toaster .alert .close:hover {
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    min-height: 250px;
+    height: 240px;
+    min-height: 240px;
     padding: 0;
     box-sizing: border-box;
     gap: 18px;

@@ -106,13 +106,14 @@ BEGIN
     FROM (
         -- 1. Rejections from Formation_Rework_Rejection for today
         SELECT 
-            ISNULL(NULLIF(RTRIM(LTRIM(FRR_BatteryType)), ''), 'Unknown') AS BatteryType,
+            ISNULL(NULLIF(RTRIM(LTRIM(COALESCE(r.FRR_BatteryType, m.mv_BatteryType))), ''), 'Unknown') AS BatteryType,
             COUNT(1) AS Qty
-        FROM dbo.Formation_Rework_Rejection
-        WHERE FRR_Status = 'A'
-          AND (FRR_Type_Name = 'Rejection' OR FRR_Type_ID = 13)
-          AND FRR_Created_Date >= @Today AND FRR_Created_Date < @Tomorrow
-        GROUP BY ISNULL(NULLIF(RTRIM(LTRIM(FRR_BatteryType)), ''), 'Unknown')
+        FROM dbo.Formation_Rework_Rejection r
+        LEFT JOIN dbo.MVRLA m ON r.FRR_QRCode = m.mv_QRCode AND m.mv_Status = 'A'
+        WHERE r.FRR_Status = 'A'
+          AND (r.FRR_Type_Name = 'Rejection' OR r.FRR_Type_ID = 13)
+          AND r.FRR_Created_Date >= @Today AND r.FRR_Created_Date < @Tomorrow
+        GROUP BY ISNULL(NULLIF(RTRIM(LTRIM(COALESCE(r.FRR_BatteryType, m.mv_BatteryType))), ''), 'Unknown')
 
         UNION ALL
 

@@ -158,6 +158,147 @@
                 </div>
             </div>
         </div>
+
+        <!-- Edit Record Modal -->
+        <div class="modal fade" id="editRecordModal" tabindex="-1" role="dialog" aria-labelledby="editRecordModalLabel">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content" style="border-radius: 4px; overflow: hidden; border-top: 3px solid var(--ar-primary);">
+                    <div class="modal-header" style="background-color: var(--card-header-bg); padding: 12px 20px;">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="opacity: 0.8;">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="editRecordModalLabel" style="font-size: 15px; font-weight: 700; color: var(--text-primary); margin: 0;">
+                            <i class="fa fa-pencil-square-o" style="color: var(--ar-primary); margin-right: 6px;"></i> Edit Rework / Rejection Record
+                        </h4>
+                    </div>
+                    <div class="modal-body" style="padding: 20px; background-color: var(--bg-primary); max-height: 75vh; overflow-y: auto;">
+                        <form id="formEditRecord" class="form-horizontal" onsubmit="return false;">
+                            <input type="hidden" id="edit_FRR_ID" />
+                            
+                            <div class="row">
+                                <div class="col-md-4 col-sm-6" style="margin-bottom: 12px;">
+                                    <label class="filter-label">Formation ID:</label>
+                                    <input type="text" id="edit_Formation_ID" class="form-control input-sm" readonly style="background-color: #eee;" />
+                                </div>
+                                <div class="col-md-4 col-sm-6" style="margin-bottom: 12px;">
+                                    <label class="filter-label">QR Code:</label>
+                                    <input type="text" id="edit_QRCode" class="form-control input-sm" readonly style="background-color: #eee;" />
+                                </div>
+                                <div class="col-md-4 col-sm-6" style="margin-bottom: 12px;">
+                                    <label class="filter-label">Battery Type:</label>
+                                    <input type="text" id="edit_BatteryType" class="form-control input-sm" readonly style="background-color: #eee;" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4 col-sm-6" style="margin-bottom: 12px;">
+                                    <label class="filter-label">CKT No:</label>
+                                    <input type="text" id="edit_CKTNo" class="form-control input-sm" readonly style="background-color: #eee;" />
+                                </div>
+                                <div class="col-md-4 col-sm-6" style="margin-bottom: 12px;">
+                                    <label class="filter-label">Defect Type:</label>
+                                    <select id="edit_TypeName" class="form-control input-sm">
+                                        <option value="Rework">Rework</option>
+                                        <option value="Rejection">Rejection</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 col-sm-6" style="margin-bottom: 12px;">
+                                    <label class="filter-label">Employee:</label>
+                                    <input type="text" id="edit_EmployeeName" class="form-control input-sm" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4 col-sm-6" style="margin-bottom: 12px;">
+                                    <label class="filter-label">Defect Reason Type:</label>
+                                    <input type="text" id="edit_DefectReasonType" class="form-control input-sm" />
+                                </div>
+                                <div class="col-md-4 col-sm-6" style="margin-bottom: 12px;">
+                                    <label class="filter-label">Defect Reason:</label>
+                                    <input type="text" id="edit_Reason" class="form-control input-sm" />
+                                </div>
+                                <div class="col-md-4 col-sm-6" style="margin-bottom: 12px;">
+                                    <label class="filter-label">Defect Code Reason:</label>
+                                    <input type="text" id="edit_DefectReason" class="form-control input-sm" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4 col-sm-6" style="margin-bottom: 12px;">
+                                    <label class="filter-label">Defect Cell:</label>
+                                    <input type="text" id="edit_DefectCell" class="form-control input-sm" />
+                                </div>
+                                <div class="col-md-4 col-sm-6" style="margin-bottom: 12px;">
+                                    <label class="filter-label">OCV:</label>
+                                    <input type="text" id="edit_OCV" class="form-control input-sm" />
+                                </div>
+                                <div class="col-md-4 col-sm-6" style="margin-bottom: 12px;">
+                                    <label class="filter-label">Plate No:</label>
+                                    <input type="text" id="edit_PlateNo" class="form-control input-sm" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4 col-sm-6" style="margin-bottom: 12px;">
+                                    <label class="filter-label">Location:</label>
+                                    <input type="text" id="edit_Location" class="form-control input-sm" />
+                                </div>
+                                <div class="col-md-4 col-sm-6" style="margin-bottom: 12px;">
+                                    <label class="filter-label">Plate Type:</label>
+                                    <input type="text" id="edit_PlateType" class="form-control input-sm" />
+                                </div>
+                                <div class="col-md-4 col-sm-6" style="margin-bottom: 12px;">
+                                    <label class="filter-label">Created By:</label>
+                                    <input type="text" id="edit_CreatedBy" class="form-control input-sm" readonly style="background-color: #eee;" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-2 col-xs-4" style="margin-bottom: 10px;">
+                                    <label class="filter-label">Cell 1:</label>
+                                    <input type="text" id="edit_Cell1" class="form-control input-sm" />
+                                </div>
+                                <div class="col-md-2 col-xs-4" style="margin-bottom: 10px;">
+                                    <label class="filter-label">Cell 2:</label>
+                                    <input type="text" id="edit_Cell2" class="form-control input-sm" />
+                                </div>
+                                <div class="col-md-2 col-xs-4" style="margin-bottom: 10px;">
+                                    <label class="filter-label">Cell 3:</label>
+                                    <input type="text" id="edit_Cell3" class="form-control input-sm" />
+                                </div>
+                                <div class="col-md-2 col-xs-4" style="margin-bottom: 10px;">
+                                    <label class="filter-label">Cell 4:</label>
+                                    <input type="text" id="edit_Cell4" class="form-control input-sm" />
+                                </div>
+                                <div class="col-md-2 col-xs-4" style="margin-bottom: 10px;">
+                                    <label class="filter-label">Cell 5:</label>
+                                    <input type="text" id="edit_Cell5" class="form-control input-sm" />
+                                </div>
+                                <div class="col-md-2 col-xs-4" style="margin-bottom: 10px;">
+                                    <label class="filter-label">Cell 6:</label>
+                                    <input type="text" id="edit_Cell6" class="form-control input-sm" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12" style="margin-bottom: 10px;">
+                                    <label class="filter-label">Date / Time:</label>
+                                    <input type="text" id="edit_CreatedDate" class="form-control input-sm" readonly style="background-color: #eee;" />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer" style="padding: 12px 20px; background-color: var(--card-header-bg);">
+                        <button type="button" id="btn_UpdateRecord" class="btn btn-primary btn-sm" style="background-color: var(--ar-primary) !important; border-color: var(--ar-primary) !important; color: #FFF !important; min-width: 90px;">
+                            <i class="fa fa-save"></i> Update
+                        </button>
+                        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal" style="min-width: 80px;">
+                            <i class="fa fa-times"></i> Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 </div>
 
@@ -274,8 +415,7 @@
                     { name: 'FRR_OCV', type: 'string' },
                     { name: 'FRR_PlateNo', type: 'string' },
                     { name: 'FRR_Location', type: 'string' },
-                    { name: 'FRR_PlateType', type: 'string' },
-                    { name: 'FRR_DefectReason', type: 'string' }
+                    { name: 'FRR_PlateType', type: 'string' }
                 ],
                 id: 'FRR_ID',
                 url: url,
@@ -304,16 +444,18 @@
                     {
                         text: 'Type',
                         datafield: 'FRR_Type_Name',
-                        width: 85,
+                        width: 90,
                         align: 'center',
                         cellsalign: 'center',
                         cellsrenderer: function (row, column, value) {
-                            if (value === "Rework") {
-                                return '<div style="margin-top: 5px; text-align: center;"><span class="badge" style="background-color: #f39c12; font-weight: 600;">' + value + '</span></div>';
-                            } else if (value === "Rejection") {
-                                return '<div style="margin-top: 5px; text-align: center;"><span class="badge" style="background-color: #dd4b39; font-weight: 600;">' + value + '</span></div>';
+                            var textVal = value || '';
+                            var bg = '#777';
+                            if (textVal === "Rework") {
+                                bg = '#f39c12';
+                            } else if (textVal === "Rejection") {
+                                bg = '#dd4b39';
                             }
-                            return '<div style="margin-top: 5px; text-align: center;">' + value + '</div>';
+                            return '<div style="margin-top: 5px; text-align: center;"><span style="display: inline-block; width: 72px; padding: 3px 0; border-radius: 12px; font-size: 11.5px; font-weight: 600; color: #fff; background-color: ' + bg + '; text-align: center; box-shadow: 0 1px 2px rgba(0,0,0,0.12);">' + textVal + '</span></div>';
                         }
                     },
                     { text: 'Defect Reason', datafield: 'FRR_Reason', width: 140 },
@@ -335,5 +477,131 @@
                 ]
             });
         }
+
+        // =========================================================================
+        // Delete Record Action
+        // Prompts confirmation, executes delete, refreshes grid & alerts
+        // =========================================================================
+        function deleteRecord(dataRecord) {
+            var recordId = dataRecord.FRR_ID || dataRecord.ID;
+            if (!recordId) {
+                alert("Invalid Record ID.");
+                return;
+            }
+
+            var confirmDelete = confirm("Are you sure want to delete press OK");
+            if (confirmDelete === true) {
+                $.ajax({
+                    type: 'POST',
+                    contentType: "application/json; charset=utf-8",
+                    url: '../../Transaction/Pr_Delete_Formation_Rework_Rejection',
+                    data: JSON.stringify({ ID: recordId }),
+                    success: function (response) {
+                        getGrid();
+                        alert('Record Deleted Successfully');
+                    },
+                    error: function (xhr, status, error) {
+                        // Fallback attempt to Reports controller if routed there
+                        $.ajax({
+                            type: 'POST',
+                            contentType: "application/json; charset=utf-8",
+                            url: '../../Reports/Pr_Delete_Formation_Rework_Rejection',
+                            data: JSON.stringify({ ID: recordId }),
+                            success: function (response) {
+                                getGrid();
+                                alert('Record Deleted Successfully');
+                            },
+                            error: function () {
+                                alert('Record delete failed. Please ensure the backend stored procedure pr_delete_Formation_Rework_Rejection exists in the database.');
+                            }
+                        });
+                    }
+                });
+            }
+        }
+
+        // =========================================================================
+        // Open Edit Modal with Row Data Pre-Populated (Preserves all fields)
+        // =========================================================================
+        function openEditModal(dataRecord) {
+            $('#edit_FRR_ID').val(dataRecord.ID || dataRecord.FRR_ID || '');
+            $('#edit_Formation_ID').val(dataRecord.Formation_ID || '');
+            $('#edit_QRCode').val(dataRecord.QRCode || dataRecord.FRR_QRCode || '');
+            $('#edit_BatteryType').val(dataRecord.BatteryType || dataRecord.FRR_BatteryType || '');
+            $('#edit_CKTNo').val(dataRecord.CKTNo || dataRecord.FRR_CKTNo || '');
+            $('#edit_TypeName').val(dataRecord.Type_Name || dataRecord.FRR_Type_Name || 'Rework');
+            $('#edit_Reason').val(dataRecord.Reason || dataRecord.FRR_Reason || '');
+            $('#edit_DefectReasonType').val(dataRecord.DefectReasonType || dataRecord.FRR_DefectReasonType || '');
+            $('#edit_DefectReason').val(dataRecord.DefectReason || dataRecord.FRR_DefectReason || '');
+            $('#edit_EmployeeName').val(dataRecord.Employee_Name || dataRecord.FRR_Employee_Name || '');
+            $('#edit_DefectCell').val(dataRecord.DefectCell || dataRecord.FRR_DefectCell || '');
+            $('#edit_OCV').val(dataRecord.OCV || dataRecord.FRR_OCV || '');
+            $('#edit_PlateNo').val(dataRecord.PlateNo || dataRecord.FRR_PlateNo || '');
+            $('#edit_Location').val(dataRecord.Location || dataRecord.FRR_Location || '');
+            $('#edit_PlateType').val(dataRecord.PlateType || dataRecord.FRR_PlateType || '');
+            $('#edit_Cell1').val(dataRecord.Cell1 || dataRecord.FRR_Cell1 || '');
+            $('#edit_Cell2').val(dataRecord.Cell2 || dataRecord.FRR_Cell2 || '');
+            $('#edit_Cell3').val(dataRecord.Cell3 || dataRecord.FRR_Cell3 || '');
+            $('#edit_Cell4').val(dataRecord.Cell4 || dataRecord.FRR_Cell4 || '');
+            $('#edit_Cell5').val(dataRecord.Cell5 || dataRecord.FRR_Cell5 || '');
+            $('#edit_Cell6').val(dataRecord.Cell6 || dataRecord.FRR_Cell6 || '');
+            $('#edit_CreatedDate').val(dataRecord.Created_Date || dataRecord.FRR_Created_Date || '');
+            $('#edit_CreatedBy').val(dataRecord.Created_By || dataRecord.FRR_Created_By || '');
+
+            $('#editRecordModal').modal('show');
+        }
+
+        // =========================================================================
+        // Save / Update Edited Record
+        // =========================================================================
+        $('#btn_UpdateRecord').click(function () {
+            var postData = {
+                FRR_ID: $('#edit_FRR_ID').val(),
+                FRR_Type_Name: $('#edit_TypeName').val(),
+                FRR_Reason: $('#edit_Reason').val(),
+                FRR_DefectReasonType: $('#edit_DefectReasonType').val(),
+                FRR_DefectReason: $('#edit_DefectReason').val(),
+                FRR_Employee_Name: $('#edit_EmployeeName').val(),
+                FRR_DefectCell: $('#edit_DefectCell').val(),
+                FRR_OCV: $('#edit_OCV').val(),
+                FRR_PlateNo: $('#edit_PlateNo').val(),
+                FRR_Location: $('#edit_Location').val(),
+                FRR_PlateType: $('#edit_PlateType').val(),
+                FRR_Cell1: $('#edit_Cell1').val(),
+                FRR_Cell2: $('#edit_Cell2').val(),
+                FRR_Cell3: $('#edit_Cell3').val(),
+                FRR_Cell4: $('#edit_Cell4').val(),
+                FRR_Cell5: $('#edit_Cell5').val(),
+                FRR_Cell6: $('#edit_Cell6').val()
+            };
+
+            $.ajax({
+                type: 'POST',
+                contentType: "application/json; charset=utf-8",
+                url: '../../Transaction/Pr_Update_Formation_Rework_Rejection',
+                data: JSON.stringify(postData),
+                success: function (response) {
+                    $('#editRecordModal').modal('hide');
+                    getGrid();
+                    alert('Record Updated Successfully');
+                },
+                error: function () {
+                    $.ajax({
+                        type: 'POST',
+                        contentType: "application/json; charset=utf-8",
+                        url: '../../Reports/Pr_Update_Formation_Rework_Rejection',
+                        data: JSON.stringify(postData),
+                        success: function (response) {
+                            $('#editRecordModal').modal('hide');
+                            getGrid();
+                            alert('Record Updated Successfully');
+                        },
+                        error: function () {
+                            alert('Update operation failed. Please ensure the backend stored procedure pr_update_Formation_Rework_Rejection exists in the database.');
+                        }
+                    });
+                }
+            });
+        });
     });
 </script>

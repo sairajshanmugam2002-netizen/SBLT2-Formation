@@ -659,6 +659,9 @@
                 success: function (response) {
                     if (response == 'True') {
                         $.toaster({ priority: 'success', title: 'Notice', message: "Record Saved Successfully" });
+                        try {
+                            localStorage.setItem('mvrla_saved', JSON.stringify({ time: Date.now() }));
+                        } catch (e) { }
                         Clear();
                         $("#Grid").jqxGrid('updatebounddata');
                     } else {

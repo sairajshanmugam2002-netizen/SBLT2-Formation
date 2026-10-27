@@ -275,37 +275,37 @@
                                         <div class="col-md-2 col-sm-4 col-xs-6" style="margin-bottom: 10px;">
                                             <div class="form-group" style="margin-bottom: 0;">
                                                 <label for="txt_Cell1" style="font-weight: 600; font-size: 12px; margin-bottom: 5px; display: block;">Cell 1</label>
-                                                <input type="text" id="txt_Cell1" name="txt_Cell1" class="form-control" value="C1" style="height: 34px; font-weight: 600;" />
+                                                <input type="text" id="txt_Cell1" name="txt_Cell1" class="form-control" value="" style="height: 34px; font-weight: 600;" />
                                             </div>
                                         </div>
                                         <div class="col-md-2 col-sm-4 col-xs-6" style="margin-bottom: 10px;">
                                             <div class="form-group" style="margin-bottom: 0;">
                                                 <label for="txt_Cell2" style="font-weight: 600; font-size: 12px; margin-bottom: 5px; display: block;">Cell 2</label>
-                                                <input type="text" id="txt_Cell2" name="txt_Cell2" class="form-control" value="C-2" style="height: 34px; font-weight: 600;" />
+                                                <input type="text" id="txt_Cell2" name="txt_Cell2" class="form-control" value="" style="height: 34px; font-weight: 600;" />
                                             </div>
                                         </div>
                                         <div class="col-md-2 col-sm-4 col-xs-6" style="margin-bottom: 10px;">
                                             <div class="form-group" style="margin-bottom: 0;">
                                                 <label for="txt_Cell3" style="font-weight: 600; font-size: 12px; margin-bottom: 5px; display: block;">Cell 3</label>
-                                                <input type="text" id="txt_Cell3" name="txt_Cell3" class="form-control" value="C-3" style="height: 34px; font-weight: 600;" />
+                                                <input type="text" id="txt_Cell3" name="txt_Cell3" class="form-control" value="" style="height: 34px; font-weight: 600;" />
                                             </div>
                                         </div>
                                         <div class="col-md-2 col-sm-4 col-xs-6" style="margin-bottom: 10px;">
                                             <div class="form-group" style="margin-bottom: 0;">
                                                 <label for="txt_Cell4" style="font-weight: 600; font-size: 12px; margin-bottom: 5px; display: block;">Cell 4</label>
-                                                <input type="text" id="txt_Cell4" name="txt_Cell4" class="form-control" value="C-4" style="height: 34px; font-weight: 600;" />
+                                                <input type="text" id="txt_Cell4" name="txt_Cell4" class="form-control" value="" style="height: 34px; font-weight: 600;" />
                                             </div>
                                         </div>
                                         <div class="col-md-2 col-sm-4 col-xs-6" style="margin-bottom: 10px;">
                                             <div class="form-group" style="margin-bottom: 0;">
                                                 <label for="txt_Cell5" style="font-weight: 600; font-size: 12px; margin-bottom: 5px; display: block;">Cell 5</label>
-                                                <input type="text" id="txt_Cell5" name="txt_Cell5" class="form-control" value="C-5" style="height: 34px; font-weight: 600;" />
+                                                <input type="text" id="txt_Cell5" name="txt_Cell5" class="form-control" value="" style="height: 34px; font-weight: 600;" />
                                             </div>
                                         </div>
                                         <div class="col-md-2 col-sm-4 col-xs-6" style="margin-bottom: 10px;">
                                             <div class="form-group" style="margin-bottom: 0;">
                                                 <label for="txt_Cell6" style="font-weight: 600; font-size: 12px; margin-bottom: 5px; display: block;">Cell 6</label>
-                                                <input type="text" id="txt_Cell6" name="txt_Cell6" class="form-control" value="C-6" style="height: 34px; font-weight: 600;" />
+                                                <input type="text" id="txt_Cell6" name="txt_Cell6" class="form-control" value="" style="height: 34px; font-weight: 600;" />
                                             </div>
                                         </div>
                                     </div>
@@ -368,10 +368,15 @@
                     </div>
 
                     <!-- Records Grid Section -->
-                    <div class="box-body" style="padding: 10px 25px 20px 25px; border-top: 1px solid var(--border-color);">
-                        <h4 style="font-size: 14px; font-weight: bold; color: var(--text-primary); margin-bottom: 10px;">
-                            <i class="fa fa-list"></i> Logged Rework / Rejection Records
-                        </h4>
+                    <div class="box-body" style="padding: 15px 20px 20px 20px; border-top: 1px solid var(--border-color);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <h4 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0;">
+                                <i class="fa fa-list text-primary"></i> Logged Rework / Rejection Records
+                            </h4>
+                            <button type="button" id="Delete" class="btn btn-danger btn-sm" style="min-height: 32px; height: 32px; padding: 4px 14px;">
+                                <i class="fa fa-trash"></i> Delete Selected
+                            </button>
+                        </div>
                         <div id="Grid"></div>
                     </div>
                 </div>
@@ -775,7 +780,54 @@
 
             var defectCodeReasonVal = (defectCodeReasonItem && defectCodeReasonItem.label) ? defectCodeReasonItem.label : '';
 
-            // Send via AJAX to TransactionController
+            if (edit_FRR_ID) {
+                // Update Existing Record
+                $.ajax({
+                    type: "POST",
+                    url: "../../Transaction/Pr_Update_Formation_Rework_Rejection",
+                    data: {
+                        FRR_ID: edit_FRR_ID,
+                        FRR_Type_ID: selectedTypeItem ? selectedTypeItem.value : '',
+                        FRR_Type_Name: selectedTypeItem ? selectedTypeItem.label : '',
+                        FRR_Reason: reason,
+                        FRR_DefectReason: defectCodeReasonVal,
+                        FRR_DefectReasonType: '',
+                        FRR_Employee_ID: selectedEmpItem ? selectedEmpItem.value : '',
+                        FRR_Employee_Name: selectedEmpItem ? selectedEmpItem.label : '',
+                        FRR_Created_By: User,
+                        FRR_QRCode: $.trim($('#txt_Scan_QRCode').val()),
+                        FRR_BatteryType: $.trim($('#txt_Battery_Type').val()),
+                        FRR_CKTNo: $.trim($('#txt_CKT_No').val()),
+                        FRR_Cell1: $.trim($('#txt_Cell1').val()),
+                        FRR_Cell2: $.trim($('#txt_Cell2').val()),
+                        FRR_Cell3: $.trim($('#txt_Cell3').val()),
+                        FRR_Cell4: $.trim($('#txt_Cell4').val()),
+                        FRR_Cell5: $.trim($('#txt_Cell5').val()),
+                        FRR_Cell6: $.trim($('#txt_Cell6').val()),
+                        FRR_DefectCell: defectCellItem ? defectCellItem.value : '',
+                        FRR_OCV: $.trim($('#txt_OCV').val()),
+                        FRR_PlateNo: plateNoItem ? plateNoItem.value : '',
+                        FRR_Location: locationItem ? locationItem.value : '',
+                        FRR_PlateType: plateTypeItem ? plateTypeItem.value : ''
+                    },
+                    success: function (response) {
+                        if (response === "True") {
+                            $.toaster({ priority: 'success', title: 'Notice', message: "Record Updated Successfully...!" });
+                            edit_FRR_ID = null;
+                            Clear();
+                            getGrid();
+                        } else {
+                            $.toaster({ priority: 'danger', title: 'Notice', message: response });
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        $.toaster({ priority: 'danger', title: 'Notice', message: "Failed to update record: " + error });
+                    }
+                });
+                return;
+            }
+
+            // Send via AJAX to TransactionController (New Record)
             $.ajax({
                 type: "POST",
                 url: "../../Transaction/pr_insert_Formation_Rework_Rejection",
@@ -846,7 +898,10 @@
             });
         }
 
+        var edit_FRR_ID = null;
+
         function Clear() {
+            edit_FRR_ID = null;
             $('#ddlType').jqxDropDownList('clearSelection');
             loadReasons(null, null);
             $('#ddlEmployee').jqxDropDownList('clearSelection');
@@ -855,12 +910,12 @@
             syncToggleWithDdl(null);
 
             // Reset new card controls
-            $('#txt_Cell1').val('C1');
-            $('#txt_Cell2').val('C-2');
-            $('#txt_Cell3').val('C-3');
-            $('#txt_Cell4').val('C-4');
-            $('#txt_Cell5').val('C-5');
-            $('#txt_Cell6').val('C-6');
+            $('#txt_Cell1').val('');
+            $('#txt_Cell2').val('');
+            $('#txt_Cell3').val('');
+            $('#txt_Cell4').val('');
+            $('#txt_Cell5').val('');
+            $('#txt_Cell6').val('');
             $('#ddlDefectCell').jqxDropDownList('clearSelection');
             loadDefectCodeReasons(null);
             $('#txt_OCV').val('');
@@ -868,6 +923,166 @@
             $('#ddlLocation').jqxDropDownList('clearSelection');
             $('#ddlPlateType').jqxDropDownList('clearSelection');
         }
+
+        // =========================================================================
+        // Populate Form Fields for Row Editing
+        // =========================================================================
+        function populateFormForEdit(dataRecord) {
+            if (!dataRecord) return;
+            edit_FRR_ID = dataRecord.FRR_ID;
+            $('#btn_save_label').text('Update Record');
+
+            $('#txt_Scan_QRCode').val(dataRecord.FRR_QRCode || '');
+            $('#txt_Battery_Type').val(dataRecord.FRR_BatteryType || '');
+            $('#txt_CKT_No').val(dataRecord.FRR_CKTNo || '');
+
+            // Type
+            if (dataRecord.FRR_Type_Name) {
+                var items = $('#ddlType').jqxDropDownList('getItems');
+                for (var i = 0; i < items.length; i++) {
+                    if (items[i].label === dataRecord.FRR_Type_Name) {
+                        $('#ddlType').jqxDropDownList('selectIndex', i);
+                        syncToggleWithDdl(dataRecord.FRR_Type_Name);
+                        break;
+                    }
+                }
+            }
+
+            // Reason
+            if (dataRecord.FRR_Reason) {
+                var selectReason = function () {
+                    var rItems = $('#ddlReason').jqxDropDownList('getItems');
+                    if (rItems) {
+                        for (var j = 0; j < rItems.length; j++) {
+                            if (rItems[j].label === dataRecord.FRR_Reason) {
+                                $('#ddlReason').jqxDropDownList('selectIndex', j);
+                                break;
+                            }
+                        }
+                    }
+                };
+                setTimeout(selectReason, 200);
+            }
+
+            // Employee
+            if (dataRecord.FRR_Employee_Name) {
+                var empItems = $('#ddlEmployee').jqxDropDownList('getItems');
+                if (empItems) {
+                    for (var k = 0; k < empItems.length; k++) {
+                        if (empItems[k].label === dataRecord.FRR_Employee_Name) {
+                            $('#ddlEmployee').jqxDropDownList('selectIndex', k);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Cells
+            $('#txt_Cell1').val(dataRecord.FRR_Cell1 || 'C1');
+            $('#txt_Cell2').val(dataRecord.FRR_Cell2 || 'C-2');
+            $('#txt_Cell3').val(dataRecord.FRR_Cell3 || 'C-3');
+            $('#txt_Cell4').val(dataRecord.FRR_Cell4 || 'C-4');
+            $('#txt_Cell5').val(dataRecord.FRR_Cell5 || 'C-5');
+            $('#txt_Cell6').val(dataRecord.FRR_Cell6 || 'C-6');
+
+            // Defect Cell
+            if (dataRecord.FRR_DefectCell) {
+                $('#ddlDefectCell').jqxDropDownList('selectItem', dataRecord.FRR_DefectCell);
+            }
+
+            // OCV
+            $('#txt_OCV').val(dataRecord.FRR_OCV || '');
+
+            // Plate No
+            if (dataRecord.FRR_PlateNo) {
+                $('#ddlPlateNo').jqxDropDownList('selectItem', dataRecord.FRR_PlateNo);
+            }
+
+            // Location
+            if (dataRecord.FRR_Location) {
+                $('#ddlLocation').jqxDropDownList('selectItem', dataRecord.FRR_Location);
+            }
+
+            // Plate Type
+            if (dataRecord.FRR_PlateType) {
+                $('#ddlPlateType').jqxDropDownList('selectItem', dataRecord.FRR_PlateType);
+            }
+
+            // Defect Code Reason
+            if (dataRecord.FRR_DefectReason) {
+                var selectDefectCode = function () {
+                    var dcItems = $('#ddlDefectCodeReason').jqxDropDownList('getItems');
+                    if (dcItems) {
+                        for (var m = 0; m < dcItems.length; m++) {
+                            if (dcItems[m].label === dataRecord.FRR_DefectReason) {
+                                $('#ddlDefectCodeReason').jqxDropDownList('selectIndex', m);
+                                break;
+                            }
+                        }
+                    }
+                };
+                setTimeout(selectDefectCode, 200);
+            }
+
+            // Scroll to entry form smoothly
+            $('html, body').animate({
+                scrollTop: $("#txt_Scan_QRCode").offset().top - 120
+            }, 300);
+
+            $.toaster({ priority: 'info', title: 'Edit Mode', message: 'Record loaded into form. Click "Update Record" when finished.' });
+        }
+
+        // =========================================================================
+        // Single Record Delete
+        // =========================================================================
+        function deleteSingleRecord(id) {
+            if (!id) return;
+            var a = confirm("Are you sure want to delete press OK");
+            if (a === true) {
+                $.ajax({
+                    type: 'POST',
+                    contentType: "application/json; charset=utf-8",
+                    url: '../../Transaction/Pr_Delete_Formation_Rework_Rejection',
+                    data: JSON.stringify({ ID: id }),
+                    success: function (response) {
+                        getGrid();
+                        $.toaster({ priority: 'success', title: 'Notice', message: "Record Deleted Successfully...!" });
+                    },
+                    error: function (xhr, status, error) {
+                        $.toaster({ priority: 'danger', title: 'Notice', message: "Delete failed: " + error });
+                    }
+                });
+            }
+        }
+
+        // =========================================================================
+        // Delete Selected (Batch Delete)
+        // =========================================================================
+        $('#Delete').click(function () {
+            var selectedrows = $('#Grid').jqxGrid('getselectedrowindexes');
+            if (selectedrows.length <= 0) {
+                alert('Please select row want to Delete');
+                return;
+            }
+            var a = confirm("Are you sure want to delete press OK");
+            if (a === true) {
+                for (var i = 0; i < selectedrows.length; i++) {
+                    var frrId = $('#Grid').jqxGrid('getcellvalue', selectedrows[i], "FRR_ID");
+                    if (frrId) {
+                        $.ajax({
+                            type: 'POST',
+                            contentType: "application/json; charset=utf-8",
+                            url: '../../Transaction/Pr_Delete_Formation_Rework_Rejection',
+                            data: JSON.stringify({ ID: frrId }),
+                            async: false,
+                            success: function (response) { }
+                        });
+                    }
+                }
+                getGrid();
+                alert('Record Deleted Successfully');
+            }
+        });
 
         // =========================================================================
         // Grid Displaying Saved Records
@@ -909,13 +1124,17 @@
             };
             var gridAdapter = new $.jqx.dataAdapter(gridSource);
             $("#Grid").jqxGrid({
+                theme: 'ui-sunny',
                 width: '100%',
-                height: '320px',
+                height: '420px',
                 source: gridAdapter,
+                selectionmode: 'checkbox',
                 pageable: true,
-                pagesize: 10,
-                sortable: true,
+                pagermode: 'simple',
+                pagesize: 14,
+                showfilterrow: true,
                 filterable: true,
+                sortable: true,
                 columnsresize: true,
                 enabletooltips: true,
                 columnsheight: 34,
@@ -946,5 +1165,16 @@
                 ]
             });
         }
+
+        // =========================================================================
+        // Grid Row Double Click Handler: Load Row into Entry Form for Editing
+        // =========================================================================
+        $("#Grid").on("rowdoubleclick", function (event) {
+            var rowindex = event.args.rowindex;
+            var dataRecord = $("#Grid").jqxGrid('getrowdata', rowindex);
+            if (dataRecord) {
+                populateFormForEdit(dataRecord);
+            }
+        });
     });
 </script>
