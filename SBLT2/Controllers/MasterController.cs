@@ -723,8 +723,32 @@ namespace SBLT2.Controllers
 
         public string Pr_Delete_Product_Master_by_ID(string ID)
         {
-            DataTable dt = dbFunctions.getTable("Pr_Delete_Product_Master_by_ID '" + ID + "'");
-            return "True";
+            try
+            {
+                if (string.IsNullOrWhiteSpace(ID)) return "Invalid ID";
+                string cleanID = ID.Trim().Replace("'", "''");
+                DataTable dt = dbFunctions.getTable("UPDATE Product_Master_Assembly SET PM_Status = 'D' WHERE PM_iID = '" + cleanID + "'");
+                return "True";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        public string pr_Delete_Product_MasterAssy(string ID)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(ID)) return "Invalid ID";
+                string cleanID = ID.Trim().Replace("'", "''");
+                DataTable dt = dbFunctions.getTable("UPDATE Product_Master_Assembly SET PM_Status = 'D' WHERE PM_iID = '" + cleanID + "'");
+                return "True";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
         }
 
         //public string Pr_Insert_Team_Master(

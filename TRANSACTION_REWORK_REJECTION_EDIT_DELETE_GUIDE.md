@@ -66,7 +66,7 @@ GO
 -- Description: Updates defect reasons, classifications, employee, and cells
 --              for an active Formation_Rework_Rejection record.
 -- =========================================================================
-IF OBJECT_ID('dbo.pr_update_Formation_Rework_Rejection', 'P') IS NOT NULL
+ IF OBJECT_ID('dbo.pr_update_Formation_Rework_Rejection', 'P') IS NOT NULL
     DROP PROCEDURE dbo.pr_update_Formation_Rework_Rejection;
 GO
 
@@ -151,8 +151,19 @@ public string Pr_Delete_Formation_Rework_Rejection(string ID)
 {
     try
     {
-        string cleanID = (ID ?? "").Replace("'", "''");
-        DataTable dt = dbFunctions.getTable("pr_delete_Formation_Rework_Rejection '" + cleanID + "'");
+        if (string.IsNullOrWhiteSpace(ID)) return "Invalid ID";
+        string cleanID = ID.Trim().Replace("'", "''");
+
+        using (SqlConnection con = new SqlConnection(dbFunctions.connectionstring))
+        {
+            con.Open();
+            using (SqlCommand com = new SqlCommand("UPDATE Formation_Rework_Rejection SET FRR_Status = 'D' WHERE FRR_ID = @FRR_ID", con))
+            {
+                com.Parameters.Add("@FRR_ID", SqlDbType.Int).Value = Convert.ToInt32(cleanID);
+                com.ExecuteNonQuery();
+            }
+            con.Close();
+        }
         return "True";
     }
     catch (Exception ex)
@@ -317,14 +328,18 @@ $('#Delete').click(function () {
                     type: 'POST',
                     contentType: "application/json; charset=utf-8",
                     url: '../../Transaction/Pr_Delete_Formation_Rework_Rejection',
-                    data: JSON.stringify({ ID: frrId }),
+                    data: "{'ID':'" + frrId + "'}",
                     async: false,
                     success: function (response) { }
                 });
             }
         }
+        $('#Grid').jqxGrid('clearselection');
+        $('#Grid').jqxGrid('updatebounddata');
         getGrid();
         alert('Record Deleted Successfully');
+    } else {
+        $('#Grid').jqxGrid('clearselection');
     }
 });
 ```

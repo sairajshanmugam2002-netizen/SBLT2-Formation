@@ -529,8 +529,19 @@ namespace SBLT2.Controllers
         {
             try
             {
-                string cleanID = (ID ?? "").Replace("'", "''");
-                DataTable dt = dbFunctions.getTable("pr_delete_Formation_Rework_Rejection '" + cleanID + "'");
+                if (string.IsNullOrWhiteSpace(ID)) return "Invalid ID";
+                string cleanID = ID.Trim().Replace("'", "''");
+
+                using (SqlConnection con = new SqlConnection(dbFunctions.connectionstring))
+                {
+                    con.Open();
+                    using (SqlCommand com = new SqlCommand("UPDATE Formation_Rework_Rejection SET FRR_Status = 'D' WHERE FRR_ID = @FRR_ID", con))
+                    {
+                        com.Parameters.Add("@FRR_ID", SqlDbType.Int).Value = Convert.ToInt32(cleanID);
+                        com.ExecuteNonQuery();
+                    }
+                    con.Close();
+                }
                 return "True";
             }
             catch (Exception ex)
@@ -565,36 +576,58 @@ namespace SBLT2.Controllers
             string FRR_DefectReason = ""
         )
         {
-            SqlConnection con = new SqlConnection(dbFunctions.connectionstring);
-            try
+            using (SqlConnection con = new SqlConnection(dbFunctions.connectionstring))
             {
-                con.Open();
-                SqlCommand com = new SqlCommand("pr_update_Formation_Rework_Rejection", con);
-                com.CommandType = CommandType.StoredProcedure;
-                com.Parameters.Add("@FRR_ID", SqlDbType.Int).Value = Convert.ToInt32(FRR_ID);
-                com.Parameters.Add("@FRR_Type_Name", SqlDbType.VarChar, 50).Value = FRR_Type_Name ?? "";
-                com.Parameters.Add("@FRR_Reason", SqlDbType.VarChar, 500).Value = FRR_Reason ?? "";
-                com.Parameters.Add("@FRR_DefectReasonType", SqlDbType.VarChar, 100).Value = string.IsNullOrEmpty(FRR_DefectReasonType) ? (object)DBNull.Value : FRR_DefectReasonType;
-                com.Parameters.Add("@FRR_DefectReason", SqlDbType.VarChar, 500).Value = string.IsNullOrEmpty(FRR_DefectReason) ? (object)DBNull.Value : FRR_DefectReason;
-                com.Parameters.Add("@FRR_Employee_Name", SqlDbType.VarChar, 100).Value = FRR_Employee_Name ?? "";
-                com.Parameters.Add("@FRR_DefectCell", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_DefectCell) ? (object)DBNull.Value : FRR_DefectCell;
-                com.Parameters.Add("@FRR_OCV", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_OCV) ? (object)DBNull.Value : FRR_OCV;
-                com.Parameters.Add("@FRR_PlateNo", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_PlateNo) ? (object)DBNull.Value : FRR_PlateNo;
-                com.Parameters.Add("@FRR_Location", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_Location) ? (object)DBNull.Value : FRR_Location;
-                com.Parameters.Add("@FRR_PlateType", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_PlateType) ? (object)DBNull.Value : FRR_PlateType;
-                com.Parameters.Add("@FRR_Cell1", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_Cell1) ? (object)DBNull.Value : FRR_Cell1;
-                com.Parameters.Add("@FRR_Cell2", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_Cell2) ? (object)DBNull.Value : FRR_Cell2;
-                com.Parameters.Add("@FRR_Cell3", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_Cell3) ? (object)DBNull.Value : FRR_Cell3;
-                com.Parameters.Add("@FRR_Cell4", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_Cell4) ? (object)DBNull.Value : FRR_Cell4;
-                com.Parameters.Add("@FRR_Cell5", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_Cell5) ? (object)DBNull.Value : FRR_Cell5;
-                com.Parameters.Add("@FRR_Cell6", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_Cell6) ? (object)DBNull.Value : FRR_Cell6;
-                com.ExecuteNonQuery();
-                con.Close();
-                return "True";
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
+                try
+                {
+                    con.Open();
+                    string updateSql = @"UPDATE Formation_Rework_Rejection 
+                                         SET FRR_Type_Name = @FRR_Type_Name,
+                                             FRR_Reason = @FRR_Reason,
+                                             FRR_DefectReasonType = @FRR_DefectReasonType,
+                                             FRR_DefectReason = @FRR_DefectReason,
+                                             FRR_Employee_Name = @FRR_Employee_Name,
+                                             FRR_DefectCell = @FRR_DefectCell,
+                                             FRR_OCV = @FRR_OCV,
+                                             FRR_PlateNo = @FRR_PlateNo,
+                                             FRR_Location = @FRR_Location,
+                                             FRR_PlateType = @FRR_PlateType,
+                                             FRR_Cell1 = @FRR_Cell1,
+                                             FRR_Cell2 = @FRR_Cell2,
+                                             FRR_Cell3 = @FRR_Cell3,
+                                             FRR_Cell4 = @FRR_Cell4,
+                                             FRR_Cell5 = @FRR_Cell5,
+                                             FRR_Cell6 = @FRR_Cell6
+                                         WHERE FRR_ID = @FRR_ID AND FRR_Status = 'A'";
+
+                    using (SqlCommand com = new SqlCommand(updateSql, con))
+                    {
+                        com.Parameters.Add("@FRR_ID", SqlDbType.Int).Value = Convert.ToInt32(FRR_ID);
+                        com.Parameters.Add("@FRR_Type_Name", SqlDbType.VarChar, 50).Value = FRR_Type_Name ?? "";
+                        com.Parameters.Add("@FRR_Reason", SqlDbType.VarChar, 500).Value = FRR_Reason ?? "";
+                        com.Parameters.Add("@FRR_DefectReasonType", SqlDbType.VarChar, 100).Value = string.IsNullOrEmpty(FRR_DefectReasonType) ? (object)DBNull.Value : FRR_DefectReasonType;
+                        com.Parameters.Add("@FRR_DefectReason", SqlDbType.VarChar, 500).Value = string.IsNullOrEmpty(FRR_DefectReason) ? (object)DBNull.Value : FRR_DefectReason;
+                        com.Parameters.Add("@FRR_Employee_Name", SqlDbType.VarChar, 100).Value = FRR_Employee_Name ?? "";
+                        com.Parameters.Add("@FRR_DefectCell", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_DefectCell) ? (object)DBNull.Value : FRR_DefectCell;
+                        com.Parameters.Add("@FRR_OCV", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_OCV) ? (object)DBNull.Value : FRR_OCV;
+                        com.Parameters.Add("@FRR_PlateNo", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_PlateNo) ? (object)DBNull.Value : FRR_PlateNo;
+                        com.Parameters.Add("@FRR_Location", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_Location) ? (object)DBNull.Value : FRR_Location;
+                        com.Parameters.Add("@FRR_PlateType", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_PlateType) ? (object)DBNull.Value : FRR_PlateType;
+                        com.Parameters.Add("@FRR_Cell1", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_Cell1) ? (object)DBNull.Value : FRR_Cell1;
+                        com.Parameters.Add("@FRR_Cell2", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_Cell2) ? (object)DBNull.Value : FRR_Cell2;
+                        com.Parameters.Add("@FRR_Cell3", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_Cell3) ? (object)DBNull.Value : FRR_Cell3;
+                        com.Parameters.Add("@FRR_Cell4", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_Cell4) ? (object)DBNull.Value : FRR_Cell4;
+                        com.Parameters.Add("@FRR_Cell5", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_Cell5) ? (object)DBNull.Value : FRR_Cell5;
+                        com.Parameters.Add("@FRR_Cell6", SqlDbType.VarChar, 50).Value = string.IsNullOrEmpty(FRR_Cell6) ? (object)DBNull.Value : FRR_Cell6;
+                        com.ExecuteNonQuery();
+                    }
+                    con.Close();
+                    return "True";
+                }
+                catch (Exception ex)
+                {
+                    return ex.Message;
+                }
             }
         }
 

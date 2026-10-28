@@ -1043,8 +1043,10 @@
                     type: 'POST',
                     contentType: "application/json; charset=utf-8",
                     url: '../../Transaction/Pr_Delete_Formation_Rework_Rejection',
-                    data: JSON.stringify({ ID: id }),
+                    data: "{'ID':'" + id + "'}",
                     success: function (response) {
+                        $('#Grid').jqxGrid('clearselection');
+                        $('#Grid').jqxGrid('updatebounddata');
                         getGrid();
                         $.toaster({ priority: 'success', title: 'Notice', message: "Record Deleted Successfully...!" });
                     },
@@ -1073,14 +1075,19 @@
                             type: 'POST',
                             contentType: "application/json; charset=utf-8",
                             url: '../../Transaction/Pr_Delete_Formation_Rework_Rejection',
-                            data: JSON.stringify({ ID: frrId }),
+                            data: "{'ID':'" + frrId + "'}",
                             async: false,
                             success: function (response) { }
                         });
                     }
                 }
+                $('#Grid').jqxGrid('clearselection');
+                $('#Grid').jqxGrid('updatebounddata');
                 getGrid();
                 alert('Record Deleted Successfully');
+            } else {
+                $('#Grid').jqxGrid('clearselection');
+                return;
             }
         });
 

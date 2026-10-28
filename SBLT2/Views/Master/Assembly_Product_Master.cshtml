@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewBag.Title = "Assembly_Product_Master";
 }
 
@@ -930,41 +930,39 @@
         });
 
         $('#Delete').click(function () {
-            debugger
             var selectedrows = $('#Grid').jqxGrid('getselectedrowindexes');
             if (selectedrows.length <= 0) {
-                alert('Please select row yoy want to Delete');
+                alert('Please select row want to Delete');
                 return;
             }
             else {
                 var a = confirm("Are you sure want to delete press OK");
                 if (a == true) {
                     for (var i = 0; i < selectedrows.length; i++) {
-                        inv_Id = $('#Grid').jqxGrid('getcellvalue', selectedrows[i], "inv_Id");
-                        $.ajax({
-                            type: 'POST',
-                            contentType: "application/json; charset=utf-8",
-                            url: 'Pr_Delete_Material_Receipt',
-                            data: "{'ID':'" + inv_Id + "'}",
-                            async: false,
-                            success: function (response) {
-                                //$("#Grid").jqxGrid('updatebounddata');
-                                //alert('Record Deleted Successfully');
-                            },
-                            error: function () {
-                                console.log('there is some error');
-                            }
-                        });
+                        var pm_iID = $('#Grid').jqxGrid('getcellvalue', selectedrows[i], "PM_iID");
+                        if (pm_iID) {
+                            $.ajax({
+                                type: 'POST',
+                                contentType: "application/json; charset=utf-8",
+                                url: 'pr_Delete_Product_MasterAssy',
+                                data: "{'ID':'" + pm_iID + "'}",
+                                async: false,
+                                success: function (response) { },
+                                error: function () {
+                                    console.log('there is some error');
+                                }
+                            });
+                        }
                     }
+                    $('#Grid').jqxGrid('clearselection');
+                    $("#Grid").jqxGrid('updatebounddata');
+                    alert("Record Deleted Successfully...!");
                 }
                 else {
                     $('#Grid').jqxGrid('clearselection');
                     return;
                 }
             }
-            alert("Record Saved Successfully...!");
-            $('#Grid').jqxGrid('clearselection');
-            $("#Grid").jqxGrid('updatebounddata');
         });
 
         function printpdf(inv_Id) {
