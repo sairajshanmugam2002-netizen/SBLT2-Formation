@@ -967,16 +967,28 @@
             // Employee
             if (dataRecord.FRR_Employee_Name) {
                 var empItems = $('#ddlEmployee').jqxDropDownList('getItems');
+                var matched = false;
                 if (empItems) {
+                    var targetName = $.trim(dataRecord.FRR_Employee_Name).toLowerCase();
                     for (var k = 0; k < empItems.length; k++) {
-                        if (empItems[k].label === dataRecord.FRR_Employee_Name) {
+                        var itemLabel = $.trim(empItems[k].label || '').toLowerCase();
+                        if (itemLabel === targetName ||
+                            (targetName && itemLabel.indexOf(targetName) !== -1) ||
+                            (targetName && targetName.indexOf(itemLabel) !== -1)) {
                             $('#ddlEmployee').jqxDropDownList('selectIndex', k);
+                            matched = true;
                             break;
                         }
                     }
                 }
+                if (!matched && dataRecord.FRR_Employee_Name) {
+                    $('#ddlEmployee').jqxDropDownList('addItem', {
+                        label: dataRecord.FRR_Employee_Name,
+                        value: dataRecord.FRR_Employee_ID || 0
+                    });
+                    $('#ddlEmployee').jqxDropDownList('selectItem', dataRecord.FRR_Employee_Name);
+                }
             }
-
             // Cells
             $('#txt_Cell1').val(dataRecord.FRR_Cell1 || 'C1');
             $('#txt_Cell2').val(dataRecord.FRR_Cell2 || 'C-2');

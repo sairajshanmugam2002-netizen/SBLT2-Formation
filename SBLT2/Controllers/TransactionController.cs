@@ -66,9 +66,7 @@ namespace SBLT2.Controllers
 
         public string pr_fetch_Active_Employees()
         {
-            DataTable dt = dbFunctions.getTable("pr_fetch_Active_Employees");
-            string s = dbFunctions.GetJSONString(dt);
-            return s;
+            return EmployeeMappingHelper.GetMappedEmployeesForReworkRejection();
         }
 
         public string pr_fetch_Rework_Rejection_Reasons(string Type_ID = null, string ID = null, string ReferenceType = null)
@@ -101,7 +99,7 @@ namespace SBLT2.Controllers
                 return "[]";
             }
             string s = dbFunctions.GetJSONString(dt);
-            return s;
+            return s;   
         }
 
         public string pr_fetch_Today_Rework_Rejection_Counts(string Type = null)
@@ -143,7 +141,7 @@ namespace SBLT2.Controllers
                 return "{\"record\":[]}";
             }
             string s = dbFunctions.GetJSONString(dt);
-            return s;
+            return s;   
         }
 
         public string pr_insert_Formation_Rework_Rejection(

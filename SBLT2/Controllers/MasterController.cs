@@ -2565,6 +2565,21 @@ namespace SBLT2.Controllers
             return s;
         }
 
+        public string Pr_Fetch_Employee_Master_For_Mapping()
+        {
+            return EmployeeMappingHelper.GetActiveEmployeesForReferenceMaster();
+        }
+
+        public string Pr_Fetch_Departments()
+        {
+            return EmployeeMappingHelper.GetDepartmentList();
+        }
+
+        public string Pr_Get_Employee_Department(string Code = "", string Name = "")
+        {
+            return EmployeeMappingHelper.GetEmployeeDepartment(Code, Name);
+        }
+
         public string Pr_Fetch_ReferenceGroup_Value_Details(string ID)
         {
             DataTable dt = dbFunctions.getTable("Pr_Fetch_ReferenceGroup_Value_Details'" + ID + "'");
@@ -2619,7 +2634,7 @@ namespace SBLT2.Controllers
         }
 
 
-        public string Pr_Insert_ReferenceGroup_Value(string RGV_iRG_ID, string RGV_vCode, string RGV_vDesciption, string RGV_vDefectReasonType = "")
+        public string Pr_Insert_ReferenceGroup_Value(string RGV_iRG_ID, string RGV_vCode, string RGV_vDesciption, string RGV_vDefectReasonType = "", string Department = "", string User = "System")
         {
             SqlConnection con = new SqlConnection(dbFunctions.connectionstring);
             try
@@ -2635,6 +2650,11 @@ namespace SBLT2.Controllers
                 com.Parameters.Add("@RGV_vDefectReasonType", SqlDbType.VarChar, 100).Value = string.IsNullOrEmpty(RGV_vDefectReasonType) ? (object)DBNull.Value : RGV_vDefectReasonType;
                 com.ExecuteNonQuery();
                 con.Close();
+                // If Reference Type is Employee (RGV_iRG_ID = 1), also store the employee into Employee_Master
+                if (RGV_iRG_ID == "1")
+                {
+                    EmployeeMappingHelper.SaveEmployeeToMaster(RGV_vCode, RGV_vDesciption, Department, User);
+                }
                 return "True";
             }
             catch (Exception ex)
@@ -2643,7 +2663,7 @@ namespace SBLT2.Controllers
             }
         }
 
-        public string Pr_Update_ReferenceGroup_Value(string RGV_iID, string RGV_vCode, string RGV_vDesciption, string RGV_vDefectReasonType = "")
+        public string Pr_Update_ReferenceGroup_Value(string RGV_iID, string RGV_vCode, string RGV_vDesciption, string RGV_vDefectReasonType = "", string Department = "", string User = "System")
         {
             SqlConnection con = new SqlConnection(dbFunctions.connectionstring);
             try
@@ -2656,9 +2676,13 @@ namespace SBLT2.Controllers
                 com.Parameters.Add("@RGV_iID", SqlDbType.VarChar).Value = RGV_iID;
                 com.Parameters.Add("@RGV_vCode", SqlDbType.VarChar).Value = RGV_vCode ?? "";
                 com.Parameters.Add("@RGV_vDesciption", SqlDbType.VarChar).Value = RGV_vDesciption ?? "";
-                com.Parameters.Add("@RGV_vDefectReasonType", SqlDbType.VarChar, 100).Value = string.IsNullOrEmpty(RGV_vDefectReasonType) ? (object)DBNull.Value : RGV_vDefectReasonType;
                 com.ExecuteNonQuery();
                 con.Close();
+                // If updating an employee reference record, also update Employee_Master
+                if (!string.IsNullOrEmpty(Department) || EmployeeMappingHelper.IsEmployeeReference(RGV_iID))
+                {
+                    EmployeeMappingHelper.SaveEmployeeToMaster(RGV_vCode, RGV_vDesciption, Department, User);
+                }
                 return "True";
             }
             catch (Exception ex)

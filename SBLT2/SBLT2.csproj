@@ -147,6 +147,7 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="CommonData\dbFunctions.cs" />
+    <Compile Include="CommonData\EmployeeMappingHelper.cs" />
     <Compile Include="CommonData\getdata.aspx.cs">
       <DependentUpon>getdata.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

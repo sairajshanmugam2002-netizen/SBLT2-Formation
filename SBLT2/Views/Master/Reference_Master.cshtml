@@ -21,16 +21,73 @@
         var adapter = new $.jqx.dataAdapter(Source);
         $("#RG_vDescription").jqxComboBox({ selectedIndex: -1, source: adapter, displayMember: "RG_vDescription", valueMember: "RG_iID", width: '100%', height: '30' });
 
+        // =========================================================================
+        // Department Dropdown: loads distinct departments
+        // Shown only when Reference Type = "Employee"
+        // Flow: Reference Type = Employee -> Department Select -> Employee Code -> Employee Name
+        // =========================================================================
+        var isEmployeeSelected = false;
+        var deptUrl = "../../Master/Pr_Fetch_Departments";
+        var deptSource = {
+            datatype: "json",
+            datafields: [
+                { name: 'Department', type: 'string' }
+            ],
+            id: 'Department',
+            url: deptUrl,
+            async: false
+        };
+        var deptAdapter = new $.jqx.dataAdapter(deptSource);
+        $("#ddl_Department").jqxDropDownList({
+            selectedIndex: -1,
+            source: deptAdapter,
+            displayMember: "Department",
+            valueMember: "Department",
+            width: '100%',
+            height: '30px',
+            promptText: "-- Select Department --",
+            filterable: true,
+            filterPlaceHolder: "Search Department..."
+        });
+
+        function checkIsEmployee(item) {
+            if (!item) return false;
+            var desc = (item.label || (item.originalItem && item.originalItem.RG_vDescription) || '').toString().trim().toLowerCase();
+            var id = (item.value || (item.originalItem && item.originalItem.RG_iID) || '').toString();
+            return desc === 'employee' || id === '1';
+        }
+
+        function setEmployeeMode(isEmp) {
+            isEmployeeSelected = isEmp;
+            if (isEmp) {
+                $('#div_Department').show();
+                $('#lbl_RGV_vCode').html('<span class="star">*</span> Employee Code');
+                $('#RGV_vCode').attr('placeholder', 'Enter Employee Code');
+                $('#lbl_RGV_vDesciption').html('<span class="star">*</span> Employee Name');
+                $('#RGV_vDesciption').attr('placeholder', 'Enter Employee Name');
+            } else {
+                $('#div_Department').hide();
+                if ($('#ddl_Department').length) {
+                    $('#ddl_Department').jqxDropDownList('clearSelection');
+                }
+                $('#lbl_RGV_vCode').html('<span class="star"></span> Reference Code');
+                $('#RGV_vCode').attr('placeholder', 'Reference Code');
+                $('#lbl_RGV_vDesciption').html('<span class="star">*</span> Defect Reason / Description');
+                $('#RGV_vDesciption').attr('placeholder', 'Enter Defect Reason or Description');
+            }
+        }
+
         $('#RG_vDescription').on('select', function (event) {
-            debugger
             var args = event.args;
-            if (args) {
-                var item = args.item;
-                var originalItem = item.originalItem.RG_iID;
+            var originalItem = 0;
+            if (args && args.item) {
+                originalItem = args.item.originalItem ? args.item.originalItem.RG_iID : args.item.value;
+                setEmployeeMode(checkIsEmployee(args.item));
+            } else {
+                setEmployeeMode(false);
             }
             grid(originalItem);
-            //Bind1(originalItem);
-            //Bind3(originalItem);
+            Clear();
         });
         grid(0);
         function grid(ID) {
@@ -84,6 +141,29 @@
                 $('#RGV_vCode').val(dataRecord.Code);
                 $('#RGV_vDesciption').val(dataRecord.Desciption);
                 $("#btn_save_label").text('Update');
+
+                if (isEmployeeSelected) {
+                    // Auto-lookup department for this employee code / name
+                    $.ajax({
+                        url: '../../Master/Pr_Get_Employee_Department?Code=' + encodeURIComponent(dataRecord.Code || '') + '&Name=' + encodeURIComponent(dataRecord.Desciption || ''),
+                        type: 'GET',
+                        async: true,
+                        success: function (dept) {
+                            if (dept) {
+                                var items = $('#ddl_Department').jqxDropDownList('getItems');
+                                if (items) {
+                                    for (var i = 0; i < items.length; i++) {
+                                        if (items[i].value.toLowerCase() === dept.toLowerCase()) {
+                                            $('#ddl_Department').jqxDropDownList('selectIndex', i);
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+                            $('#ddl_Department').jqxDropDownList('clearSelection');
+                        }
+                    });
+                }
             }
             //if (columnindex == 1) {
             //    editrow = rowindex;
@@ -172,14 +252,39 @@
 
 
         $("#btn_Save").click(function () {
-            $('#form1').jqxValidator('validate');
-            if (flag == true) {
-                if ($("#btn_save_label").text() == 'Save') {
-                    save();
-                } else {
-                    Update();
+            var refVal = $('#RG_vDescription').val();
+            if (!refVal) {
+                $.toaster({ priority: 'danger', title: 'Notice', message: "Please Select Reference Type" });
+                return;
+            }
+
+            if (isEmployeeSelected) {
+                var dept = $('#ddl_Department').val();
+                if (!dept) {
+                    $.toaster({ priority: 'danger', title: 'Notice', message: "Please Select Department" });
+                    $('#ddl_Department').jqxDropDownList('focus');
+                    return;
                 }
-                flag = false;
+                var empCode = $.trim($('#RGV_vCode').val());
+                if (!empCode) {
+                    $.toaster({ priority: 'danger', title: 'Notice', message: "Please Enter Employee Code" });
+                    $('#RGV_vCode').focus();
+                    return;
+                }
+            }
+
+            var desc = $.trim($('#RGV_vDesciption').val());
+            if (!desc) {
+                var msg = isEmployeeSelected ? "Please Enter Employee Name" : "Please Enter Defect Reason or Description";
+                $.toaster({ priority: 'danger', title: 'Notice', message: msg });
+                $('#RGV_vDesciption').focus();
+                return;
+            }
+
+            if ($("#btn_save_label").text() == 'Save') {
+                save();
+            } else {
+                Update();
             }
         });
 
@@ -198,11 +303,14 @@
         });
 
         function save() {
+            var selectedDept = isEmployeeSelected ? ($('#ddl_Department').val() || '') : '';
             var data = new FormData();
             $.ajax({
                 url: "Pr_Insert_ReferenceGroup_Value?RGV_iRG_ID=" + encodeURIComponent($('#RG_vDescription').val() || '') +
                     "&RGV_vCode=" + encodeURIComponent($('#RGV_vCode').val() || '') +
-                    "&RGV_vDesciption=" + encodeURIComponent($('#RGV_vDesciption').val() || ''),
+                    "&RGV_vDesciption=" + encodeURIComponent($('#RGV_vDesciption').val() || '') +
+                    "&Department=" + encodeURIComponent(selectedDept) +
+                    "&User=" + encodeURIComponent(User || 'System'),
                 type: "POST",
                 processData: false,
                 contentType: false,
@@ -225,11 +333,14 @@
         }
 
         function Update() {
+            var selectedDept = isEmployeeSelected ? ($('#ddl_Department').val() || '') : '';
             var data = new FormData();
             $.ajax({
                 url: "Pr_Update_ReferenceGroup_Value?RGV_iID=" + ID +
                     "&RGV_vCode=" + encodeURIComponent($('#RGV_vCode').val() || '') +
-                    "&RGV_vDesciption=" + encodeURIComponent($('#RGV_vDesciption').val() || ''),
+                    "&RGV_vDesciption=" + encodeURIComponent($('#RGV_vDesciption').val() || '') +
+                    "&Department=" + encodeURIComponent(selectedDept) +
+                    "&User=" + encodeURIComponent(User || 'System'),
                 type: "POST",
                 processData: false,
                 contentType: false,
@@ -251,13 +362,15 @@
         }
 
         function Clear() {
-            //$('#lm_BranchCode').val('');
             $('#lm_CustomerCode').val('');
             $('#RGV_vDesciption').val('');
             $('#RGV_vCode').val('');
             $('#lm_Address').val('');
             $("#btn_save_label").text('Save');
-            FetchTeamCode();
+            if ($('#ddl_Department').length) {
+                $('#ddl_Department').jqxDropDownList('clearSelection');
+            }
+            try { FetchTeamCode(); } catch (e) { }
             $('#blah1').attr('src', "../../");
             flag = false;
         }
@@ -316,14 +429,20 @@
                                         <div id="RG_vDescription"></div>
                                     </div>
                                 </div>
+                                <div class="form-group" id="div_Department" style="display: none;">
+                                    <label class="col-sm-4 control-label no-padding-right" for="ddl_Department"><span class="star">*</span> Department </label>
+                                    <div class="col-sm-7">
+                                        <div id="ddl_Department"></div>
+                                    </div>
+                                </div>
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label no-padding-right" for="RGV_vCode"> <span class="star"></span>Reference Code </label>
+                                    <label class="col-sm-4 control-label no-padding-right" for="RGV_vCode" id="lbl_RGV_vCode"> <span class="star"></span> Reference Code </label>
                                     <div class="col-sm-7">
                                         <input id="RGV_vCode" type="text" placeholder="Reference Code" class="form-control" />
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label no-padding-right" for="RGV_vDesciption"> <span class="star">*</span>Defect Reason / Description</label>
+                                    <label class="col-sm-4 control-label no-padding-right" for="RGV_vDesciption" id="lbl_RGV_vDesciption"> <span class="star">*</span> Defect Reason / Description </label>
                                     <div class="col-sm-7">
                                         <input id="RGV_vDesciption" type="text" placeholder="Enter Defect Reason or Description" class="form-control" />
                                     </div>
@@ -342,11 +461,7 @@
                                 <i class="ace-icon fa fa-trash-o bigger-120 orange"></i>
                                 Clear
                             </button>
-                            <button class="btn btn-white btn-default btn-round" data-dismiss="modal">
-                                <i class="ace-icon fa fa-times red2"></i>
-                                Close
-                            </button>
-                        </p>
+                            </p>
                     </div>
                     <div class="box-body">
                         <div class="col-sm-4" style="max-width: 70px; padding-left: 0px; padding-right: 0px">
